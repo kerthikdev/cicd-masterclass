@@ -6,6 +6,7 @@ import { LessonPage } from './pages/LessonPage';
 import { SimulatorPage } from './pages/SimulatorPage';
 import { ReferencePage } from './pages/ReferencePage';
 import { PresentationPage } from './pages/PresentationPage';
+import { AwsSimulatorPage } from './pages/AwsSimulatorPage';
 import { SearchModal } from './components/SearchModal';
 import { CertificateModal } from './components/CertificateModal';
 import { lessons } from './content/lessons';
@@ -21,7 +22,7 @@ export function App() {
     percentComplete,
   } = useProgress();
 
-  const [currentView, setCurrentView] = useState<'home' | 'lesson' | 'simulator' | 'reference' | 'presentation'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'lesson' | 'simulator' | 'aws' | 'reference' | 'presentation'>('home');
   const [currentLessonSlug, setCurrentLessonSlug] = useState<string>(lessons[0].slug);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [certModalOpen, setCertModalOpen] = useState(false);
@@ -35,6 +36,8 @@ export function App() {
         setCurrentView('home');
       } else if (hash === 'simulator') {
         setCurrentView('simulator');
+      } else if (hash === 'aws' || hash === 'aws-simulator') {
+        setCurrentView('aws');
       } else if (hash === 'reference') {
         setCurrentView('reference');
       } else if (hash === 'presentation') {
@@ -54,7 +57,7 @@ export function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  const navigateTo = (view: 'home' | 'lesson' | 'simulator' | 'reference' | 'presentation', lessonSlug?: string) => {
+  const navigateTo = (view: 'home' | 'lesson' | 'simulator' | 'aws' | 'reference' | 'presentation', lessonSlug?: string) => {
     setCurrentView(view);
     setMobileMenuOpen(false);
 
@@ -62,6 +65,8 @@ export function App() {
       window.location.hash = 'home';
     } else if (view === 'simulator') {
       window.location.hash = 'simulator';
+    } else if (view === 'aws') {
+      window.location.hash = 'aws';
     } else if (view === 'reference') {
       window.location.hash = 'reference';
     } else if (view === 'presentation') {
@@ -112,6 +117,12 @@ export function App() {
             ⚡ Pipeline Simulator
           </button>
           <button
+            onClick={() => navigateTo('aws')}
+            className="w-full text-left px-3 py-2 text-sm rounded-lg text-amber-700 font-bold hover:bg-amber-50"
+          >
+            ☁️ AWS Cloud Lab (ECS & OIDC)
+          </button>
+          <button
             onClick={() => navigateTo('reference')}
             className="w-full text-left px-3 py-2 text-sm rounded-lg text-slate-700 hover:bg-slate-100 font-medium"
           >
@@ -132,6 +143,7 @@ export function App() {
           <HomePage
             onStartCourse={(slug) => navigateTo('lesson', slug || currentLessonSlug)}
             onOpenSimulator={() => navigateTo('simulator')}
+            onOpenAws={() => navigateTo('aws')}
             onOpenReference={() => navigateTo('reference')}
             completedLessons={progress.completedLessons}
             percentComplete={percentComplete}
@@ -154,6 +166,13 @@ export function App() {
 
         {currentView === 'simulator' && (
           <SimulatorPage onBackToCourse={() => navigateTo('lesson', currentLessonSlug)} />
+        )}
+
+        {currentView === 'aws' && (
+          <AwsSimulatorPage 
+            onBackToCourse={() => navigateTo('home')} 
+            onOpenPresentation={() => navigateTo('presentation')}
+          />
         )}
 
         {currentView === 'reference' && <ReferencePage />}
@@ -195,6 +214,9 @@ export function App() {
             </button>
             <button onClick={() => navigateTo('simulator')} className="hover:text-blue-600 font-medium transition-colors">
               Simulator
+            </button>
+            <button onClick={() => navigateTo('aws')} className="hover:text-amber-700 font-bold transition-colors">
+              AWS Cloud Lab
             </button>
             <button onClick={() => navigateTo('reference')} className="hover:text-blue-600 font-medium transition-colors">
               Glossary

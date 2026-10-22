@@ -10,12 +10,13 @@ import {
   Home, 
   Layers, 
   HelpCircle,
-  UtensilsCrossed
+  UtensilsCrossed,
+  Cloud
 } from 'lucide-react';
 
 interface NavbarProps {
-  currentView: 'home' | 'lesson' | 'simulator' | 'reference' | 'presentation';
-  onNavigate: (view: 'home' | 'lesson' | 'simulator' | 'reference' | 'presentation', lessonSlug?: string) => void;
+  currentView: 'home' | 'lesson' | 'simulator' | 'aws' | 'reference' | 'presentation';
+  onNavigate: (view: 'home' | 'lesson' | 'simulator' | 'aws' | 'reference' | 'presentation', lessonSlug?: string) => void;
   percentComplete: number;
   onOpenSearch: () => void;
   onOpenCertificate: () => void;
@@ -101,6 +102,19 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Terminal className="w-3.5 h-3.5 text-blue-600" />
             <span>Pipeline Simulator</span>
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          </button>
+
+          <button
+            onClick={() => onNavigate('aws')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+              currentView === 'aws'
+                ? 'bg-amber-500 text-slate-950 font-black shadow-sm'
+                : 'text-amber-800 hover:text-amber-950 hover:bg-amber-50'
+            }`}
+          >
+            <Cloud className="w-3.5 h-3.5 text-amber-600" />
+            <span>AWS Cloud Lab</span>
+            <span className="text-[10px] bg-amber-200/80 text-amber-900 px-1 rounded font-bold">ECS+OIDC</span>
           </button>
 
           <button

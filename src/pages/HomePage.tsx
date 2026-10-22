@@ -15,12 +15,14 @@ import {
   Layers,
   ChevronRight,
   Flame,
-  Clock
+  Clock,
+  Cloud
 } from 'lucide-react';
 
 interface HomePageProps {
   onStartCourse: (slug?: string) => void;
   onOpenSimulator: () => void;
+  onOpenAws?: () => void;
   onOpenReference: () => void;
   completedLessons: number[];
   percentComplete: number;
@@ -29,6 +31,7 @@ interface HomePageProps {
 export const HomePage: React.FC<HomePageProps> = ({
   onStartCourse,
   onOpenSimulator,
+  onOpenAws,
   onOpenReference,
   completedLessons,
   percentComplete,
@@ -77,8 +80,18 @@ export const HomePage: React.FC<HomePageProps> = ({
               className="flex items-center gap-2 px-6 py-4 bg-slate-900/80 border border-cyan-500/30 text-cyan-300 hover:border-cyan-400 font-bold text-base rounded-2xl hover:bg-cyan-950/30 transition-all"
             >
               <Terminal className="w-5 h-5 text-cyan-400" />
-              <span>Launch Pipeline Simulator</span>
+              <span>Pipeline Simulator</span>
             </button>
+
+            {onOpenAws && (
+              <button
+                onClick={onOpenAws}
+                className="flex items-center gap-2 px-6 py-4 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 hover:from-amber-400 hover:to-orange-400 font-black text-base rounded-2xl hover:shadow-xl hover:shadow-orange-500/20 transition-all hover:scale-105 active:scale-95"
+              >
+                <Cloud className="w-5 h-5 text-slate-950" />
+                <span>AWS Cloud Simulator</span>
+              </button>
+            )}
           </div>
 
           {/* Key Stats Bar */}
