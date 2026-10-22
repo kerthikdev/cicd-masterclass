@@ -25,7 +25,10 @@ import {
   GitBranch,
   FolderGit2,
   CheckSquare,
-  HelpCircle
+  HelpCircle,
+  ZoomIn,
+  ZoomOut,
+  RotateCcw
 } from 'lucide-react';
 
 export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onBackToCourse }) => {
@@ -33,6 +36,8 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
   const [slideNum, setSlideNum] = useState<number>(0); 
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [enlargedImage, setEnlargedImage] = useState<string | null>(null);
+  const [isDiagramExpanded, setIsDiagramExpanded] = useState<boolean>(false);
+  const [zoomLevel, setZoomLevel] = useState<number>(1);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const totalSlides = 20;
@@ -73,7 +78,11 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight' || e.key === ' ') {
+      if (e.key === 'Escape' && enlargedImage) {
+        e.preventDefault();
+        setEnlargedImage(null);
+        setZoomLevel(1);
+      } else if (e.key === 'ArrowRight' || e.key === ' ') {
         e.preventDefault();
         nextSlide();
       } else if (e.key === 'ArrowLeft') {
@@ -86,7 +95,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [slideNum]);
+  }, [slideNum, enlargedImage]);
 
   const currentSlide = slideNum > 0 ? MASTER_SLIDES_DATA[slideNum - 1] : null;
 
@@ -335,103 +344,274 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                 SLIDE-SPECIFIC RICH CONTENT WITH PROPER ALIGNMENT
                 ========================================================================= */}
             {currentSlide!.image ? (
-              /* ================= SPLIT 12-COL LAYOUT WITH PROMINENT DIAGRAM IMAGE ================= */
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-6">
-                {/* Left Side (6 cols): Detailed Points & Analogy */}
-                <div className="lg:col-span-6 space-y-4">
-                  {/* Detailed Content Points */}
-                  <div className="space-y-3">
-                    {(currentSlide!.detailedPoints || currentSlide!.contentPoints)?.map((pt, idx) => (
-                      <div key={idx} className="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
-                        <CheckCircle2 className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
-                        <p className="text-sm sm:text-base text-slate-800 font-medium leading-relaxed">{pt}</p>
+              /* ================= SLIDE WITH HIGH-RESOLUTION DIAGRAM IMAGE ================= */
+              isDiagramExpanded ? (
+                /* EXPANDED FULL-WIDTH 12-COL VIEW */
+                <div className="space-y-6 mb-6">
+                  {/* Top Enormous Diagram Card */}
+                  <div className="w-full rounded-3xl overflow-hidden border-2 border-blue-300 shadow-2xl bg-white p-4">
+                    <div className="flex items-center justify-between pb-3 mb-2 border-b border-slate-100 flex-wrap gap-2">
+                      <div className="flex items-center gap-2 text-blue-700 font-bold text-sm uppercase font-mono">
+                        <Layers className="w-4 h-4 text-blue-600" />
+                        <span>Architecture Diagram (Full Width)</span>
+                        <span className="text-slate-400">•</span>
+                        <span className="text-slate-600 normal-case">{currentSlide!.imageCaption}</span>
                       </div>
-                    ))}
-                  </div>
-
-                  {/* Food Analogy Card */}
-                  {currentSlide!.foodAnalogy && (
-                    <div className="p-5 rounded-2xl bg-amber-50/70 border-2 border-amber-200 shadow-xs">
-                      <div className="flex items-center gap-2 text-amber-900 font-black text-base mb-2">
-                        <UtensilsCrossed className="w-5 h-5 text-amber-600" />
-                        <span>{currentSlide!.foodAnalogy.title}</span>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => {
+                            setEnlargedImage(currentSlide!.image!);
+                            setZoomLevel(1);
+                          }}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-mono font-bold shadow-xs transition-all"
+                        >
+                          <ZoomIn className="w-4 h-4 text-white" />
+                          <span>Zoom Lightbox</span>
+                        </button>
+                        <button
+                          onClick={() => setIsDiagramExpanded(false)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-mono font-bold shadow-xs transition-all"
+                        >
+                          <Minimize2 className="w-4 h-4 text-blue-600" />
+                          <span>Side-by-Side</span>
+                        </button>
                       </div>
-                      <p className="text-sm sm:text-base text-slate-800 leading-relaxed mb-3">
-                        {currentSlide!.foodAnalogy.story}
-                      </p>
-                      {currentSlide!.foodAnalogy.connection && (
-                        <div className="p-3 rounded-xl bg-white border border-amber-200">
-                          <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
-                            <strong className="text-amber-900">Software Connection:</strong> {currentSlide!.foodAnalogy.connection}
-                          </p>
-                        </div>
-                      )}
                     </div>
-                  )}
 
-                  {/* Extra Specific Content if Slide 14 Stages or Slide 15 Terms */}
-                  {currentSlide!.stages && (
-                    <div className="grid grid-cols-2 gap-2.5">
-                      {currentSlide!.stages.map((stg, idx) => (
-                        <div key={idx} className="p-3 rounded-xl bg-white border border-slate-200">
-                          <span className="text-xs font-mono font-bold text-blue-700">{stg.num}. {stg.name}</span>
-                          <p className="text-xs text-slate-600 mt-0.5">{stg.purpose}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {currentSlide!.terms && (
-                    <div className="grid grid-cols-2 gap-2.5">
-                      {currentSlide!.terms.slice(0, 4).map((t, idx) => (
-                        <div key={idx} className="p-3 rounded-xl bg-white border border-slate-200">
-                          <span className="text-xs font-mono font-bold text-blue-700">{t.term}</span>
-                          <p className="text-xs text-slate-600 mt-0.5">{t.desc}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* Right Side (6 cols): Prominent High-Resolution Architecture Diagram Image */}
-                <div className="lg:col-span-6 flex flex-col items-center space-y-3">
-                  <div
-                    className="w-full rounded-3xl overflow-hidden border-2 border-slate-200/90 shadow-xl bg-white p-3 cursor-pointer group transition-all hover:border-blue-400"
-                    onClick={() => setEnlargedImage(currentSlide!.image!)}
-                    title="Click to view full screen"
-                  >
-                    <div className="relative overflow-hidden rounded-2xl bg-slate-50 flex items-center justify-center p-2">
+                    <div
+                      className="relative overflow-hidden rounded-2xl bg-slate-50 flex items-center justify-center p-3 cursor-pointer group"
+                      onClick={() => {
+                        setEnlargedImage(currentSlide!.image!);
+                        setZoomLevel(1);
+                      }}
+                      title="Click to open Fullscreen Lightbox Zoom"
+                    >
                       <img
                         src={currentSlide!.image}
                         alt={currentSlide!.title}
-                        className="w-full h-auto min-h-[340px] sm:min-h-[420px] max-h-[520px] rounded-2xl object-contain group-hover:scale-103 transition-transform duration-300"
+                        className="w-full h-auto min-h-[460px] sm:min-h-[560px] max-h-[720px] rounded-2xl object-contain group-hover:scale-101 transition-transform duration-300"
                       />
-                      <div className="absolute top-3 right-3 px-3 py-1.5 rounded-xl bg-black/60 backdrop-blur-sm text-white text-xs font-mono font-bold flex items-center gap-1.5 opacity-90 group-hover:opacity-100 transition-opacity">
+                      <div className="absolute top-4 right-4 px-3.5 py-2 rounded-xl bg-black/70 backdrop-blur-sm text-white text-xs font-mono font-bold flex items-center gap-2 opacity-90 group-hover:opacity-100 transition-opacity">
                         <Maximize2 className="w-4 h-4 text-white" />
-                        <span>Click to Enlarge</span>
+                        <span>Click to Enlarge / Zoom</span>
                       </div>
-                    </div>
-                    <div className="p-3.5 bg-slate-50/90 rounded-2xl mt-3 border border-slate-200">
-                      <div className="flex items-center gap-1.5 text-blue-700 font-bold text-xs uppercase font-mono mb-1">
-                        <Layers className="w-4 h-4" />
-                        <span>Architecture Diagram</span>
-                      </div>
-                      <p className="text-xs sm:text-sm font-mono text-slate-800 leading-relaxed font-semibold">
-                        {currentSlide!.imageCaption}
-                      </p>
                     </div>
                   </div>
 
-                  <div className="w-full p-3.5 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 text-center">
-                    <span className="text-xs font-mono font-bold text-blue-900 block">
-                      Lesson {currentSlide!.num} Core Architecture
-                    </span>
-                    <span className="text-xs text-slate-700 font-medium">
-                      Every code commit triggers deterministic automated validation.
-                    </span>
+                  {/* Bottom Content Grid */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                    {/* Left Column: Points & Problems */}
+                    <div className="space-y-4">
+                      <div className="space-y-3">
+                        {(currentSlide!.detailedPoints || currentSlide!.contentPoints)?.map((pt, idx) => (
+                          <div key={idx} className="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
+                            <CheckCircle2 className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
+                            <p className="text-sm sm:text-base text-slate-800 font-medium leading-relaxed">{pt}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      {currentSlide!.problemsList && (
+                        <div className="space-y-2 pt-2">
+                          <div className="flex items-center gap-2 text-rose-800 font-bold text-sm">
+                            <AlertTriangle className="w-4 h-4 text-rose-600" />
+                            <span>The Manual Delivery Pitfalls:</span>
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            {currentSlide!.problemsList.map((prob, idx) => (
+                              <div key={idx} className="p-3 rounded-xl bg-rose-50/80 border border-rose-200 text-slate-800 font-bold text-xs flex items-start gap-2">
+                                <XCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                                <span>{prob}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Right Column: Food Analogy & Extras */}
+                    <div className="space-y-4">
+                      {currentSlide!.foodAnalogy && (
+                        <div className="p-5 rounded-2xl bg-amber-50/70 border-2 border-amber-200 shadow-xs">
+                          <div className="flex items-center gap-2 text-amber-900 font-black text-base mb-2">
+                            <UtensilsCrossed className="w-5 h-5 text-amber-600" />
+                            <span>{currentSlide!.foodAnalogy.title}</span>
+                          </div>
+                          <p className="text-sm sm:text-base text-slate-800 leading-relaxed mb-3">
+                            {currentSlide!.foodAnalogy.story}
+                          </p>
+                          {currentSlide!.foodAnalogy.connection && (
+                            <div className="p-3 rounded-xl bg-white border border-amber-200">
+                              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                                <strong className="text-amber-900">Software Connection:</strong> {currentSlide!.foodAnalogy.connection}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {currentSlide!.stages && (
+                        <div className="grid grid-cols-2 gap-2.5">
+                          {currentSlide!.stages.map((stg, idx) => (
+                            <div key={idx} className="p-3 rounded-xl bg-white border border-slate-200">
+                              <span className="text-xs font-mono font-bold text-blue-700">{stg.num}. {stg.name}</span>
+                              <p className="text-xs text-slate-600 mt-0.5">{stg.purpose}</p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {currentSlide!.terms && (
+                        <div className="grid grid-cols-2 gap-2.5">
+                          {currentSlide!.terms.slice(0, 4).map((t, idx) => (
+                            <div key={idx} className="p-3 rounded-xl bg-white border border-slate-200">
+                              <span className="text-xs font-mono font-bold text-blue-700">{t.term}</span>
+                              <p className="text-xs text-slate-600 mt-0.5">{t.desc}</p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
+              ) : (
+                /* SIDE-BY-SIDE 6:6 GRID VIEW */
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-6">
+                  {/* Left Side (6 cols): Detailed Points & Analogy */}
+                  <div className="lg:col-span-6 space-y-4">
+                    {/* Detailed Content Points */}
+                    <div className="space-y-3">
+                      {(currentSlide!.detailedPoints || currentSlide!.contentPoints)?.map((pt, idx) => (
+                        <div key={idx} className="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
+                          <CheckCircle2 className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
+                          <p className="text-sm sm:text-base text-slate-800 font-medium leading-relaxed">{pt}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Problems List if available (e.g. Slide 2) */}
+                    {currentSlide!.problemsList && (
+                      <div className="space-y-2 pt-1">
+                        <div className="flex items-center gap-2 text-rose-800 font-bold text-sm">
+                          <AlertTriangle className="w-4 h-4 text-rose-600" />
+                          <span>The Manual Delivery Pitfalls:</span>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {currentSlide!.problemsList.map((prob, idx) => (
+                            <div key={idx} className="p-2.5 rounded-xl bg-rose-50/80 border border-rose-200 text-slate-800 font-bold text-xs flex items-start gap-2">
+                              <XCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                              <span>{prob}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Food Analogy Card */}
+                    {currentSlide!.foodAnalogy && (
+                      <div className="p-5 rounded-2xl bg-amber-50/70 border-2 border-amber-200 shadow-xs">
+                        <div className="flex items-center gap-2 text-amber-900 font-black text-base mb-2">
+                          <UtensilsCrossed className="w-5 h-5 text-amber-600" />
+                          <span>{currentSlide!.foodAnalogy.title}</span>
+                        </div>
+                        <p className="text-sm sm:text-base text-slate-800 leading-relaxed mb-3">
+                          {currentSlide!.foodAnalogy.story}
+                        </p>
+                        {currentSlide!.foodAnalogy.connection && (
+                          <div className="p-3 rounded-xl bg-white border border-amber-200">
+                            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                              <strong className="text-amber-900">Software Connection:</strong> {currentSlide!.foodAnalogy.connection}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Extra Specific Content if Slide 14 Stages or Slide 15 Terms */}
+                    {currentSlide!.stages && (
+                      <div className="grid grid-cols-2 gap-2.5">
+                        {currentSlide!.stages.map((stg, idx) => (
+                          <div key={idx} className="p-3 rounded-xl bg-white border border-slate-200">
+                            <span className="text-xs font-mono font-bold text-blue-700">{stg.num}. {stg.name}</span>
+                            <p className="text-xs text-slate-600 mt-0.5">{stg.purpose}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {currentSlide!.terms && (
+                      <div className="grid grid-cols-2 gap-2.5">
+                        {currentSlide!.terms.slice(0, 4).map((t, idx) => (
+                          <div key={idx} className="p-3 rounded-xl bg-white border border-slate-200">
+                            <span className="text-xs font-mono font-bold text-blue-700">{t.term}</span>
+                            <p className="text-xs text-slate-600 mt-0.5">{t.desc}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Right Side (6 cols): Prominent High-Resolution Architecture Diagram Image */}
+                  <div className="lg:col-span-6 flex flex-col items-center space-y-3">
+                    <div
+                      className="w-full rounded-3xl overflow-hidden border-2 border-slate-200/90 shadow-xl bg-white p-3.5 cursor-pointer group transition-all hover:border-blue-400"
+                      onClick={() => {
+                        setEnlargedImage(currentSlide!.image!);
+                        setZoomLevel(1);
+                      }}
+                      title="Click to view full screen"
+                    >
+                      {/* Diagram Card Header with Expand Button */}
+                      <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
+                        <div className="flex items-center gap-1.5 text-blue-700 font-bold text-xs uppercase font-mono">
+                          <Layers className="w-4 h-4" />
+                          <span>Architecture Diagram</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setIsDiagramExpanded(true);
+                            }}
+                            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-mono font-bold transition-all"
+                            title="Expand diagram across full 12 columns"
+                          >
+                            <Maximize2 className="w-3.5 h-3.5 text-blue-600" />
+                            <span>Expand Full Width</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="relative overflow-hidden rounded-2xl bg-slate-50 flex items-center justify-center p-2">
+                        <img
+                          src={currentSlide!.image}
+                          alt={currentSlide!.title}
+                          className="w-full h-auto min-h-[380px] sm:min-h-[460px] max-h-[580px] rounded-2xl object-contain group-hover:scale-102 transition-transform duration-300"
+                        />
+                        <div className="absolute top-3 right-3 px-3 py-1.5 rounded-xl bg-black/60 backdrop-blur-sm text-white text-xs font-mono font-bold flex items-center gap-1.5 opacity-90 group-hover:opacity-100 transition-opacity">
+                          <Maximize2 className="w-4 h-4 text-white" />
+                          <span>Click to Enlarge</span>
+                        </div>
+                      </div>
+
+                      <div className="p-3 bg-slate-50/90 rounded-2xl mt-3 border border-slate-200">
+                        <p className="text-xs sm:text-sm font-mono text-slate-800 leading-relaxed font-semibold">
+                          {currentSlide!.imageCaption}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="w-full p-3.5 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 text-center">
+                      <span className="text-xs font-mono font-bold text-blue-900 block">
+                        Lesson {currentSlide!.num} Core Architecture
+                      </span>
+                      <span className="text-xs text-slate-700 font-medium">
+                        Every code commit triggers deterministic automated validation.
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )
             ) : (
               /* ================= FULL-WIDTH LAYOUT (FOR TABLES, CODE, TIMELINES) ================= */
               <div className="space-y-6 mb-6">
@@ -837,32 +1017,84 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
         </div>
       </div>
 
-      {/* High-Resolution Diagram Lightbox Modal */}
+      {/* High-Resolution Diagram Lightbox Modal with Zoom Controls */}
       {enlargedImage && (
         <div
-          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 animate-in fade-in duration-200"
-          onClick={() => setEnlargedImage(null)}
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200"
+          onClick={() => {
+            setEnlargedImage(null);
+            setZoomLevel(1);
+          }}
         >
           <div
-            className="relative max-w-6xl max-h-[92vh] bg-white rounded-3xl p-4 sm:p-6 shadow-2xl overflow-hidden flex flex-col items-center"
+            className="relative w-full max-w-6xl max-h-[95vh] bg-white rounded-3xl p-4 sm:p-6 shadow-2xl overflow-hidden flex flex-col items-center"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="w-full flex items-center justify-between pb-3 mb-2 border-b border-slate-200">
-              <span className="text-sm font-mono font-bold text-blue-700 uppercase">
-                High-Resolution Diagram Full View
-              </span>
-              <button
-                onClick={() => setEnlargedImage(null)}
-                className="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold font-mono transition-all"
-              >
-                Close (ESC)
-              </button>
+            {/* Top Toolbar */}
+            <div className="w-full flex items-center justify-between pb-3 mb-2 border-b border-slate-200 flex-wrap gap-2">
+              <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-full bg-blue-600 animate-pulse"></span>
+                <span className="text-xs sm:text-sm font-mono font-bold text-slate-900 uppercase">
+                  High-Resolution Full View Diagram
+                </span>
+              </div>
+
+              {/* Interactive Zoom Toolbar */}
+              <div className="flex items-center gap-2">
+                <div className="flex items-center bg-slate-100 rounded-xl p-1 border border-slate-200">
+                  <button
+                    onClick={() => setZoomLevel((z) => Math.max(0.5, +(z - 0.25).toFixed(2)))}
+                    className="p-1.5 rounded-lg hover:bg-white text-slate-700 hover:text-blue-600 transition-all"
+                    title="Zoom Out"
+                  >
+                    <ZoomOut className="w-4 h-4" />
+                  </button>
+                  <span className="px-2.5 text-xs font-mono font-bold text-slate-800 select-none">
+                    {Math.round(zoomLevel * 100)}%
+                  </span>
+                  <button
+                    onClick={() => setZoomLevel((z) => Math.min(2.5, +(z + 0.25).toFixed(2)))}
+                    className="p-1.5 rounded-lg hover:bg-white text-slate-700 hover:text-blue-600 transition-all"
+                    title="Zoom In"
+                  >
+                    <ZoomIn className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => setZoomLevel(1)}
+                    className="p-1.5 rounded-lg hover:bg-white text-slate-700 hover:text-blue-600 transition-all ml-1 border-l border-slate-200"
+                    title="Reset Zoom"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => {
+                    setEnlargedImage(null);
+                    setZoomLevel(1);
+                  }}
+                  className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold font-mono transition-all shadow-xs"
+                >
+                  Close (ESC)
+                </button>
+              </div>
             </div>
-            <img
-              src={enlargedImage}
-              alt="Enlarged Architecture Diagram"
-              className="w-full h-auto max-h-[78vh] object-contain rounded-2xl"
-            />
+
+            {/* Scrollable Pannable Zoomable Image Container */}
+            <div className="w-full overflow-auto max-h-[82vh] flex items-center justify-center p-2 rounded-2xl bg-slate-50 border border-slate-200">
+              <img
+                src={enlargedImage}
+                alt="Enlarged Architecture Diagram"
+                style={{
+                  transform: `scale(${zoomLevel})`,
+                  transformOrigin: 'center center',
+                  transition: 'transform 0.15s ease-out'
+                }}
+                className="max-w-full max-h-[78vh] object-contain rounded-xl shadow-md transition-transform select-none cursor-zoom-in"
+                onDoubleClick={() => setZoomLevel((z) => (z === 1 ? 1.5 : 1))}
+                title="Double-click to toggle 150% zoom"
+              />
+            </div>
           </div>
         </div>
       )}

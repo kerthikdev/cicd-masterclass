@@ -83,6 +83,8 @@ slides_data = [
       "connection": "As the number of orders increases, delays, mistakes, and cold food become inevitable. Manual delivery collapses as teams grow."
     },
     "keyTakeaway": "Manual delivery can work for small hobby projects, but becomes unmanageable as applications and teams scale.",
+    "image": "/slides/slide_2.png",
+    "imageCaption": "Manual Delivery 'Integration Hell' vs. Automated CI/CD Continuous Flow Comparison.",
     "detailedPoints": [
       "The 6-Month 'Big Bang' Release: Teams wrote code in isolated branches for months. Merging resulted in 'Integration Hell' with thousands of conflicting code lines.",
       "The 'Works on My Machine' Trap: A feature worked on the developer's MacBook, but immediately crashed on Linux production servers due to missing packages or different OS libraries.",

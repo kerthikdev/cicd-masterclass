@@ -1,15 +1,45 @@
+#!/usr/bin/env python3
+"""
+Generate ultra-clear, high-resolution slide diagram images with large TrueType fonts,
+vibrant modern aesthetics, and razor-sharp readability for 1080p/4K presentation displays.
+"""
+
 import os
 from PIL import Image, ImageDraw, ImageFont
 
 os.makedirs("public/slides", exist_ok=True)
 
-W, H = 1200, 800
+# 1600x1000 High-Resolution Canvas
+W, H = 1600, 1000
 
-def draw_base_card(title, subtitle, category, badge_color=(37, 99, 235)):
+# TrueType Fonts
+FONT_BOLD_PATH = "/System/Library/Fonts/Supplemental/Arial Bold.ttf"
+FONT_REG_PATH = "/System/Library/Fonts/Supplemental/Arial.ttf"
+FONT_BLACK_PATH = "/System/Library/Fonts/Supplemental/Arial Black.ttf"
+
+def get_font(path, size):
+    try:
+        return ImageFont.truetype(path, size)
+    except Exception:
+        try:
+            return ImageFont.truetype("/System/Library/Fonts/Supplemental/Arial.ttf", size)
+        except Exception:
+            return ImageFont.load_default()
+
+font_title = get_font(FONT_BLACK_PATH, 34)
+font_cat = get_font(FONT_BOLD_PATH, 22)
+font_head = get_font(FONT_BOLD_PATH, 26)
+font_sub = get_font(FONT_BOLD_PATH, 22)
+font_body = get_font(FONT_REG_PATH, 21)
+font_body_bold = get_font(FONT_BOLD_PATH, 22)
+font_badge = get_font(FONT_BOLD_PATH, 20)
+font_footer = get_font(FONT_BOLD_PATH, 22)
+
+def draw_base_card(title, category, badge_color=(37, 99, 235)):
     img = Image.new('RGB', (W, H), color=(255, 255, 255))
     d = ImageDraw.Draw(img)
 
-    # Soft subtle background
+    # Clean gradient background
     for y in range(H):
         r = int(248 + (255 - 248) * (y / H))
         g = int(250 + (255 - 250) * (y / H))
@@ -17,35 +47,38 @@ def draw_base_card(title, subtitle, category, badge_color=(37, 99, 235)):
         d.line([(0, y), (W, y)], fill=(r, g, b))
 
     # Outer border
-    d.rounded_rectangle([(24, 24), (W-24, H-24)], radius=24, outline=(226, 232, 240), width=4, fill=(255, 255, 255))
+    d.rounded_rectangle([(20, 20), (W - 20, H - 20)], radius=24, outline=(226, 232, 240), width=4, fill=(255, 255, 255))
 
     # Top Header Banner
-    d.rounded_rectangle([(44, 44), (W-44, 120)], radius=16, fill=(241, 245, 249), outline=(203, 213, 225), width=2)
+    d.rounded_rectangle([(40, 36), (W - 40, 126)], radius=18, fill=(241, 245, 249), outline=(203, 213, 225), width=2)
     
     # Category pill
-    d.rounded_rectangle([(64, 58), (260, 94)], radius=10, fill=badge_color)
-    d.text((80, 68), category.upper(), fill=(255, 255, 255))
+    cat_text = category.upper()
+    cat_bbox = d.textbbox((0, 0), cat_text, font=font_cat)
+    cat_w = cat_bbox[2] - cat_bbox[0] + 36
+    d.rounded_rectangle([(56, 52), (56 + cat_w, 110)], radius=12, fill=badge_color)
+    d.text((74, 66), cat_text, fill=(255, 255, 255), font=font_cat)
     
     # Title in banner
-    d.text((280, 66), title, fill=(15, 23, 42))
+    d.text((56 + cat_w + 24, 62), title, fill=(15, 23, 42), font=font_title)
 
     return img, d
 
 slides_configs = [
     {
         "id": 1,
-        "title": "What is CI/CD? The Automated Assembly Line",
+        "title": "CI/CD Pipeline: The Automated Assembly Line",
         "category": "Architecture Overview",
         "color": (37, 99, 235),
         "draw": "pipeline_flow",
         "steps": [
-            ("1. Git Commit", "Code Pushed", (37, 99, 235)),
-            ("2. Webhook", "Event Triggered", (14, 165, 233)),
-            ("3. CI Build & Test", "Unit + Security", (16, 185, 129)),
-            ("4. Docker Package", "Immutable Image", (139, 92, 246)),
-            ("5. Cloud Deploy", "Live on AWS/Cloud", (245, 158, 11))
+            ("1. Git Commit", "Code Pushed", "Branch: main", (37, 99, 235)),
+            ("2. Webhook", "Event Triggered", "Automated Wakeup", (14, 165, 233)),
+            ("3. CI Test Gate", "Jest & PyTest", "Zero Bugs Allowed", (16, 185, 129)),
+            ("4. Docker Build", "Immutable Image", "Tagged with SHA", (139, 92, 246)),
+            ("5. Cloud Deploy", "AWS / Global CDN", "Live (200 OK)", (245, 158, 11))
         ],
-        "footer_badge": "Outcome: Zero manual SSH, automated validation under 5 minutes"
+        "footer_badge": "Continuous Feedback: Code to Production in Under 5 Minutes with Zero Manual SSH"
     },
     {
         "id": 2,
@@ -53,11 +86,23 @@ slides_configs = [
         "category": "History & Problem",
         "color": (225, 29, 72),
         "draw": "comparison_split",
-        "left_title": "❌ The Old Way: 'Integration Hell'",
-        "left_items": ["• 6-Month Big Bang Releases", "• 10,000-line Merge Conflicts", "• 'Works on my machine!'", "• Manual FTP & SSH 2 AM deployments", "• Catastrophic outages on launch day"],
-        "right_title": "✅ The CI/CD Way: Continuous Flow",
-        "right_items": ["• Small daily atomic commits", "• Automated test suites catch bugs in 2 mins", "• Identical containerized environments", "• 1-Click zero-downtime releases", "• Instant automated rollbacks if errors spike"],
-        "footer_badge": "Eliminates human error and replaces panic with repeatable automation"
+        "left_title": "❌ The Old Way: Manual 'Integration Hell'",
+        "left_items": [
+            "• 6-Month Big Bang Releases (High Risk)",
+            "• 10,000-Line Terrifying Merge Conflicts",
+            "• 'Works On My Machine!' Production Crashes",
+            "• 2:00 AM SSH & FTP Manual Deployments",
+            "• Catastrophic Outages on Launch Day"
+        ],
+        "right_title": "✅ The CI/CD Way: Automated Continuous Flow",
+        "right_items": [
+            "• Small Atomic Commits Multiple Times Daily",
+            "• Automated Test Suites Catch Bugs in < 5 Mins",
+            "• Identical Docker Containers in Every Environment",
+            "• 1-Click Zero-Downtime Safe Deployments",
+            "• Instant 10-Second Automated Rollbacks"
+        ],
+        "footer_badge": "Eliminates Human Error & Replaces Production Panic with Repeatable Automation"
     },
     {
         "id": 3,
@@ -66,35 +111,35 @@ slides_configs = [
         "color": (79, 70, 229),
         "draw": "timeline",
         "milestones": [
-            ("1991: Grady Booch", "The Booch Method", "First defined Continuous Integration: merging changes regularly rather than at project end.", (59, 130, 246)),
-            ("1999: Kent Beck", "Extreme Programming (XP)", "Mandated integrating code multiple times daily with automated unit testing.", (16, 185, 129)),
-            ("2000s: The Paradigm Shift", "From Theory to Practice", "Integration transformed from a dreaded phase into a continuous automated habit.", (245, 158, 11))
+            ("1991: Grady Booch", "The Booch Method Concept", "First proposed Continuous Integration: merging changes regularly rather than waiting until the end.", (59, 130, 246)),
+            ("1999: Kent Beck", "Extreme Programming (XP)", "Mandated integrating code multiple times daily with automated unit testing suites.", (16, 185, 129)),
+            ("2000s: Cultural Shift", "From Theory to Standard", "Integration transformed from a dreaded 3-month phase into an effortless daily routine.", (245, 158, 11))
         ],
         "footer_badge": "Kent Beck: 'If it hurts, do it more often to bring the pain forward.'"
     },
     {
         "id": 4,
-        "title": "Martin Fowler & CruiseControl: Automated CI (2001-2006)",
+        "title": "CruiseControl & Martin Fowler: Automated CI (2001-2006)",
         "category": "Automated Engines",
         "color": (13, 148, 136),
-        "draw": "engine_flow",
+        "draw": "timeline",
         "milestones": [
-            ("2001: CruiseControl", "First Open Source CI Server", "ThoughtWorks engineers built a daemon that continuously polled CVS/SVN repositories.", (13, 148, 136)),
-            ("2006: Fowler's Paper", "'Continuous Integration'", "The definitive paper defining the 10 core principles of automated integration.", (37, 99, 235)),
-            ("The Red/Green Rule", "Stop the Line Culture", "If the build breaks, fixing it is the top priority for the entire engineering team.", (225, 29, 72))
+            ("2001: CruiseControl", "First Open-Source CI Daemon", "ThoughtWorks engineers automated scheduled builds by constantly polling SVN/CVS repos.", (13, 148, 136)),
+            ("2006: Fowler's Paper", "'Continuous Integration'", "The definitive paper defining the 10 foundational rules of automated software integration.", (37, 99, 235)),
+            ("The Red/Green Rule", "Stop the Line Culture", "If the build fails, fixing it is the immediate top priority for the entire development team.", (225, 29, 72))
         ],
         "footer_badge": "Martin Fowler: 'Continuous Integration doesn't get rid of bugs, it gets rid of hiding places.'"
     },
     {
         "id": 5,
-        "title": "Invention of Continuous Delivery: Humble & Farley (2010)",
+        "title": "Continuous Delivery Invention: Humble & Farley (2010)",
         "category": "Continuous Delivery",
         "color": (217, 119, 6),
-        "draw": "delivery_book",
+        "draw": "timeline",
         "milestones": [
             ("2010: The Definitive Book", "Jez Humble & David Farley", "Published 'Continuous Delivery': Building reliable software releases through automation.", (217, 119, 6)),
-            ("The Deployment Pipeline", "Commit to Production", "Every change proves its fitness for release through a series of automated verification gates.", (37, 99, 235)),
-            ("Deployment as a Non-Event", "Routine & Predictable", "Transforming high-stress releases into boring, routine, everyday occurrences.", (16, 185, 129))
+            ("The Deployment Pipeline", "Commit to Production Gates", "Every code commit proves its fitness for release through automated verification gates.", (37, 99, 235)),
+            ("Routine Deployments", "Deployments as a Non-Event", "Transforming high-stress releases into boring, predictable, everyday occurrences.", (16, 185, 129))
         ],
         "footer_badge": "Jez Humble: 'Our goal is to make software deployments boring and routine.'"
     },
@@ -105,11 +150,11 @@ slides_configs = [
         "color": (37, 99, 235),
         "draw": "pipeline_flow",
         "steps": [
-            ("1. Git Commit", "Branch to Main", (37, 99, 235)),
-            ("2. Static Lint", "ESLint / Sonar", (14, 165, 233)),
-            ("3. Clean Build", "Compile Source", (139, 92, 246)),
-            ("4. Unit Tests", "Jest / PyTest", (16, 185, 129)),
-            ("5. Artifact Stored", "Versioned Binary", (245, 158, 11))
+            ("1. Git Commit", "Branch to Main", "Small Atomic Push", (37, 99, 235)),
+            ("2. Static Lint", "ESLint / Sonar", "Enforce Standards", (14, 165, 233)),
+            ("3. Clean Build", "Compile Source", "Fresh Node/Python", (139, 92, 246)),
+            ("4. Unit Tests", "Jest / PyTest", "100% Core Passes", (16, 185, 129)),
+            ("5. Binary Stored", "Versioned Artifact", "Ready for Delivery", (245, 158, 11))
         ],
         "footer_badge": "Fast Feedback Rule: Total CI pipeline execution must finish in under 10 minutes"
     },
@@ -119,11 +164,23 @@ slides_configs = [
         "category": "Release Spectrum",
         "color": (124, 58, 237),
         "draw": "comparison_split",
-        "left_title": "🚀 Continuous Delivery",
-        "left_items": ["• Code is ALWAYS in a deployable state", "• Passes all tests & staging dry-runs", "• Requires MANUAL business approval button", "• Ideal for: Banking, Healthcare, Enterprise B2B", "• Human checks compliance, release notes, audit"],
-        "right_title": "⚡ Continuous Deployment",
-        "right_items": ["• 100% Fully Automated end-to-end", "• Passing tests trigger direct cloud rollout", "• ZERO human intervention required", "• Ideal for: SaaS microservices, web apps, consumer", "• Relies on canary metrics & auto-rollback"],
-        "footer_badge": "Difference is purely the final human sign-off gate vs. autonomous delivery"
+        "left_title": "🚀 Continuous Delivery (CDel)",
+        "left_items": [
+            "• Code is ALWAYS in a 100% deployable state",
+            "• Passes all automated tests & staging dry-runs",
+            "• Requires a MANUAL business approval click",
+            "• Ideal for: Banking, Healthcare, Enterprise B2B",
+            "• Human signs off compliance, release notes, & audit"
+        ],
+        "right_title": "⚡ Continuous Deployment (CDep)",
+        "right_items": [
+            "• 100% Fully Automated end-to-end pipeline",
+            "• Passing test gates trigger direct cloud rollout",
+            "• ZERO human intervention required",
+            "• Ideal for: SaaS microservices, consumer web apps",
+            "• Relies on canary metrics & automated rollbacks"
+        ],
+        "footer_badge": "Key Distinction: Manual Business Sign-Off Gate vs. 100% Autonomous Rollout"
     },
     {
         "id": 8,
@@ -132,24 +189,36 @@ slides_configs = [
         "color": (5, 150, 105),
         "draw": "comparison_split",
         "left_title": "🧱 The Old 'Wall of Confusion'",
-        "left_items": ["• Developers rewarded for velocity & changes", "• Operations rewarded for system stability", "• Dev throws code over the wall to Ops", "• Ops blamed when unvetted code crashes server", "• Finger-pointing and siloed friction"],
+        "left_items": [
+            "• Developers rewarded for speed & frequent changes",
+            "• Operations rewarded for system stability & uptime",
+            "• Dev throws untested code over the wall to Ops",
+            "• Ops blamed when unvetted code crashes server",
+            "• Finger-pointing, siloed friction, and blame games"
+        ],
         "right_title": "🤝 The DevOps Unified Culture",
-        "right_items": ["• Shared responsibility for code AND uptime", "• 'You build it, you run it' (Werner Vogels)", "• Infrastructure as Code (Terraform, YAML)", "• Joint post-mortems without finger pointing", "• Cross-functional autonomous teams"],
+        "right_items": [
+            "• Shared responsibility for code AND production uptime",
+            "• 'You build it, you run it' (Werner Vogels, Amazon)",
+            "• Infrastructure as Code (Terraform, Docker, YAML)",
+            "• Blameless post-mortems with continuous learning",
+            "• Cross-functional high-velocity engineering teams"
+        ],
         "footer_badge": "DevOps = Development + Operations united through empathy, metrics, and automation"
     },
     {
         "id": 9,
-        "title": "How DevOps Works: The Infinity Loop ♾️ & CAMS",
+        "title": "How DevOps Works: The CAMS Framework",
         "category": "DevOps Framework",
         "color": (37, 99, 235),
         "draw": "cams_grid",
         "pillars": [
-            ("C - CULTURE", "Shared trust, blameless reviews, psychological safety", (37, 99, 235)),
-            ("A - AUTOMATION", "Eliminate repetitive manual toil with CI/CD & IaC", (16, 185, 129)),
-            ("M - MEASUREMENT", "DORA metrics: Lead Time, Deploy Frequency, MTTR, CFR", (245, 158, 11)),
+            ("C - CULTURE", "Shared trust, blameless reviews, psychological safety across teams", (37, 99, 235)),
+            ("A - AUTOMATION", "Eliminate repetitive manual toil with CI/CD, Docker & Terraform", (16, 185, 129)),
+            ("M - MEASUREMENT", "DORA Metrics: Lead Time, Deploy Frequency, MTTR, Change Failure Rate", (245, 158, 11)),
             ("S - SHARING", "Cross-pollination of knowledge and transparent documentation", (139, 92, 246))
         ],
-        "footer_badge": "The Continuous Feedback Loop: Plan ➔ Code ➔ Build ➔ Test ➔ Release ➔ Deploy ➔ Operate ➔ Monitor"
+        "footer_badge": "Continuous Feedback Loop: Plan ➔ Code ➔ Build ➔ Test ➔ Release ➔ Deploy ➔ Operate ➔ Monitor"
     },
     {
         "id": 10,
@@ -158,9 +227,9 @@ slides_configs = [
         "color": (249, 115, 22),
         "draw": "timeline",
         "milestones": [
-            ("April 2005: The Crisis", "BitKeeper Revocation", "Proprietary VCS BitKeeper revoked free Linux license; development halted.", (225, 29, 72)),
-            ("7 Days of Coding", "Linus Writes Git", "Linus Torvalds coded Git in just one week, based on snapshot DAGs, not delta diffs.", (249, 115, 22)),
-            ("Distributed Architecture", "Every Clone is a Repo", "Every developer has full repository history locally, enabling blazing fast offline commits.", (16, 185, 129))
+            ("April 2005: The Crisis", "BitKeeper Revocation", "Proprietary VCS BitKeeper revoked free Linux license; kernel development halted.", (225, 29, 72)),
+            ("7 Days of Coding", "Linus Writes Git", "Linus Torvalds coded Git in just one week based on snapshot DAGs, not delta diffs.", (249, 115, 22)),
+            ("Distributed Architecture", "Every Clone is a Full Repo", "Every developer has full repository history locally, enabling blazing fast offline commits.", (16, 185, 129))
         ],
         "footer_badge": "Git revolutionized version control by treating code as immutable cryptographic content trees"
     },
@@ -171,7 +240,7 @@ slides_configs = [
         "color": (15, 23, 42),
         "draw": "timeline",
         "milestones": [
-            ("February 2008: Founders", "Wanstrath, Hyett, Preston-Werner", "Founded GitHub to make sharing Git repositories as easy as sharing web links.", (15, 23, 42)),
+            ("2008: The Founders", "Wanstrath, Hyett, Preston-Werner", "Founded GitHub to make sharing Git repositories as easy as sharing web links.", (15, 23, 42)),
             ("The Pull Request", "Revolution of Collaboration", "Transformed open-source from emailed patch files to interactive web code reviews.", (37, 99, 235)),
             ("2018: Microsoft Acquisition", "Global Home of 100M+ Devs", "Microsoft acquires GitHub for $7.5B; launches GitHub Actions to integrate CI/CD natively.", (5, 150, 105))
         ],
@@ -197,7 +266,7 @@ slides_configs = [
         "color": (37, 99, 235),
         "draw": "actions_arch",
         "components": [
-            ("1. Event Trigger", "git push / pull_request / schedule / workflow_dispatch", (37, 99, 235)),
+            ("1. Event Trigger", "git push, pull_request, schedule, workflow_dispatch waking up pipeline", (37, 99, 235)),
             ("2. GitHub Runner", "Ephemeral fresh VM (Ubuntu, macOS, Windows) spun up in seconds", (14, 165, 233)),
             ("3. Jobs (Parallel)", "Independent job containers running concurrently across runner pool", (139, 92, 246)),
             ("4. Steps (Sequential)", "Check out repo ➔ Set up Node/Python ➔ Run tests ➔ Build artifact", (16, 185, 129))
@@ -209,13 +278,12 @@ slides_configs = [
         "title": "Anatomy of a GitHub Actions YAML Workflow",
         "category": "YAML Anatomy",
         "color": (99, 102, 241),
-        "draw": "yaml_breakdown",
-        "sections": [
-            ("name: CI Pipeline", "Human readable workflow name displayed in PR checks", (99, 102, 241)),
+        "draw": "actions_arch",
+        "components": [
+            ("name: CI Pipeline", "Human readable workflow name displayed in PR check status", (99, 102, 241)),
             ("on: [push, pull_request]", "Webhooks that wake up the pipeline on branch activity", (14, 165, 233)),
-            ("jobs: build_and_test:", "Define distinct tasks like lint, unit-test, and deploy", (139, 92, 246)),
-            ("runs-on: ubuntu-latest", "Target execution environment VM provided by GitHub", (16, 185, 129)),
-            ("steps: - uses: & run:", "Reusable marketplace actions (`actions/checkout@v4`) and bash commands", (245, 158, 11))
+            ("jobs: build_and_test:", "Define distinct tasks like lint, unit-test, and cloud deployment", (139, 92, 246)),
+            ("runs-on: ubuntu-latest", "Target execution environment VM provided on-demand by GitHub", (16, 185, 129))
         ],
         "footer_badge": "Store workflows in `.github/workflows/*.yml` — version controlled alongside your application code"
     },
@@ -226,11 +294,11 @@ slides_configs = [
         "color": (2, 132, 199),
         "draw": "pipeline_flow",
         "steps": [
-            ("1. Dockerfile", "Blueprint Recipe", (2, 132, 199)),
-            ("2. docker build", "Compile Layers", (37, 99, 235)),
-            ("3. Image Tagging", "Git SHA / Semantic", (139, 92, 246)),
-            ("4. Container Registry", "Push to ECR / GHCR", (16, 185, 129)),
-            ("5. Cloud Run", "Identical Runtime", (245, 158, 11))
+            ("1. Dockerfile", "Blueprint Recipe", "App + OS Dependencies", (2, 132, 199)),
+            ("2. docker build", "Compile Layers", "Cached Deterministic", (37, 99, 235)),
+            ("3. Image Tagging", "Git SHA / SemVer", "Immutable Version", (139, 92, 246)),
+            ("4. Registry Push", "ECR / GHCR", "Secure Cloud Storage", (16, 185, 129)),
+            ("5. Cloud Run", "Identical Runtime", "Zero Environment Drift", (245, 158, 11))
         ],
         "footer_badge": "The Golden Rule: 'Build Once, Deploy Anywhere' — exact same binary runs in Staging & Production"
     },
@@ -255,11 +323,11 @@ slides_configs = [
         "color": (139, 92, 246),
         "draw": "pipeline_flow",
         "steps": [
-            ("1. Local Dev", "Laptop Testing", (100, 116, 139)),
-            ("2. PR Preview", "Ephemeral Branch URL", (14, 165, 233)),
-            ("3. CI Pipeline", "Automated Gates", (37, 99, 235)),
-            ("4. Staging Clone", "Production Mirror", (139, 92, 246)),
-            ("5. Production", "Live Traffic & Users", (16, 185, 129))
+            ("1. Local Dev", "Laptop Testing", "Developer Machine", (100, 116, 139)),
+            ("2. PR Preview", "Branch URL", "Ephemeral Sandbox", (14, 165, 233)),
+            ("3. CI Pipeline", "Automated Gates", "Strict Validation", (37, 99, 235)),
+            ("4. Staging Mirror", "Production Clone", "Full Data Testing", (139, 92, 246)),
+            ("5. Production", "Live Traffic", "Real Customers", (16, 185, 129))
         ],
         "footer_badge": "Parity Rule: Staging must replicate production OS, database version, and network topology exactly"
     },
@@ -270,9 +338,21 @@ slides_configs = [
         "color": (217, 119, 6),
         "draw": "comparison_split",
         "left_title": "🟢/🔵 Blue-Green Deployment",
-        "left_items": ["• Two identical production clusters: Blue & Green", "• Blue is live; Green deploys new release v2", "• Automated smoke tests run on Green in private", "• Load Balancer flips 100% traffic to Green in 1 second", "• Zero downtime; instant 1-second rollback if needed"],
+        "left_items": [
+            "• Two identical production clusters: Blue & Green",
+            "• Blue serves live users; Green receives new v2",
+            "• Automated smoke tests run on Green in private",
+            "• Router flips 100% traffic to Green in 1 second",
+            "• Zero downtime; instant 1-second rollback to Blue"
+        ],
         "right_title": "🐥 Canary Deployment",
-        "right_items": ["• Route 5% traffic to new release v2 (canary)", "• Monitor HTTP 500 error rates & latency metrics", "• If healthy, auto-ramp to 25% ➔ 50% ➔ 100%", "• If errors spike > 1%, instantly route 100% back to v1", "• Limits blast radius so only few users see bugs"],
+        "right_items": [
+            "• Route 5% traffic to new release v2 (canary)",
+            "• Monitor HTTP 500 error rates & latency metrics",
+            "• If healthy, auto-ramp to 25% ➔ 50% ➔ 100%",
+            "• If errors spike > 1%, instantly route 100% back",
+            "• Limits blast radius so only a tiny fraction of users see bugs"
+        ],
         "footer_badge": "Zero Downtime Deployments: Users never experience 503 maintenance screens during updates"
     },
     {
@@ -282,11 +362,11 @@ slides_configs = [
         "color": (16, 185, 129),
         "draw": "pipeline_flow",
         "steps": [
-            ("1. Code Website", "index.html & script.js", (16, 185, 129)),
-            ("2. git push", "Push to GitHub", (37, 99, 235)),
-            ("3. Action Runs", "Checkout & Build", (139, 92, 246)),
-            ("4. CDN Deploy", "Cloudflare / AWS S3", (245, 158, 11)),
-            ("5. Live in 45s", "https://your-app.com", (5, 150, 105))
+            ("1. Code Webpage", "HTML & Scripts", "Local IDE", (16, 185, 129)),
+            ("2. git push", "Push to GitHub", "Triggers Webhook", (37, 99, 235)),
+            ("3. Action Runs", "Checkout & Build", "Ubuntu Runner", (139, 92, 246)),
+            ("4. CDN Deploy", "Cloudflare / S3", "Asset Sync", (245, 158, 11)),
+            ("5. Live in 45s", "Global SSL", "200 OK Live", (5, 150, 105))
         ],
         "footer_badge": "Hands-On Demo: From git commit to live global CDN in under 45 seconds with zero server management"
     },
@@ -307,122 +387,177 @@ slides_configs = [
 ]
 
 for cfg in slides_configs:
-    img, d = draw_base_card(cfg["title"], "", cfg["category"], cfg["color"])
+    img, d = draw_base_card(cfg["title"], cfg["category"], cfg["color"])
     
-    # Draw different layout styles based on configuration
+    # 1. PIPELINE FLOW (Slides 1, 6, 15, 17, 19)
     if cfg["draw"] == "pipeline_flow":
         steps = cfg["steps"]
         num = len(steps)
-        box_w = int((W - 140 - (num - 1) * 30) / num)
-        box_h = 240
-        start_x = 70
-        y = 220
+        gap = 32
+        total_gaps = (num - 1) * gap
+        avail_w = W - 100 - total_gaps
+        box_w = int(avail_w / num)
+        box_h = 480
+        start_x = 50
+        y = 200
         
-        for idx, (head, sub, col) in enumerate(steps):
-            bx = start_x + idx * (box_w + 30)
-            d.rounded_rectangle([(bx, y), (bx + box_w, y + box_h)], radius=18, fill=(255, 255, 255), outline=col, width=4)
-            d.rectangle([(bx, y), (bx + box_w, y + 55)], fill=col)
-            d.text((bx + 16, y + 18), head, fill=(255, 255, 255))
+        for idx, step_data in enumerate(steps):
+            head = step_data[0]
+            sub1 = step_data[1]
+            sub2 = step_data[2]
+            col = step_data[3]
+            bx = start_x + idx * (box_w + gap)
             
-            # Inner details
-            d.rounded_rectangle([(bx + 16, y + 75), (bx + box_w - 16, y + 150)], radius=12, fill=(248, 250, 252), outline=(226, 232, 240), width=2)
-            d.text((bx + 26, y + 100), sub, fill=(51, 65, 85))
+            # Step card shadow & body
+            d.rounded_rectangle([(bx + 4, y + 4), (bx + box_w + 4, y + box_h + 4)], radius=22, fill=(226, 232, 240))
+            d.rounded_rectangle([(bx, y), (bx + box_w, y + box_h)], radius=22, fill=(255, 255, 255), outline=col, width=4)
             
-            d.text((bx + 26, y + 180), f"STATUS: OK ✓", fill=(16, 185, 129))
+            # Header pill
+            d.rounded_rectangle([(bx, y), (bx + box_w, y + 95)], radius=20, fill=col)
+            # Clip bottom corners of header
+            d.rectangle([(bx, y + 60), (bx + box_w, y + 95)], fill=col)
             
+            # Header text (centered or padded)
+            d.text((bx + 18, y + 30), head, fill=(255, 255, 255), font=font_head)
+            
+            # Detail Box 1
+            d.rounded_rectangle([(bx + 16, y + 120), (bx + box_w - 16, y + 215)], radius=16, fill=(248, 250, 252), outline=(203, 213, 225), width=2)
+            d.text((bx + 26, y + 140), "ACTION:", fill=(100, 116, 139), font=font_badge)
+            d.text((bx + 26, y + 170), sub1, fill=(15, 23, 42), font=font_sub)
+            
+            # Detail Box 2
+            d.rounded_rectangle([(bx + 16, y + 235), (bx + box_w - 16, y + 330)], radius=16, fill=(248, 250, 252), outline=(203, 213, 225), width=2)
+            d.text((bx + 26, y + 255), "TARGET:", fill=(100, 116, 139), font=font_badge)
+            d.text((bx + 26, y + 285), sub2, fill=(30, 41, 59), font=font_sub)
+            
+            # Green Verified Badge
+            d.rounded_rectangle([(bx + 16, y + 360), (bx + box_w - 16, y + 440)], radius=16, fill=(236, 253, 245), outline=(16, 185, 129), width=2)
+            d.text((bx + 36, y + 385), "PASSED ✓", fill=(5, 150, 105), font=font_head)
+            
+            # Flow arrow
             if idx < num - 1:
                 ax = bx + box_w + 6
-                d.line([(ax, y + 120), (ax + 18, y + 120)], fill=(148, 163, 184), width=6)
-                # Arrowhead
-                d.polygon([(ax + 18, y + 110), (ax + 26, y + 120), (ax + 18, y + 130)], fill=(148, 163, 184))
+                ay = y + 230
+                d.line([(ax, ay), (ax + gap - 14, ay)], fill=col, width=8)
+                # Triangle arrow head
+                d.polygon([(ax + gap - 14, ay - 14), (ax + gap - 2, ay), (ax + gap - 14, ay + 14)], fill=col)
 
+    # 2. COMPARISON SPLIT (Slides 2, 7, 8, 18)
     elif cfg["draw"] == "comparison_split":
-        # Two large cards side by side
-        card_w = (W - 160) // 2
-        y = 160
-        card_h = 450
+        card_w = (W - 140) // 2
+        y = 180
+        card_h = 640
 
-        # Left Card
-        d.rounded_rectangle([(70, y), (70 + card_w, y + card_h)], radius=20, fill=(255, 241, 242), outline=(244, 63, 94), width=3)
-        d.rectangle([(70, y), (70 + card_w, y + 60)], fill=(225, 29, 72))
-        d.text((90, y + 18), cfg["left_title"], fill=(255, 255, 255))
-        item_y = y + 90
+        # Left Card (Shadow + Body)
+        d.rounded_rectangle([(54, y + 4), (54 + card_w, y + card_h + 4)], radius=24, fill=(241, 245, 249))
+        d.rounded_rectangle([(50, y), (50 + card_w, y + card_h)], radius=24, fill=(255, 245, 245), outline=(225, 29, 72), width=4)
+        
+        # Left Header
+        d.rounded_rectangle([(50, y), (50 + card_w, y + 100)], radius=22, fill=(225, 29, 72))
+        d.rectangle([(50, y + 60), (50 + card_w, y + 100)], fill=(225, 29, 72))
+        d.text((75, y + 32), cfg["left_title"], fill=(255, 255, 255), font=font_head)
+        
+        # Left Items
+        item_y = y + 135
         for item in cfg["left_items"]:
-            d.text((95, item_y), item, fill=(30, 41, 59))
-            item_y += 50
+            d.rounded_rectangle([(70, item_y), (50 + card_w - 20, item_y + 80)], radius=14, fill=(255, 255, 255), outline=(254, 202, 202), width=2)
+            d.text((90, item_y + 26), item, fill=(159, 18, 57), font=font_body_bold)
+            item_y += 98
 
-        # Right Card
-        rx = 70 + card_w + 20
-        d.rounded_rectangle([(rx, y), (rx + card_w, y + card_h)], radius=20, fill=(240, 253, 244), outline=(34, 197, 94), width=3)
-        d.rectangle([(rx, y), (rx + card_w, y + 60)], fill=(22, 163, 74))
-        d.text((rx + 20, y + 18), cfg["right_title"], fill=(255, 255, 255))
-        item_y = y + 90
+        # Right Card (Shadow + Body)
+        rx = 50 + card_w + 40
+        d.rounded_rectangle([(rx + 4, y + 4), (rx + card_w + 4, y + card_h + 4)], radius=24, fill=(241, 245, 249))
+        d.rounded_rectangle([(rx, y), (rx + card_w, y + card_h)], radius=24, fill=(240, 253, 244), outline=(16, 185, 129), width=4)
+        
+        # Right Header
+        d.rounded_rectangle([(rx, y), (rx + card_w, y + 100)], radius=22, fill=(16, 185, 129))
+        d.rectangle([(rx, y + 60), (rx + card_w, y + 100)], fill=(16, 185, 129))
+        d.text((rx + 25, y + 32), cfg["right_title"], fill=(255, 255, 255), font=font_head)
+        
+        # Right Items
+        item_y = y + 135
         for item in cfg["right_items"]:
-            d.text((rx + 25, item_y), item, fill=(30, 41, 59))
-            item_y += 50
+            d.rounded_rectangle([(rx + 20, item_y), (rx + card_w - 20, item_y + 80)], radius=14, fill=(255, 255, 255), outline=(187, 247, 208), width=2)
+            d.text((rx + 40, item_y + 26), item, fill=(6, 95, 70), font=font_body_bold)
+            item_y += 98
 
-    elif cfg["draw"] in ["timeline", "engine_flow", "delivery_book"]:
-        y = 160
+    # 3. TIMELINE (Slides 3, 4, 5, 10, 11, 12)
+    elif cfg["draw"] == "timeline":
+        y = 180
         milestones = cfg["milestones"]
-        card_w = W - 140
-        card_h = 130
+        card_w = W - 100
+        card_h = 190
+        gap = 30
         for idx, (year, subhead, desc, col) in enumerate(milestones):
-            cy = y + idx * (card_h + 25)
-            d.rounded_rectangle([(70, cy), (70 + card_w, cy + card_h)], radius=18, fill=(255, 255, 255), outline=col, width=3)
+            cy = y + idx * (card_h + gap)
             
-            # Left year pill
-            d.rounded_rectangle([(90, cy + 25), (320, cy + 85)], radius=14, fill=col)
-            d.text((110, cy + 45), year, fill=(255, 255, 255))
+            # Card Shadow + Body
+            d.rounded_rectangle([(54, cy + 4), (54 + card_w, cy + card_h + 4)], radius=22, fill=(226, 232, 240))
+            d.rounded_rectangle([(50, cy), (50 + card_w, cy + card_h)], radius=22, fill=(255, 255, 255), outline=col, width=4)
             
-            # Middle title & desc
-            d.text((350, cy + 28), subhead, fill=(15, 23, 42))
-            d.text((350, cy + 65), desc, fill=(71, 85, 105))
+            # Left year block
+            d.rounded_rectangle([(65, cy + 18), (420, cy + card_h - 18)], radius=18, fill=col)
+            d.text((85, cy + 75), year, fill=(255, 255, 255), font=font_head)
+            
+            # Right content
+            d.text((450, cy + 35), subhead, fill=(15, 23, 42), font=font_head)
+            
+            # Desc box
+            d.rounded_rectangle([(445, cy + 85), (50 + card_w - 20, cy + card_h - 22)], radius=12, fill=(248, 250, 252), outline=(226, 232, 240), width=2)
+            d.text((465, cy + 105), desc, fill=(51, 65, 85), font=font_body_bold)
 
+    # 4. CAMS GRID / QUALITY GATES (Slides 9, 16, 20)
     elif cfg["draw"] == "cams_grid":
         pillars = cfg["pillars"]
-        gw = (W - 170) // 2
-        gh = 190
+        gw = (W - 140) // 2
+        gh = 290
         coords = [
-            (70, 160),
-            (70 + gw + 30, 160),
-            (70, 160 + gh + 25),
-            (70 + gw + 30, 160 + gh + 25)
+            (50, 180),
+            (50 + gw + 40, 180),
+            (50, 180 + gh + 35),
+            (50 + gw + 40, 180 + gh + 35)
         ]
         for idx, (title, desc, col) in enumerate(pillars):
             gx, gy = coords[idx]
-            d.rounded_rectangle([(gx, gy), (gx + gw, gy + gh)], radius=18, fill=(255, 255, 255), outline=col, width=3)
-            d.rectangle([(gx, gy), (gx + gw, gy + 48)], fill=col)
-            d.text((gx + 20, gy + 14), title, fill=(255, 255, 255))
-            d.text((gx + 20, gy + 75), desc, fill=(51, 65, 85))
+            
+            d.rounded_rectangle([(gx + 4, gy + 4), (gx + gw + 4, gy + gh + 4)], radius=22, fill=(226, 232, 240))
+            d.rounded_rectangle([(gx, gy), (gx + gw, gy + gh)], radius=22, fill=(255, 255, 255), outline=col, width=4)
+            
+            # Card Header
+            d.rounded_rectangle([(gx, gy), (gx + gw, gy + 80)], radius=20, fill=col)
+            d.rectangle([(gx, gy + 50), (gx + gw, gy + 80)], fill=col)
+            d.text((gx + 25, gy + 24), title, fill=(255, 255, 255), font=font_head)
+            
+            # Card Body
+            d.rounded_rectangle([(gx + 20, gy + 105), (gx + gw - 20, gy + gh - 20)], radius=14, fill=(248, 250, 252), outline=(226, 232, 240), width=2)
+            d.text((gx + 35, gy + 140), desc, fill=(30, 41, 59), font=font_body_bold)
 
+    # 5. ACTIONS ARCH (Slides 13, 14)
     elif cfg["draw"] == "actions_arch":
         components = cfg["components"]
-        y = 150
-        ch = 100
+        y = 180
+        ch = 135
+        gap = 25
         for idx, (title, desc, col) in enumerate(components):
-            cy = y + idx * (ch + 20)
-            d.rounded_rectangle([(70, cy), (W - 70, cy + ch)], radius=16, fill=(255, 255, 255), outline=col, width=3)
-            d.rectangle([(70, cy), (320, cy + ch)], fill=col)
-            d.text((90, cy + 36), title, fill=(255, 255, 255))
-            d.text((345, cy + 36), desc, fill=(30, 41, 59))
-
-    elif cfg["draw"] == "yaml_breakdown":
-        sections = cfg["sections"]
-        y = 150
-        sh = 80
-        for idx, (title, desc, col) in enumerate(sections):
-            sy = y + idx * (sh + 16)
-            d.rounded_rectangle([(70, sy), (W - 70, sy + sh)], radius=14, fill=(248, 250, 252), outline=col, width=2)
-            d.rounded_rectangle([(85, sy + 14), (380, sy + sh - 14)], radius=8, fill=col)
-            d.text((100, sy + 28), title, fill=(255, 255, 255))
-            d.text((405, sy + 28), desc, fill=(51, 65, 85))
+            cy = y + idx * (ch + gap)
+            
+            d.rounded_rectangle([(54, cy + 4), (W - 46, cy + ch + 4)], radius=20, fill=(226, 232, 240))
+            d.rounded_rectangle([(50, cy), (W - 50, cy + ch)], radius=20, fill=(255, 255, 255), outline=col, width=4)
+            
+            # Left Tag
+            d.rounded_rectangle([(60, cy + 14), (460, cy + ch - 14)], radius=14, fill=col)
+            d.text((80, cy + 50), title, fill=(255, 255, 255), font=font_head)
+            
+            # Right Description Box
+            d.rounded_rectangle([(480, cy + 14), (W - 65, cy + ch - 14)], radius=14, fill=(248, 250, 252), outline=(226, 232, 240), width=2)
+            d.text((505, cy + 48), desc, fill=(15, 23, 42), font=font_body_bold)
 
     # Bottom summary footer badge
-    d.rounded_rectangle([(70, H - 95), (W - 70, H - 45)], radius=12, fill=(241, 245, 249), outline=(203, 213, 225), width=2)
-    d.text((95, H - 75), f"💡 {cfg['footer_badge']}", fill=(30, 41, 59))
+    d.rounded_rectangle([(50, H - 120), (W - 50, H - 40)], radius=18, fill=(241, 245, 249), outline=(203, 213, 225), width=2)
+    d.text((75, H - 90), f"⚡ {cfg['footer_badge']}", fill=(15, 23, 42), font=font_footer)
 
     out_path = f"public/slides/slide_{cfg['id']}.png"
-    img.save(out_path)
-    print(f"Generated {out_path}")
+    img.save(out_path, quality=95)
+    print(f"Generated {out_path} ({W}x{H})")
 
-print("All 20 slide illustrations generated successfully!")
+print("All 20 high-resolution slide diagram images generated successfully!")
