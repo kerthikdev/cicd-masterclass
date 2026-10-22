@@ -1,0 +1,248 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-primary: #0a0e1a;
+    --bg-secondary: #0d1321;
+    --bg-card: #111827;
+    --bg-card-hover: #1a2332;
+    --border: rgba(34, 211, 238, 0.15);
+    --border-hover: rgba(34, 211, 238, 0.4);
+    --text-primary: #f0f9ff;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --accent-cyan: #22d3ee;
+    --accent-blue: #60a5fa;
+    --accent-purple: #a78bfa;
+    --accent-green: #34d399;
+    --accent-orange: #fb923c;
+    --accent-red: #f87171;
+  }
+
+  * {
+    @apply box-border;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(34, 211, 238, 0.3) transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: rgba(34, 211, 238, 0.3);
+    border-radius: 3px;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-[#f8fafc] text-slate-900 font-sans antialiased;
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white border border-slate-200/80 rounded-2xl shadow-sm;
+  }
+
+  .glass-card-hover {
+    @apply glass-card transition-all duration-200 hover:border-blue-400 hover:shadow-md;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-semibold rounded-xl transition-all duration-200 hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/20 active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 px-6 py-3 bg-white border border-slate-300 text-slate-700 font-semibold rounded-xl transition-all duration-200 hover:bg-slate-50 hover:border-slate-400 active:scale-95 shadow-sm;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 px-4 py-2 text-slate-600 font-medium rounded-lg transition-all duration-200 hover:text-slate-900 hover:bg-slate-100;
+  }
+
+  .code-block {
+    @apply bg-[#0f172a] border border-slate-800 rounded-xl font-mono text-sm p-4 overflow-x-auto relative text-slate-200 shadow-sm;
+  }
+
+  .lesson-sidebar-item {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition-all duration-200 text-sm;
+  }
+
+  .lesson-sidebar-item.active {
+    @apply bg-cyan-500/15 text-cyan-300 border border-cyan-500/20;
+  }
+
+  .lesson-sidebar-item:not(.active) {
+    @apply text-slate-400 hover:text-slate-200 hover:bg-white/5;
+  }
+
+  .status-badge {
+    @apply inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .status-badge.running {
+    @apply bg-blue-500/20 text-blue-300 border border-blue-500/30;
+  }
+
+  .status-badge.success {
+    @apply bg-green-500/20 text-green-300 border border-green-500/30;
+  }
+
+  .status-badge.failed {
+    @apply bg-red-500/20 text-red-300 border border-red-500/30;
+  }
+
+  .status-badge.waiting {
+    @apply bg-slate-500/20 text-slate-400 border border-slate-500/30;
+  }
+
+  .analogy-table {
+    @apply w-full border-collapse;
+  }
+
+  .analogy-table th {
+    @apply bg-gradient-to-r from-cyan-500/10 to-blue-500/10 px-4 py-3 text-left text-sm font-semibold text-cyan-300 border border-cyan-500/20;
+  }
+
+  .analogy-table td {
+    @apply px-4 py-3 text-sm text-slate-300 border border-slate-700/50;
+  }
+
+  .analogy-table tr:hover td {
+    @apply bg-white/5;
+  }
+
+  .quiz-option {
+    @apply w-full text-left px-4 py-3 rounded-lg border border-slate-700/50 text-slate-300 transition-all duration-200 hover:border-cyan-500/40 hover:bg-cyan-500/5;
+  }
+
+  .quiz-option.correct {
+    @apply border-green-500/50 bg-green-500/10 text-green-300;
+  }
+
+  .quiz-option.incorrect {
+    @apply border-red-500/50 bg-red-500/10 text-red-300;
+  }
+
+  .pipeline-stage {
+    @apply flex flex-col items-center gap-2 p-4 rounded-xl border transition-all duration-500;
+  }
+
+  .pipeline-stage.waiting {
+    @apply border-slate-700/50 bg-slate-800/30 opacity-60;
+  }
+
+  .pipeline-stage.running {
+    @apply border-blue-500/60 bg-blue-500/10 shadow-lg shadow-blue-500/10;
+    animation: pulse-glow 1.5s ease-in-out infinite;
+  }
+
+  .pipeline-stage.success {
+    @apply border-green-500/60 bg-green-500/10 shadow-lg shadow-green-500/10;
+  }
+
+  .pipeline-stage.failed {
+    @apply border-red-500/60 bg-red-500/10 shadow-lg shadow-red-500/10;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 10px rgba(59, 130, 246, 0.2); }
+  50% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); }
+}
+
+@keyframes progress-bar {
+  from { width: 0; }
+}
+
+/* Code syntax highlighting */
+.code-keyword { color: #c792ea; }
+.code-string { color: #c3e88d; }
+.code-comment { color: #546e7a; font-style: italic; }
+.code-number { color: #f78c6c; }
+.code-function { color: #82aaff; }
+.code-operator { color: #89ddff; }
+
+/* Mermaid diagram overrides */
+.mermaid {
+  @apply flex justify-center;
+}
+
+/* Mobile overlay */
+.sidebar-overlay {
+  @apply fixed inset-0 bg-black/60 backdrop-blur-sm z-30 lg:hidden;
+}
+
+/* Prose content */
+.lesson-content h2 {
+  @apply text-xl font-bold text-cyan-300 mt-8 mb-4 flex items-center gap-2;
+}
+
+.lesson-content h3 {
+  @apply text-lg font-semibold text-blue-300 mt-6 mb-3;
+}
+
+.lesson-content p {
+  @apply text-slate-300 leading-relaxed mb-4;
+}
+
+.lesson-content ul {
+  @apply list-none space-y-2 mb-4;
+}
+
+.lesson-content ul li {
+  @apply flex items-start gap-2 text-slate-300;
+}
+
+.lesson-content ul li::before {
+  content: '▸';
+  @apply text-cyan-400 mt-0.5 flex-shrink-0;
+}
+
+.lesson-content ol {
+  @apply list-decimal list-inside space-y-2 mb-4 text-slate-300;
+}
+
+.lesson-content strong {
+  @apply text-slate-100 font-semibold;
+}
+
+.lesson-content code {
+  @apply bg-slate-800 text-cyan-300 px-1.5 py-0.5 rounded text-sm font-mono;
+}
+
+/* Animation utilities */
+.animate-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.flow-arrow {
+  @apply text-cyan-500/60 text-2xl flex-shrink-0;
+}
+
+/* Progress bar fill */
+.progress-fill {
+  background: linear-gradient(90deg, #06b6d4, #3b82f6);
+  transition: width 0.6s ease;
+}
