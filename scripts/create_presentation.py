@@ -974,7 +974,7 @@ def generate_master_powerpoint():
         p_sub.space_before = Pt(3)
 
         has_image = "image" in slide_data and slide_data["image"]
-        left_w = Inches(6.8) if has_image else Inches(11.733)
+        left_w = Inches(6.0) if has_image else Inches(11.733)
 
         c_left = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(1.85), left_w, Inches(4.3))
         c_left.fill.solid()
@@ -1043,8 +1043,8 @@ def generate_master_powerpoint():
             img_rel = slide_data["image"].lstrip("/")
             img_abs = os.path.join("/Users/kerthik/Downloads/Playground/cicd-masterclass/public", img_rel)
             if os.path.exists(img_abs):
-                s.shapes.add_picture(img_abs, Inches(7.8), Inches(1.85), width=Inches(4.733), height=Inches(3.3))
-                c_cap = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(7.8), Inches(5.3), Inches(4.733), Inches(0.85))
+                s.shapes.add_picture(img_abs, Inches(7.1), Inches(1.85), width=Inches(5.433), height=Inches(3.75))
+                c_cap = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(7.1), Inches(5.65), Inches(5.433), Inches(0.55))
                 c_cap.fill.solid()
                 c_cap.fill.fore_color.rgb = RGBColor(240, 249, 255)
                 c_cap.line.color.rgb = BLUE_ACCENT

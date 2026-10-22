@@ -32,6 +32,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
   // 0 = Executive Presenter Introduction Slide, 1-20 = Lessons 1-20
   const [slideNum, setSlideNum] = useState<number>(0); 
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [enlargedImage, setEnlargedImage] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const totalSlides = 20;
@@ -189,8 +190,8 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
 
             {/* Hero Split: Left Info & Bio, Right DevOps Pipeline Image */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-8">
-              {/* Left Column (7 cols): Title & Kerthik's Bio */}
-              <div className="lg:col-span-7 space-y-5">
+              {/* Left Column (6 cols): Title & Kerthik's Bio */}
+              <div className="lg:col-span-6 space-y-5">
                 <div>
                   <span className="text-sm font-mono font-bold uppercase tracking-wider text-blue-600 block mb-1">
                     Complete DevOps Curriculum
@@ -259,17 +260,27 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                 </div>
               </div>
 
-              {/* Right Column (5 cols): Embedded Generated DevOps Pipeline Illustration */}
-              <div className="lg:col-span-5 flex flex-col items-center">
-                <div className="w-full rounded-3xl overflow-hidden border-2 border-slate-200 shadow-md bg-white p-2.5">
-                  <img
-                    src="/devops_cicd_intro.jpg"
-                    alt="DevOps CI/CD Pipeline Automation Illustration"
-                    className="w-full h-auto rounded-2xl object-cover hover:scale-102 transition-transform duration-300"
-                  />
-                  <div className="p-3 text-center bg-slate-50 rounded-xl mt-2 border border-slate-200">
-                    <span className="text-xs font-mono font-semibold text-slate-700 block">
-                      ⚙️ Automated Assembly Line: Git Commit ➔ Tests ➔ Docker ➔ AWS
+              {/* Right Column (6 cols): Embedded Generated DevOps Pipeline Illustration */}
+              <div className="lg:col-span-6 flex flex-col items-center">
+                <div
+                  className="w-full rounded-3xl overflow-hidden border-2 border-slate-200/90 shadow-xl bg-white p-3 cursor-pointer group transition-all hover:border-blue-400"
+                  onClick={() => setEnlargedImage('/devops_cicd_intro.jpg')}
+                  title="Click to view full screen"
+                >
+                  <div className="relative overflow-hidden rounded-2xl bg-slate-50 flex items-center justify-center">
+                    <img
+                      src="/devops_cicd_intro.jpg"
+                      alt="DevOps CI/CD Pipeline Automation Illustration"
+                      className="w-full h-auto min-h-[360px] sm:min-h-[420px] max-h-[520px] rounded-2xl object-cover group-hover:scale-102 transition-transform duration-300"
+                    />
+                    <div className="absolute top-3 right-3 px-3 py-1.5 rounded-xl bg-black/60 backdrop-blur-sm text-white text-xs font-mono font-bold flex items-center gap-1.5 opacity-90 group-hover:opacity-100 transition-opacity">
+                      <Maximize2 className="w-4 h-4 text-white" />
+                      <span>Click to Enlarge</span>
+                    </div>
+                  </div>
+                  <div className="p-3 text-center bg-slate-50 rounded-xl mt-3 border border-slate-200">
+                    <span className="text-xs sm:text-sm font-mono font-bold text-slate-800 block">
+                      ⚙️ DevOps Automated Assembly Line: Git Commit ➔ Tests ➔ Docker ➔ AWS
                     </span>
                   </div>
                 </div>
@@ -324,10 +335,10 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                 SLIDE-SPECIFIC RICH CONTENT WITH PROPER ALIGNMENT
                 ========================================================================= */}
             {currentSlide!.image ? (
-              /* ================= SPLIT 12-COL LAYOUT WITH DIAGRAM IMAGE ================= */
+              /* ================= SPLIT 12-COL LAYOUT WITH PROMINENT DIAGRAM IMAGE ================= */
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-6">
-                {/* Left Side (7 cols): Detailed Points & Analogy */}
-                <div className="lg:col-span-7 space-y-4">
+                {/* Left Side (6 cols): Detailed Points & Analogy */}
+                <div className="lg:col-span-6 space-y-4">
                   {/* Detailed Content Points */}
                   <div className="space-y-3">
                     {(currentSlide!.detailedPoints || currentSlide!.contentPoints)?.map((pt, idx) => (
@@ -382,20 +393,30 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                   )}
                 </div>
 
-                {/* Right Side (5 cols): Beautifully Framed Diagram Image & Caption Box */}
-                <div className="lg:col-span-5 flex flex-col items-center space-y-3">
-                  <div className="w-full rounded-2xl overflow-hidden border-2 border-slate-200/90 shadow-md bg-white p-2">
-                    <img
-                      src={currentSlide!.image}
-                      alt={currentSlide!.title}
-                      className="w-full h-auto rounded-xl object-contain hover:scale-102 transition-transform duration-300"
-                    />
-                    <div className="p-3 bg-slate-50/90 rounded-xl mt-2 border border-slate-200">
+                {/* Right Side (6 cols): Prominent High-Resolution Architecture Diagram Image */}
+                <div className="lg:col-span-6 flex flex-col items-center space-y-3">
+                  <div
+                    className="w-full rounded-3xl overflow-hidden border-2 border-slate-200/90 shadow-xl bg-white p-3 cursor-pointer group transition-all hover:border-blue-400"
+                    onClick={() => setEnlargedImage(currentSlide!.image!)}
+                    title="Click to view full screen"
+                  >
+                    <div className="relative overflow-hidden rounded-2xl bg-slate-50 flex items-center justify-center p-2">
+                      <img
+                        src={currentSlide!.image}
+                        alt={currentSlide!.title}
+                        className="w-full h-auto min-h-[340px] sm:min-h-[420px] max-h-[520px] rounded-2xl object-contain group-hover:scale-103 transition-transform duration-300"
+                      />
+                      <div className="absolute top-3 right-3 px-3 py-1.5 rounded-xl bg-black/60 backdrop-blur-sm text-white text-xs font-mono font-bold flex items-center gap-1.5 opacity-90 group-hover:opacity-100 transition-opacity">
+                        <Maximize2 className="w-4 h-4 text-white" />
+                        <span>Click to Enlarge</span>
+                      </div>
+                    </div>
+                    <div className="p-3.5 bg-slate-50/90 rounded-2xl mt-3 border border-slate-200">
                       <div className="flex items-center gap-1.5 text-blue-700 font-bold text-xs uppercase font-mono mb-1">
                         <Layers className="w-4 h-4" />
                         <span>Architecture Diagram</span>
                       </div>
-                      <p className="text-xs font-mono text-slate-700 leading-snug font-medium">
+                      <p className="text-xs sm:text-sm font-mono text-slate-800 leading-relaxed font-semibold">
                         {currentSlide!.imageCaption}
                       </p>
                     </div>
@@ -815,6 +836,36 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
           })}
         </div>
       </div>
+
+      {/* High-Resolution Diagram Lightbox Modal */}
+      {enlargedImage && (
+        <div
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 animate-in fade-in duration-200"
+          onClick={() => setEnlargedImage(null)}
+        >
+          <div
+            className="relative max-w-6xl max-h-[92vh] bg-white rounded-3xl p-4 sm:p-6 shadow-2xl overflow-hidden flex flex-col items-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-full flex items-center justify-between pb-3 mb-2 border-b border-slate-200">
+              <span className="text-sm font-mono font-bold text-blue-700 uppercase">
+                High-Resolution Diagram Full View
+              </span>
+              <button
+                onClick={() => setEnlargedImage(null)}
+                className="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold font-mono transition-all"
+              >
+                Close (ESC)
+              </button>
+            </div>
+            <img
+              src={enlargedImage}
+              alt="Enlarged Architecture Diagram"
+              className="w-full h-auto max-h-[78vh] object-contain rounded-2xl"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
