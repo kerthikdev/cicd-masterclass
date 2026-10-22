@@ -939,7 +939,16 @@ def generate_master_powerpoint():
     # =========================================================================
     # SLIDES 1 - 20: LESSON SLIDES
     # =========================================================================
-    for slide_data in slides_data:
+    json_path = "/Users/kerthik/Downloads/Playground/cicd-masterclass/slides_data_content.json"
+    active_slides = slides_data
+    if os.path.exists(json_path):
+        try:
+            with open(json_path, "r", encoding="utf-8") as f:
+                active_slides = json.load(f)
+        except Exception as e:
+            print(f"Using fallback slides_data: {e}")
+
+    for slide_data in active_slides:
         s = prs.slides.add_slide(blank_layout)
 
         bg = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, prs.slide_width, prs.slide_height)

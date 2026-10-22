@@ -99,6 +99,142 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
 
   const currentSlide = slideNum > 0 ? MASTER_SLIDES_DATA[slideNum - 1] : null;
 
+  const renderSlideExtras = (slide: MasterSlide) => (
+    <div className="space-y-4">
+      {/* AWS Core Services Grid */}
+      {slide.services && (
+        <div className="space-y-2 pt-1">
+          <div className="flex items-center gap-2 text-amber-900 font-bold text-sm">
+            <Cloud className="w-4 h-4 text-amber-600" />
+            <span>Core AWS Cloud Services:</span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            {slide.services.map((svc, idx) => (
+              <div key={idx} className="p-3 rounded-2xl bg-amber-50/70 border border-amber-200 shadow-xs">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
+                  <span className="text-xs font-mono font-bold text-amber-950">{svc.service}</span>
+                </div>
+                <p className="text-xs text-slate-700 mt-1 leading-relaxed font-medium">{svc.role}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* AWS 7-Step Deployment Flow */}
+      {slide.flowSteps && (
+        <div className="space-y-2 pt-1">
+          <div className="flex items-center gap-2 text-blue-900 font-bold text-sm">
+            <Terminal className="w-4 h-4 text-blue-600" />
+            <span>7-Step AWS Production Deployment Flow:</span>
+          </div>
+          <div className="space-y-1.5 max-h-[220px] overflow-y-auto pr-1">
+            {slide.flowSteps.map((step, idx) => (
+              <div key={idx} className="flex items-start gap-2.5 p-2.5 rounded-xl bg-blue-50/60 border border-blue-200 text-xs font-medium text-slate-800">
+                <span className="w-5 h-5 rounded-lg bg-blue-600 text-white font-mono font-bold flex items-center justify-center text-[10px] shrink-0 mt-0.5">
+                  {idx + 1}
+                </span>
+                <span className="leading-snug">{step}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* GitHub Actions to AWS Workflow Code */}
+      {slide.code && (
+        <div className="space-y-1.5 pt-1">
+          <div className="flex items-center justify-between text-xs font-mono font-bold text-slate-800">
+            <span className="flex items-center gap-1.5">
+              <Terminal className="w-3.5 h-3.5 text-blue-600" />
+              <span>Workflow YAML (.github/workflows/deploy-aws.yml)</span>
+            </span>
+            <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-bold">AWS ECS Fargate</span>
+          </div>
+          <div className="max-h-[260px] overflow-y-auto rounded-2xl border border-slate-300">
+            <CodeBlock code={slide.code} language="yaml" />
+          </div>
+        </div>
+      )}
+
+      {/* Slide 19 Architecture Steps (AWS Hands-on) */}
+      {slide.architectureSteps && (
+        <div className="space-y-2 pt-1">
+          <div className="flex items-center gap-2 text-emerald-900 font-bold text-sm">
+            <Rocket className="w-4 h-4 text-emerald-600" />
+            <span>End-to-End AWS Pipeline Architecture:</span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[220px] overflow-y-auto pr-1">
+            {slide.architectureSteps.map((st, idx) => (
+              <div key={idx} className="p-2.5 rounded-xl bg-emerald-50/60 border border-emerald-200">
+                <span className="text-xs font-mono font-bold text-emerald-800 block">{st.step}</span>
+                <p className="text-xs text-slate-700 mt-0.5 leading-snug">{st.detail}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Slide 19 Project Tasks */}
+      {slide.projectTasks && (
+        <div className="space-y-1.5 pt-1">
+          <span className="text-xs font-mono font-bold text-slate-700 uppercase block">Hands-On Checklist:</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+            {slide.projectTasks.map((tsk, idx) => (
+              <div key={idx} className="p-2 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-800 flex items-start gap-1.5">
+                <CheckSquare className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                <span className="leading-snug">{tsk}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Slide 17 Security Rules */}
+      {slide.securityRules && (
+        <div className="space-y-2 pt-1">
+          <div className="flex items-center gap-2 text-rose-900 font-bold text-sm">
+            <ShieldCheck className="w-4 h-4 text-rose-600" />
+            <span>DevSecOps Security & AWS OIDC Rules:</span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[220px] overflow-y-auto pr-1">
+            {slide.securityRules.map((sec, idx) => (
+              <div key={idx} className="p-2.5 rounded-xl bg-rose-50/60 border border-rose-200">
+                <span className="text-xs font-mono font-bold text-rose-800 block">{sec.rule}</span>
+                <p className="text-xs text-slate-700 mt-0.5 leading-snug">{sec.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Slide 14 Stages */}
+      {slide.stages && (
+        <div className="grid grid-cols-2 gap-2.5">
+          {slide.stages.map((stg, idx) => (
+            <div key={idx} className="p-3 rounded-xl bg-white border border-slate-200">
+              <span className="text-xs font-mono font-bold text-blue-700">{stg.num}. {stg.name}</span>
+              <p className="text-xs text-slate-600 mt-0.5">{stg.purpose}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Slide 15 Terms */}
+      {slide.terms && (
+        <div className="grid grid-cols-2 gap-2.5">
+          {slide.terms.slice(0, 4).map((t, idx) => (
+            <div key={idx} className="p-3 rounded-xl bg-white border border-slate-200">
+              <span className="text-xs font-mono font-bold text-blue-700">{t.term}</span>
+              <p className="text-xs text-slate-600 mt-0.5">{t.desc}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div
       ref={containerRef}
@@ -264,7 +400,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                   </div>
                   <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-center">
                     <span className="text-xs font-mono font-bold text-blue-700 block">Part 4 (S14-20)</span>
-                    <span className="text-xs text-slate-700 font-medium">Cloud Pipeline & SRE</span>
+                    <span className="text-xs text-slate-700 font-medium">Docker, AWS & SRE</span>
                   </div>
                 </div>
               </div>
@@ -324,6 +460,18 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                 <span className="text-xs sm:text-sm font-mono font-bold uppercase tracking-wider text-slate-500">
                   {currentSlide!.category}
                 </span>
+                {currentSlide!.num === 16 && (
+                  <span className="px-3 py-1 rounded-full font-mono font-bold text-xs bg-amber-100 text-amber-800 border border-amber-300 flex items-center gap-1.5 shadow-xs">
+                    <Cloud className="w-3.5 h-3.5 text-amber-700" />
+                    <span>AWS Cloud Platform</span>
+                  </span>
+                )}
+                {currentSlide!.num === 19 && (
+                  <span className="px-3 py-1 rounded-full font-mono font-bold text-xs bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1.5 shadow-xs">
+                    <Rocket className="w-3.5 h-3.5 text-emerald-700" />
+                    <span>AWS End-to-End Hands-On</span>
+                  </span>
+                )}
               </div>
               <span className="text-xs sm:text-sm font-mono font-semibold px-3.5 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
                 CI/CD Masterclass
@@ -450,27 +598,8 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                         </div>
                       )}
 
-                      {currentSlide!.stages && (
-                        <div className="grid grid-cols-2 gap-2.5">
-                          {currentSlide!.stages.map((stg, idx) => (
-                            <div key={idx} className="p-3 rounded-xl bg-white border border-slate-200">
-                              <span className="text-xs font-mono font-bold text-blue-700">{stg.num}. {stg.name}</span>
-                              <p className="text-xs text-slate-600 mt-0.5">{stg.purpose}</p>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-
-                      {currentSlide!.terms && (
-                        <div className="grid grid-cols-2 gap-2.5">
-                          {currentSlide!.terms.slice(0, 4).map((t, idx) => (
-                            <div key={idx} className="p-3 rounded-xl bg-white border border-slate-200">
-                              <span className="text-xs font-mono font-bold text-blue-700">{t.term}</span>
-                              <p className="text-xs text-slate-600 mt-0.5">{t.desc}</p>
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                      {/* Slide Rich Extras (AWS Services, Flow Steps, Code, Architecture, etc.) */}
+                      {renderSlideExtras(currentSlide!)}
                     </div>
                   </div>
                 </div>
@@ -527,28 +656,8 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                       </div>
                     )}
 
-                    {/* Extra Specific Content if Slide 14 Stages or Slide 15 Terms */}
-                    {currentSlide!.stages && (
-                      <div className="grid grid-cols-2 gap-2.5">
-                        {currentSlide!.stages.map((stg, idx) => (
-                          <div key={idx} className="p-3 rounded-xl bg-white border border-slate-200">
-                            <span className="text-xs font-mono font-bold text-blue-700">{stg.num}. {stg.name}</span>
-                            <p className="text-xs text-slate-600 mt-0.5">{stg.purpose}</p>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {currentSlide!.terms && (
-                      <div className="grid grid-cols-2 gap-2.5">
-                        {currentSlide!.terms.slice(0, 4).map((t, idx) => (
-                          <div key={idx} className="p-3 rounded-xl bg-white border border-slate-200">
-                            <span className="text-xs font-mono font-bold text-blue-700">{t.term}</span>
-                            <p className="text-xs text-slate-600 mt-0.5">{t.desc}</p>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                    {/* Slide Rich Extras (AWS Services, Flow Steps, Code, Architecture, etc.) */}
+                    {renderSlideExtras(currentSlide!)}
                   </div>
 
                   {/* Right Side (6 cols): Prominent High-Resolution Architecture Diagram Image */}

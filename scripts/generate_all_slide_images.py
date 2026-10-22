@@ -304,32 +304,32 @@ slides_configs = [
     },
     {
         "id": 16,
-        "title": "Automated Testing & DevSecOps Quality Gates",
-        "category": "Quality & Security",
-        "color": (5, 150, 105),
-        "draw": "cams_grid",
-        "pillars": [
-            ("UNIT TESTS (70%)", "Fast, isolated logic checks (Jest/Pytest). Runs in <30 seconds.", (5, 150, 105)),
-            ("INTEGRATION (20%)", "Database, API, and service boundary tests. Runs in 2-5 minutes.", (37, 99, 235)),
-            ("E2E TESTS (10%)", "Full browser simulation with Playwright / Cypress. Runs in staging.", (245, 158, 11)),
-            ("DEVSECOPS SCANS", "Snyk, Trivy, CodeQL scan for leaked secrets and vulnerable dependencies.", (225, 29, 72))
+        "title": "Deploying to AWS: GitHub Actions to Amazon Cloud",
+        "category": "AWS Cloud Architecture",
+        "color": (245, 158, 11),
+        "draw": "pipeline_flow",
+        "steps": [
+            ("1. GitHub Actions", "OIDC Keyless Auth", "IAM Role Assumed", (37, 99, 235)),
+            ("2. Amazon ECR", "Container Registry", "Private Image Tag", (245, 158, 11)),
+            ("3. Amazon ECS", "Fargate Tasks", "Serverless Cluster", (139, 92, 246)),
+            ("4. AWS ALB", "Load Balancer", "Zero-Downtime Live", (16, 185, 129)),
+            ("5. CloudWatch", "Telemetry & Alarms", "Auto-Rollback OK", (225, 29, 72))
         ],
-        "footer_badge": "Shift-Left Security: Detect vulnerabilities on developer pull request before code ever leaves branch"
+        "footer_badge": "AWS Production Architecture: GitHub Actions OIDC ➔ Amazon ECR ➔ Amazon ECS Fargate ➔ ALB Live (200 OK)"
     },
     {
         "id": 17,
-        "title": "Multi-Environment Parity: Dev, Staging & Prod",
-        "category": "Environments",
-        "color": (139, 92, 246),
-        "draw": "pipeline_flow",
-        "steps": [
-            ("1. Local Dev", "Laptop Testing", "Developer Machine", (100, 116, 139)),
-            ("2. PR Preview", "Branch URL", "Ephemeral Sandbox", (14, 165, 233)),
-            ("3. CI Pipeline", "Automated Gates", "Strict Validation", (37, 99, 235)),
-            ("4. Staging Mirror", "Production Clone", "Full Data Testing", (139, 92, 246)),
-            ("5. Production", "Live Traffic", "Real Customers", (16, 185, 129))
+        "title": "Security & Governance: DevSecOps & AWS OIDC",
+        "category": "Security & Governance",
+        "color": (225, 29, 72),
+        "draw": "cams_grid",
+        "pillars": [
+            ("AWS OIDC AUTH", "Never store permanent AWS access keys. Use short-lived OIDC tokens.", (245, 158, 11)),
+            ("DEVSECOPS SCANS", "Trivy & Snyk scan Docker images for CVEs before pushing to Amazon ECR.", (37, 99, 235)),
+            ("BRANCH RULES", "Require passing CI tests & senior PR review before merging to main.", (16, 185, 129)),
+            ("SECRET ENCRYPTION", "Store AWS Role ARNs and secrets in GitHub Encrypted Secrets.", (139, 92, 246))
         ],
-        "footer_badge": "Parity Rule: Staging must replicate production OS, database version, and network topology exactly"
+        "footer_badge": "DevSecOps Rule: Security is automated into every gate — catch vulnerabilities before cloud deployment"
     },
     {
         "id": 18,
@@ -357,18 +357,18 @@ slides_configs = [
     },
     {
         "id": 19,
-        "title": "Demo: Deploying a Simple Website with CI/CD",
-        "category": "Hands-On Demo",
+        "title": "Real-World Project: Food Ordering App on AWS",
+        "category": "End-to-End Hands-On",
         "color": (16, 185, 129),
         "draw": "pipeline_flow",
         "steps": [
-            ("1. Code Webpage", "HTML & Scripts", "Local IDE", (16, 185, 129)),
-            ("2. git push", "Push to GitHub", "Triggers Webhook", (37, 99, 235)),
-            ("3. Action Runs", "Checkout & Build", "Ubuntu Runner", (139, 92, 246)),
-            ("4. CDN Deploy", "Cloudflare / S3", "Asset Sync", (245, 158, 11)),
-            ("5. Live in 45s", "Global SSL", "200 OK Live", (5, 150, 105))
+            ("1. Git Commit", "FastAPI Python App", "Commit: feat/burger-api", (37, 99, 235)),
+            ("2. GitHub CI", "PyTest & Security", "100% Quality Pass", (14, 165, 233)),
+            ("3. Docker Build", "Multi-stage Image", "Minimal 45MB Image", (139, 92, 246)),
+            ("4. Push to ECR", "Amazon ECR Registry", "Secure AWS Storage", (245, 158, 11)),
+            ("5. Live on ECS", "Amazon ECS Fargate", "Zero-Downtime Live ✓", (16, 185, 129))
         ],
-        "footer_badge": "Hands-On Demo: From git commit to live global CDN in under 45 seconds with zero server management"
+        "footer_badge": "Full Project Delivery: Code push to live high-availability AWS Cloud in under 4 minutes"
     },
     {
         "id": 20,

@@ -682,14 +682,22 @@ export const MASTER_SLIDES_DATA: MasterSlide[] = [
         "role": "Aggregates logs, latency metrics, and automated alerts."
       }
     ],
+    "detailedPoints": [
+      "AWS Cloud Infrastructure: Provides high-availability compute, container orchestration, and automated auto-scaling for modern microservices.",
+      "Keyless OIDC Authentication: GitHub Actions assumes an IAM Role via OpenID Connect (OIDC), eliminating the dangerous need for stored static access keys.",
+      "Amazon ECR (Elastic Container Registry): Private, encrypted Docker image registry that automatically scans every container image for CVE vulnerabilities on push.",
+      "Amazon ECS (Elastic Container Service): Serverless container orchestration using AWS Fargate that launches and manages tasks without managing EC2 servers.",
+      "Application Load Balancer (ALB): Distributes traffic across multi-AZ container tasks, conducts continuous /health checks, and shifts traffic with zero downtime."
+    ],
+    "code": "# .github/workflows/deploy-aws.yml\nname: Deploy to Amazon ECS\non:\n  push:\n    branches: [ main ]\npermissions:\n  id-token: write\n  contents: read\njobs:\n  deploy:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - name: Authenticate with AWS via OIDC\n        uses: aws-actions/configure-aws-credentials@v4\n        with:\n          role-to-assume: arn:aws:iam::123456789012:role/GitHubActionsRole\n          aws-region: us-east-1\n      - name: Login to Amazon ECR\n        uses: aws-actions/amazon-ecr-login@v2\n      - name: Build & Push Docker Image\n        run: |\n          docker build -t $ECR_REGISTRY/food-order-api:${{ github.sha }} .\n          docker push $ECR_REGISTRY/food-order-api:${{ github.sha }}\n      - name: Deploy to Amazon ECS Fargate\n        run: |\n          aws ecs update-service --cluster prod --service food-api --force-new-deployment",
     "foodAnalogy": {
-      "title": "Franchise Logistics Network \ud83d\ude9a",
+      "title": "Franchise Logistics Network 🚚",
       "story": "GitHub Actions coordinates food prep, Amazon ECR is the central cold-storage distribution hub, Amazon ECS is the network of commercial franchise kitchens, and the Load Balancer routes hungry diners.",
       "connection": "GitHub Actions orchestrates the release; AWS provides the scalable cloud infrastructure."
     },
     "keyTakeaway": "GitHub Actions automates the deployment process; cloud providers supply the scalable hosting infrastructure.",
     "image": "/slides/slide_16.png",
-    "imageCaption": "AWS Cloud Deployment: GitHub Actions OIDC \u2794 Amazon ECR Registry \u2794 Amazon ECS High-Availability Clusters."
+    "imageCaption": "AWS Cloud Architecture: GitHub Actions OIDC ➔ Amazon ECR Registry ➔ Amazon ECS Fargate ➔ ALB Load Balancer (200 OK)."
   },
   {
     "num": 17,
@@ -807,14 +815,21 @@ export const MASTER_SLIDES_DATA: MasterSlide[] = [
       "5. Introduce a deliberate test defect and verify the pipeline halts automatically.",
       "6. Fix the defect, re-push, and celebrate your first zero-downtime cloud deployment!"
     ],
+    "detailedPoints": [
+      "End-to-End Real World Pipeline: From Git commit to live production cloud on AWS in under 4 minutes.",
+      "Automated CI Gates: Code linting, type-checking, and 80%+ test coverage enforced before any container image is compiled.",
+      "Immutable Packaging: Docker multi-stage build creates a tiny, secure container image pushed directly to Amazon ECR.",
+      "Zero-Downtime Deployment: Amazon ECS rolls out new tasks using rolling updates or blue-green switching via the Application Load Balancer.",
+      "SRE Telemetry & Observability: AWS CloudWatch tracks latency and 5xx error rates, triggering automated rollbacks if any defects emerge."
+    ],
     "foodAnalogy": {
-      "title": "The Fully Automated Smart Restaurant \ud83c\udf55",
-      "story": "Customer orders on phone \u2794 Smart ticket alerts kitchen \u2794 Robotic grill cooks burger \u2794 Optical sensor inspects burger \u2794 Packaged in bento box \u2794 Drone delivers to customer.",
-      "connection": "This real-world project unifies version control, automation, containerization, cloud hosting, and observability into one cohesive system."
+      "title": "The Fully Automated Smart Restaurant 🍕",
+      "story": "Customer orders on phone ➔ Smart ticket alerts kitchen ➔ Robotic grill cooks burger ➔ Optical sensor inspects burger ➔ Packaged in bento box ➔ Drone delivers to customer.",
+      "connection": "This real-world project unifies version control, automation, containerization, cloud hosting on AWS, and observability into one cohesive system."
     },
-    "keyTakeaway": "This end-to-end project combines code, CI/CD, containers, cloud infrastructure, and monitoring into a complete production system.",
+    "keyTakeaway": "This end-to-end project combines code, CI/CD, containers, AWS cloud infrastructure, and monitoring into a complete production system.",
     "image": "/slides/slide_19.png",
-    "imageCaption": "End-to-End Real-World Project: Automated Food Ordering App pipeline running on GitHub Actions and AWS."
+    "imageCaption": "End-to-End Real-World Project: Automated Food Ordering App pipeline running on GitHub Actions, Docker, and AWS."
   },
   {
     "num": 20,
