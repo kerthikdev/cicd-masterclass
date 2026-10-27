@@ -138,7 +138,7 @@ export function App() {
       )}
 
       {/* Main Body */}
-      <div className="flex-1">
+      <div className={`flex-1 ${currentView === 'presentation' ? 'flex flex-col justify-center' : ''}`}>
         {currentView === 'home' && (
           <HomePage
             onStartCourse={(slug) => navigateTo('lesson', slug || currentLessonSlug)}

@@ -446,31 +446,31 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
   return (
     <div
       ref={containerRef}
-      className={`bg-[#f8fafc] text-slate-900 transition-all ${
+      className={`bg-[#f8fafc] text-slate-900 transition-all flex flex-col items-center justify-center ${
         isFullscreen
-          ? 'fixed inset-0 z-50 overflow-y-auto p-3 sm:p-6 lg:p-8 flex flex-col justify-between bg-[#f8fafc]'
-          : 'w-full max-w-7xl mx-auto px-4 py-3 sm:py-5 pb-8'
+          ? 'fixed inset-0 z-50 overflow-y-auto p-2 sm:p-4 bg-[#f8fafc]'
+          : 'w-full min-h-[calc(100vh-4.25rem)] px-3 sm:px-6 py-2 sm:py-3'
       }`}
     >
-      {/* =========================================================================
-          TOP DECK HEADER & CONTROLS TOOLBAR
-          ========================================================================= */}
-      <div className="relative pb-2.5 mb-3 border-b border-slate-200">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-2.5">
+      <div className="w-full max-w-6xl my-auto flex flex-col">
+        {/* =========================================================================
+            TOP DECK HEADER & CONTROLS TOOLBAR (COMPACT SINGLE BAR)
+            ========================================================================= */}
+        <div className="flex flex-wrap items-center justify-between gap-2 pb-2 mb-2.5 border-b border-slate-200">
           {/* Deck Meta Title */}
-          <div>
-            <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-blue-600">
-              <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-1.5 text-xs font-mono font-bold uppercase tracking-wider text-blue-600">
+              <Sparkles className="w-3.5 h-3.5 text-blue-600 shrink-0" />
               <span>CI/CD Masterclass</span>
               <span className="text-slate-300">•</span>
-              <span className="text-slate-600">{PRESENTER_INFO.name} ({PRESENTER_INFO.company})</span>
+              <span className="text-slate-600 font-semibold">{PRESENTER_INFO.name}</span>
             </div>
-            <h1 className="text-base sm:text-lg font-black text-slate-950 mt-0.5 tracking-tight flex items-center gap-2 flex-wrap">
-              <span>{slideNum === 0 ? "Course Roadmap & Overview" : `Slide ${slideNum < 10 ? `0${slideNum}` : slideNum}: ${currentSlide?.title}`}</span>
-              <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
-                🍔 Food Analogy
-              </span>
-            </h1>
+            <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200">
+              {slideNum === 0 ? 'Slide 00 / 20' : `Slide ${slideNum < 10 ? `0${slideNum}` : slideNum} / 20`}
+            </span>
+            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 hidden sm:inline-flex items-center gap-1">
+              🍔 Food Delivery Analogy
+            </span>
           </div>
 
           {/* Action Controls Toolbar */}
@@ -478,21 +478,21 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
             {/* Grid Overview Modal Button */}
             <button
               onClick={() => setGridModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs sm:text-sm font-bold text-slate-700 shadow-sm transition-all"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs font-bold text-slate-700 shadow-sm transition-all"
               title="View all slides in a grid overview (Press G)"
             >
               <LayoutGrid className="w-3.5 h-3.5 text-blue-600" />
               <span>Grid</span>
-              <kbd className="hidden sm:inline text-[10px] bg-slate-100 text-slate-500 px-1 py-0.5 rounded border border-slate-200 font-mono">G</kbd>
+              <kbd className="hidden sm:inline text-[10px] bg-slate-100 text-slate-500 px-1 py-0.2 rounded border border-slate-200 font-mono">G</kbd>
             </button>
 
             {/* Quick Jump Dropdown */}
-            <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-xl px-2 py-1 shadow-sm">
+            <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-xl px-2 py-0.5 shadow-sm">
               <span className="text-xs font-mono font-bold text-slate-500">Jump:</span>
               <select
                 value={slideNum}
                 onChange={(e) => setSlideNum(Number(e.target.value))}
-                className="bg-transparent text-xs sm:text-sm font-bold text-slate-800 focus:outline-none cursor-pointer max-w-[120px] sm:max-w-[160px] truncate"
+                className="bg-transparent text-xs font-bold text-slate-800 focus:outline-none cursor-pointer max-w-[120px] sm:max-w-[150px] truncate"
               >
                 <option value={0}>00. Intro (Kerthik)</option>
                 {MASTER_SLIDES_DATA.map((s) => (
@@ -505,10 +505,10 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
 
             {/* View Mode Toggle */}
             {slideNum > 0 && (
-              <div className="hidden sm:flex items-center gap-1 bg-slate-100 p-0.5 rounded-xl border border-slate-200 text-xs shadow-sm">
+              <div className="hidden sm:flex items-center gap-0.5 bg-slate-100 p-0.5 rounded-xl border border-slate-200 text-xs shadow-sm">
                 <button
                   onClick={() => setViewMode('split')}
-                  className={`px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 transition-all ${
+                  className={`px-2 py-0.5 rounded-lg font-bold flex items-center gap-1 transition-all ${
                     viewMode === 'split' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-600 hover:text-slate-900'
                   }`}
                   title="Side-by-Side: Content & Diagram"
@@ -518,7 +518,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                 </button>
                 <button
                   onClick={() => setViewMode('content')}
-                  className={`px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 transition-all ${
+                  className={`px-2 py-0.5 rounded-lg font-bold flex items-center gap-1 transition-all ${
                     viewMode === 'content' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-600 hover:text-slate-900'
                   }`}
                   title="Full Content Reading Mode"
@@ -528,7 +528,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                 </button>
                 <button
                   onClick={() => setViewMode('diagram')}
-                  className={`px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 transition-all ${
+                  className={`px-2 py-0.5 rounded-lg font-bold flex items-center gap-1 transition-all ${
                     viewMode === 'diagram' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-600 hover:text-slate-900'
                   }`}
                   title="Full Diagram Architecture Mode"
@@ -543,7 +543,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
             <div className="flex items-center gap-0.5 bg-white border border-slate-200 p-0.5 rounded-xl shadow-sm">
               <button
                 onClick={() => setFontSize('normal')}
-                className={`px-2 py-0.5 rounded text-xs font-bold ${
+                className={`px-1.5 py-0.5 rounded text-xs font-bold ${
                   fontSize === 'normal' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100'
                 }`}
                 title="Standard Font Size"
@@ -552,7 +552,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
               </button>
               <button
                 onClick={() => setFontSize('large')}
-                className={`px-2 py-0.5 rounded text-xs font-bold ${
+                className={`px-1.5 py-0.5 rounded text-xs font-bold ${
                   fontSize === 'large' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100'
                 }`}
                 title="Large Font Size"
@@ -561,7 +561,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
               </button>
               <button
                 onClick={() => setFontSize('xl')}
-                className={`px-2 py-0.5 rounded text-xs font-bold ${
+                className={`px-1.5 py-0.5 rounded text-xs font-bold ${
                   fontSize === 'xl' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100'
                 }`}
                 title="Extra Large"
@@ -574,7 +574,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
             <a
               href="/CICD_Masterclass_20_Slides.pptx"
               download="CI_CD_Masterclass_20_Slides.pptx"
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs sm:text-sm font-bold text-slate-700 shadow-sm transition-all"
+              className="flex items-center gap-1 px-2 py-1 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs font-bold text-slate-700 shadow-sm transition-all"
               title="Download PowerPoint Presentation Deck"
             >
               <Download className="w-3.5 h-3.5 text-blue-600" />
@@ -584,7 +584,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
             {/* Fullscreen Button */}
             <button
               onClick={toggleFullscreen}
-              className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl border text-xs sm:text-sm font-bold transition-all shadow-sm ${
+              className={`flex items-center gap-1 px-2 py-1 rounded-xl border text-xs font-bold transition-all shadow-sm ${
                 isFullscreen
                   ? 'bg-blue-600 text-white border-blue-600'
                   : 'bg-white text-slate-700 hover:text-blue-600 border-slate-200'
@@ -598,19 +598,18 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
             {!isFullscreen && (
               <button
                 onClick={onBackToCourse}
-                className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold shadow-sm transition-all"
+                className="px-2.5 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-sm transition-all"
               >
                 Exit
               </button>
             )}
           </div>
         </div>
-      </div>
 
-      {/* =========================================================================
-          SLIDE CANVAS (UNIFIED TEMPLATE FOR SLIDE 00 AND SLIDES 01-20)
-          ========================================================================= */}
-      <div className="bg-white border-2 border-slate-200 rounded-3xl p-5 sm:p-6 lg:p-7 shadow-md relative flex flex-col">
+        {/* =========================================================================
+            SLIDE CANVAS (UNIFIED TEMPLATE FOR SLIDE 00 AND SLIDES 01-20)
+            ========================================================================= */}
+        <div className="bg-white border-2 border-slate-200 rounded-3xl p-4 sm:p-5 lg:p-6 shadow-md relative flex flex-col">
         {slideNum === 0 ? (
           /* ==================== SLIDE 00: COURSE INTRODUCTION & ROADMAP ==================== */
           <div>
@@ -1073,6 +1072,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
             </button>
           </div>
         </div>
+      </div>
       </div>
 
       {/* =========================================================================
