@@ -29,9 +29,6 @@ import {
   X,
   FileCode2,
   ListChecks,
-  Boxes,
-  HelpCircle,
-  GitBranch,
   Quote
 } from 'lucide-react';
 
@@ -50,9 +47,13 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
   const activeScrubberBtnRef = useRef<HTMLButtonElement | null>(null);
   const totalSlides = 20;
 
-  // Reset tab to 'primary' whenever slide changes
+  // Reset tab to 'primary' and ALWAYS reset window scroll to top whenever slide changes
   useEffect(() => {
     setActiveTab('primary');
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    if (containerRef.current) {
+      containerRef.current.scrollTop = 0;
+    }
   }, [slideNum]);
 
   // Auto-scroll the scrubber bar to keep the active slide button centered & visible
@@ -144,155 +145,114 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
     'text-lg sm:text-xl lg:text-2xl font-black';
 
   // =========================================================================
-  // PRIMARY RICH CONTENT RENDERER (GUARANTEES 100% RICH CONTENT FOR ALL 20 SLIDES)
+  // PRIMARY RICH CONTENT RENDERER (STANDARDIZED HEIGHT & PROPORTIONS)
   // =========================================================================
   const renderSlidePrimaryContent = (slide: MasterSlide) => {
-    // 1. If slide has explicit detailed points or content points (e.g. Slide 1, 2, 6, 7, 10, 16, 19)
-    if (slide.detailedPoints || slide.contentPoints) {
-      const points = slide.detailedPoints || slide.contentPoints || [];
-      return (
-        <div className="space-y-2.5">
-          {points.map((pt, idx) => (
-            <div key={idx} className="flex items-start gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 shadow-sm hover:border-blue-300 transition-colors">
-              <CheckCircle2 className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
-              <p className={`${bodyTextClass} text-slate-800 font-medium`}>{pt}</p>
-            </div>
-          ))}
-
-          {/* Slide 15 Docker terms extra */}
-          {slide.terms && (
-            <div className="mt-3 space-y-2">
-              <span className="text-xs font-mono font-bold text-slate-700 uppercase block">Key Docker Concepts:</span>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {slide.terms.map((t, idx) => (
-                  <div key={idx} className="p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm">
-                    <span className="text-xs font-mono font-bold text-blue-700 block">{t.term}</span>
-                    <p className="text-xs text-slate-700 mt-0.5">{t.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Slide 16 AWS Services extra */}
-          {slide.services && (
-            <div className="mt-3 space-y-2">
-              <span className="text-xs font-mono font-bold text-amber-800 uppercase block">Integrated AWS Services:</span>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {slide.services.map((svc, idx) => (
-                  <div key={idx} className="p-2.5 rounded-xl bg-amber-50/80 border border-amber-200 shadow-sm">
-                    <span className="text-xs font-mono font-bold text-amber-950 block">{svc.service}</span>
-                    <p className="text-xs text-slate-700 mt-0.5">{svc.role}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Slide 19 Architecture Steps extra */}
-          {slide.architectureSteps && (
-            <div className="mt-3 space-y-2">
-              <span className="text-xs font-mono font-bold text-emerald-800 uppercase block">End-to-End Pipeline Steps:</span>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {slide.architectureSteps.map((st, idx) => (
-                  <div key={idx} className="p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200 shadow-sm">
-                    <span className="text-xs font-mono font-bold text-emerald-950 block">{st.step}</span>
-                    <p className="text-xs text-slate-700 mt-0.5">{st.detail}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      );
-    }
-
-    // 2. Slide 14: Four Major Stages of Delivery (Build, Test, Package, Deploy)
+    // Slide 14: Four Major Stages of Delivery (Clean horizontal gates)
     if (slide.stages) {
       return (
-        <div className="space-y-2.5">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            {slide.stages.map((stg, idx) => (
-              <div key={idx} className="p-4 rounded-2xl bg-white border-2 border-slate-200 hover:border-blue-400 shadow-sm transition-all flex flex-col justify-between">
+        <div className="space-y-2">
+          {slide.stages.map((stg, idx) => (
+            <div key={idx} className="p-3 rounded-xl bg-white border border-slate-200 hover:border-blue-300 shadow-sm transition-all flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <span className="w-7 h-7 rounded-lg bg-blue-600 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0">
+                  {stg.num}
+                </span>
                 <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800">
-                      Stage {stg.num}
-                    </span>
-                    <span className="text-xs text-slate-400 font-mono font-semibold">Delivery Gate</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs sm:text-sm font-black text-slate-950 font-mono">{stg.name}</span>
+                    <span className="text-xs text-slate-600 hidden sm:inline">— {stg.purpose}</span>
                   </div>
-                  <h4 className="text-base font-black text-slate-950 mt-1">{stg.name}</h4>
-                  <p className="text-xs sm:text-sm text-slate-700 mt-1 leading-snug">{stg.purpose}</p>
-                </div>
-                <div className="mt-3 pt-2 border-t border-slate-100 text-xs text-amber-900 font-medium">
-                  🍔 <strong>Kitchen Equivalent:</strong> {stg.foodEquivalent}
+                  <p className="text-xs text-slate-600 sm:hidden mt-0.5">{stg.purpose}</p>
                 </div>
               </div>
-            ))}
-          </div>
+              <span className="shrink-0 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-900 border border-amber-200 text-[11px] font-medium hidden md:inline-block">
+                🍔 {stg.foodEquivalent}
+              </span>
+            </div>
+          ))}
         </div>
       );
     }
 
-    // 3. Slide 17: Security Rules & DevSecOps
+    // Slide 5: Three Core Concepts (Horizontal cards, compact & clear)
+    if (slide.concepts) {
+      return (
+        <div className="space-y-2.5">
+          {slide.concepts.map((c, idx) => (
+            <div key={idx} className="p-3 rounded-xl bg-white border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:border-blue-300 transition-colors">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-mono font-bold text-[11px]">
+                    Concept 0{idx + 1}
+                  </span>
+                  <h4 className="text-sm font-black text-slate-950">{c.term}</h4>
+                  <span className="text-xs text-blue-700 font-mono font-semibold hidden sm:inline">• {c.purpose}</span>
+                </div>
+                <p className="text-xs text-slate-700 leading-relaxed">{c.desc}</p>
+              </div>
+              <div className="shrink-0">
+                <span className="px-2 py-1 rounded-lg bg-amber-50 text-amber-900 border border-amber-200 text-[11px] font-medium inline-block">
+                  🍔 {c.analogy}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    // Slide 17: Security Rules & DevSecOps
     if (slide.securityRules) {
       return (
-        <div className="space-y-2.5">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            {slide.securityRules.map((sec, idx) => (
-              <div key={idx} className="p-3.5 rounded-xl bg-white border border-rose-200 shadow-sm hover:border-rose-400 transition-colors">
-                <div className="flex items-center gap-2 mb-1">
-                  <ShieldCheck className="w-4 h-4 text-rose-600 shrink-0" />
-                  <span className="text-xs sm:text-sm font-bold text-slate-950 font-mono">{sec.rule}</span>
-                </div>
-                <p className="text-xs text-slate-700 leading-relaxed font-medium pl-6">{sec.desc}</p>
+        <div className="space-y-2">
+          {slide.securityRules.map((sec, idx) => (
+            <div key={idx} className="p-2.5 rounded-xl bg-white border border-rose-200 shadow-sm hover:border-rose-400 transition-colors flex items-start gap-2.5">
+              <ShieldCheck className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+              <div>
+                <span className="text-xs sm:text-sm font-bold text-slate-950 font-mono block">{sec.rule}</span>
+                <p className="text-xs text-slate-700 mt-0.5">{sec.desc}</p>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       );
     }
 
-    // 4. Slide 18: Failure Matrix & Automated Recovery
+    // Slide 18: Failure Matrix & Automated Recovery
     if (slide.failureMatrix) {
       return (
-        <div className="space-y-2.5">
-          <div className="grid grid-cols-1 gap-2">
-            {slide.failureMatrix.map((f, idx) => (
-              <div key={idx} className="p-3 rounded-xl bg-white border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div className="flex items-center gap-2.5">
-                  <span className="p-1 rounded-lg bg-rose-50 text-rose-600 border border-rose-200">
-                    <AlertTriangle className="w-4 h-4" />
-                  </span>
-                  <div>
-                    <span className="text-xs sm:text-sm font-bold text-rose-900 font-mono block">{f.failure}</span>
-                    <span className="text-[11px] text-slate-500">Root Cause: {f.cause}</span>
-                  </div>
-                </div>
-                <div className="sm:text-right">
-                  <span className="inline-block px-3 py-1 rounded-lg bg-emerald-50 text-emerald-900 border border-emerald-200 text-xs font-semibold">
-                    🛡️ {f.action}
-                  </span>
+        <div className="space-y-2">
+          {slide.failureMatrix.map((f, idx) => (
+            <div key={idx} className="p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+                <div>
+                  <span className="text-xs sm:text-sm font-bold text-rose-900 font-mono block">{f.failure}</span>
+                  <span className="text-[11px] text-slate-500">Root Cause: {f.cause}</span>
                 </div>
               </div>
-            ))}
-          </div>
+              <span className="inline-block px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-900 border border-emerald-200 text-xs font-semibold">
+                🛡️ {f.action}
+              </span>
+            </div>
+          ))}
         </div>
       );
     }
 
-    // 5. Slide 3: Historical Timeline
+    // Slide 3: Historical Timeline
     if (slide.timeline) {
       return (
-        <div className="space-y-2.5">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+        <div className="space-y-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {slide.timeline.map((item, idx) => (
-              <div key={idx} className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-sm">
-                <span className="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 font-mono font-bold text-xs inline-block mb-1">
+              <div key={idx} className="p-3 rounded-xl bg-white border border-slate-200 shadow-sm">
+                <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 font-mono font-bold text-[11px] inline-block mb-1">
                   {item.era}
                 </span>
-                <h4 className="text-sm font-bold text-slate-950 leading-snug">{item.title}</h4>
-                <p className="text-xs text-slate-600 mt-1 leading-relaxed">{item.desc}</p>
+                <h4 className="text-xs sm:text-sm font-bold text-slate-950 leading-snug">{item.title}</h4>
+                <p className="text-[11px] text-slate-600 mt-1 leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -300,24 +260,24 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
       );
     }
 
-    // 6. Slide 4: Comparison Table
+    // Slide 4: Comparison Table
     if (slide.comparisonTable) {
       return (
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
           <table className="w-full text-left text-xs sm:text-sm">
             <thead className="bg-slate-100 border-b border-slate-200 font-mono font-bold text-slate-800">
               <tr>
-                <th className="p-3">Process Dimension</th>
-                <th className="p-3 text-rose-700">Before CI/CD (Manual)</th>
-                <th className="p-3 text-emerald-700">After CI/CD (Automated)</th>
+                <th className="p-2.5">Process Dimension</th>
+                <th className="p-2.5 text-rose-700">Before CI/CD (Manual)</th>
+                <th className="p-2.5 text-emerald-700">After CI/CD (Automated)</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {slide.comparisonTable.map((row, idx) => (
                 <tr key={idx} className="hover:bg-slate-50">
-                  <td className="p-3 font-bold text-slate-900">{row.aspect}</td>
-                  <td className="p-3 text-slate-600">{row.before}</td>
-                  <td className="p-3 text-emerald-950 font-semibold">{row.after}</td>
+                  <td className="p-2.5 font-bold text-slate-900">{row.aspect}</td>
+                  <td className="p-2.5 text-slate-600">{row.before}</td>
+                  <td className="p-2.5 text-emerald-950 font-semibold">{row.after}</td>
                 </tr>
               ))}
             </tbody>
@@ -326,45 +286,22 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
       );
     }
 
-    // 7. Slide 5: Three Core Concepts
-    if (slide.concepts) {
-      return (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-          {slide.concepts.map((c, idx) => (
-            <div key={idx} className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between">
-              <div>
-                <span className="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-mono font-bold text-xs inline-block mb-1">
-                  Concept 0{idx + 1}
-                </span>
-                <h4 className="text-base font-black text-slate-950">{c.term}</h4>
-                <p className="text-xs text-blue-700 font-mono font-semibold mb-1.5">{c.purpose}</p>
-                <p className="text-xs text-slate-700 leading-relaxed">{c.desc}</p>
-              </div>
-              <div className="mt-3 pt-2 border-t border-slate-100 text-xs text-amber-900 font-medium">
-                🍔 {c.analogy}
-              </div>
-            </div>
-          ))}
-        </div>
-      );
-    }
-
-    // 8. Slide 8: Tools Table
+    // Slide 8: Tools Table
     if (slide.toolsTable) {
       return (
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
           <table className="w-full text-left text-xs sm:text-sm">
             <thead className="bg-slate-100 border-b border-slate-200 font-mono font-bold text-slate-800">
               <tr>
-                <th className="p-3">Pipeline Stage</th>
-                <th className="p-3 text-blue-700">Industry Standard Tools</th>
+                <th className="p-2.5">Pipeline Stage</th>
+                <th className="p-2.5 text-blue-700">Industry Standard Tools</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {slide.toolsTable.map((t, idx) => (
                 <tr key={idx} className="hover:bg-slate-50">
-                  <td className="p-3 font-bold text-slate-900">{t.stage}</td>
-                  <td className="p-3 text-slate-800 font-medium">{t.tools}</td>
+                  <td className="p-2.5 font-bold text-slate-900">{t.stage}</td>
+                  <td className="p-2.5 text-slate-800 font-medium">{t.tools}</td>
                 </tr>
               ))}
             </tbody>
@@ -373,15 +310,15 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
       );
     }
 
-    // 9. Slide 9: Advantages
+    // Slide 9: Advantages
     if (slide.advantages) {
       return (
         <div className="space-y-2">
           {slide.advantages.map((adv, idx) => (
-            <div key={idx} className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-sm flex items-start gap-3">
-              <Rocket className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+            <div key={idx} className="p-3 rounded-xl bg-white border border-slate-200 shadow-sm flex items-start gap-2.5">
+              <Rocket className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-sm font-bold text-slate-950">{adv.title}</h4>
+                <h4 className="text-xs sm:text-sm font-bold text-slate-950">{adv.title}</h4>
                 <p className="text-xs text-slate-700 mt-0.5">{adv.desc}</p>
               </div>
             </div>
@@ -390,18 +327,18 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
       );
     }
 
-    // 10. Slide 11: Workflow Lifecycle Steps
+    // Slide 11: Workflow Lifecycle Steps
     if (slide.lifecycleSteps) {
       return (
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           {slide.lifecycleSteps.map((st, idx) => (
-            <div key={idx} className="flex items-start gap-3 p-3 rounded-xl bg-white border border-slate-200 shadow-sm">
-              <span className="w-6 h-6 rounded-lg bg-blue-600 text-white font-mono font-bold flex items-center justify-center text-xs shrink-0 mt-0.5">
+            <div key={idx} className="flex items-start gap-2.5 p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm">
+              <span className="w-5 h-5 rounded-md bg-blue-600 text-white font-mono font-bold flex items-center justify-center text-xs shrink-0 mt-0.5">
                 {idx + 1}
               </span>
               <div>
                 <span className="text-xs font-mono font-bold text-blue-700 uppercase block">{st.step}</span>
-                <p className="text-xs sm:text-sm text-slate-800">{st.desc}</p>
+                <p className="text-xs text-slate-800">{st.desc}</p>
               </div>
             </div>
           ))}
@@ -409,19 +346,19 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
       );
     }
 
-    // 11. Slide 12: Code & YAML Explanations
+    // Slide 12: Code & YAML Explanations
     if (slide.code) {
       return (
-        <div className="space-y-3">
-          <div className="rounded-xl border border-slate-300 shadow-sm overflow-hidden max-h-[300px] overflow-y-auto">
+        <div className="space-y-2.5">
+          <div className="rounded-xl border border-slate-300 shadow-sm overflow-hidden max-h-[260px] overflow-y-auto">
             <CodeBlock code={slide.code} language="yaml" />
           </div>
           {slide.explanations && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {slide.explanations.map((exp, idx) => (
-                <div key={idx} className="p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm">
+                <div key={idx} className="p-2 rounded-xl bg-white border border-slate-200 shadow-sm">
                   <span className="text-xs font-mono font-bold text-blue-700 block">{exp.key}</span>
-                  <p className="text-xs text-slate-700 mt-0.5">{exp.desc}</p>
+                  <p className="text-[11px] text-slate-700 mt-0.5">{exp.desc}</p>
                 </div>
               ))}
             </div>
@@ -430,18 +367,18 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
       );
     }
 
-    // 12. Slide 13: Real Execution Flow
+    // Slide 13: Real Execution Flow
     if (slide.steps) {
       return (
         <div className="space-y-2">
           {slide.narrative && (
-            <div className="p-3 rounded-xl bg-blue-50 border border-blue-200 text-xs sm:text-sm font-medium text-slate-800">
+            <div className="p-2.5 rounded-xl bg-blue-50 border border-blue-200 text-xs font-medium text-slate-800">
               {slide.narrative}
             </div>
           )}
           <div className="space-y-1.5">
             {slide.steps.map((st, idx) => (
-              <div key={idx} className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm text-xs sm:text-sm text-slate-800 font-medium">
+              <div key={idx} className="flex items-center gap-2.5 p-2 rounded-xl bg-white border border-slate-200 shadow-sm text-xs text-slate-800 font-medium">
                 <span className="w-5 h-5 rounded-md bg-blue-600 text-white font-mono font-bold flex items-center justify-center text-xs shrink-0">
                   {idx + 1}
                 </span>
@@ -453,10 +390,10 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
       );
     }
 
-    // 13. Slide 20: Summary Mapping & Mastery Philosophy
+    // Slide 20: Summary Mapping & Mastery Philosophy
     if (slide.summaryMapping) {
       return (
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {slide.summaryMapping.map((item, idx) => (
               <div key={idx} className="p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm">
@@ -466,9 +403,9 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
             ))}
           </div>
           {slide.finalPhilosophy && (
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 shadow-sm flex items-start gap-3">
-              <Quote className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
-              <p className="text-xs sm:text-sm text-slate-800 font-medium italic leading-relaxed">
+            <div className="p-3.5 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 shadow-sm flex items-start gap-2.5">
+              <Quote className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+              <p className="text-xs text-slate-800 font-medium italic leading-relaxed">
                 "{slide.finalPhilosophy}"
               </p>
             </div>
@@ -477,10 +414,31 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
       );
     }
 
-    // Fallback: Key Takeaway
+    // Standard Bullet Points (Slide 1, 2, 6, 7, 10, 15, 16, 19)
+    const points = slide.detailedPoints || slide.contentPoints || [];
     return (
-      <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 shadow-sm">
-        <p className={`${bodyTextClass} text-slate-800 font-medium`}>{slide.keyTakeaway}</p>
+      <div className="space-y-2">
+        {points.map((pt, idx) => (
+          <div key={idx} className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200 shadow-sm hover:border-blue-300 transition-colors">
+            <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+            <p className={`${bodyTextClass} text-slate-800 font-medium`}>{pt}</p>
+          </div>
+        ))}
+
+        {/* Slide 15 Docker terms */}
+        {slide.terms && (
+          <div className="mt-2.5 space-y-1.5">
+            <span className="text-xs font-mono font-bold text-slate-700 uppercase block">Key Docker Concepts:</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {slide.terms.map((t, idx) => (
+                <div key={idx} className="p-2 rounded-xl bg-white border border-slate-200 shadow-sm">
+                  <span className="text-xs font-mono font-bold text-blue-700 block">{t.term}</span>
+                  <p className="text-[11px] text-slate-700 mt-0.5">{t.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     );
   };
@@ -654,143 +612,141 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
           ========================================================================= */}
       {slideNum === 0 ? (
         /* ==================== SLIDE 0: TITLE & ROADMAP ==================== */
-        <div className="bg-white border-2 border-slate-200 rounded-3xl p-5 sm:p-8 lg:p-10 shadow-md relative flex flex-col justify-between min-h-[560px]">
-          <div>
-            {/* Header Meta */}
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-5">
-              <div className="flex items-center gap-2">
-                <span className="px-3 py-1 rounded-full font-mono font-bold text-xs bg-blue-50 text-blue-700 border border-blue-200">
-                  COURSE INTRODUCTION & ROADMAP
-                </span>
-                <span className="text-xs font-mono text-slate-500 uppercase tracking-wider font-semibold">
-                  20 Sequential Lessons
-                </span>
-              </div>
-              <span className="text-xs sm:text-sm font-bold text-slate-500 font-mono">
-                Slide 00 of 20
+        <div className="bg-white border-2 border-slate-200 rounded-3xl p-5 sm:p-7 lg:p-8 shadow-md relative flex flex-col">
+          {/* Header Meta */}
+          <div className="flex items-center justify-between border-b border-slate-100 pb-2.5 mb-4">
+            <div className="flex items-center gap-2">
+              <span className="px-3 py-1 rounded-full font-mono font-bold text-xs bg-blue-50 text-blue-700 border border-blue-200">
+                COURSE INTRODUCTION & ROADMAP
+              </span>
+              <span className="text-xs font-mono text-slate-500 uppercase tracking-wider font-semibold">
+                20 Sequential Lessons
               </span>
             </div>
+            <span className="text-xs sm:text-sm font-bold text-slate-500 font-mono">
+              Slide 00 of 20
+            </span>
+          </div>
 
-            {/* Hero Split */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center mb-6">
-              {/* Left Column (6 cols): Title & Bio */}
-              <div className="lg:col-span-6 space-y-4">
-                <div>
-                  <span className="text-xs font-mono font-bold uppercase tracking-wider text-blue-600 block mb-1">
-                    Complete DevOps Curriculum
-                  </span>
-                  <h2 className="text-2xl sm:text-4xl font-black text-slate-950 tracking-tight leading-tight">
-                    CI/CD: From Manual Software Delivery to Full Automation
-                  </h2>
-                  <p className="text-sm sm:text-base text-slate-600 mt-2 leading-relaxed">
-                    Start from zero, understand the pain of traditional manual software releases, master Git & GitHub, discover why we choose GitHub Actions, and build a complete automated cloud pipeline using the universal <strong className="text-amber-800 font-bold">Food Ordering Analogy 🍔</strong>.
-                  </p>
-                </div>
+          {/* Hero Split */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center mb-4">
+            {/* Left Column (6 cols): Title & Bio */}
+            <div className="lg:col-span-6 space-y-3">
+              <div>
+                <span className="text-xs font-mono font-bold uppercase tracking-wider text-blue-600 block mb-1">
+                  Complete DevOps Curriculum
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight leading-tight">
+                  CI/CD: From Manual Software Delivery to Full Automation
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-600 mt-1.5 leading-relaxed">
+                  Start from zero, master Git & GitHub, discover why we choose GitHub Actions, and build a complete automated cloud pipeline using the universal <strong className="text-amber-800 font-bold">Food Ordering Analogy 🍔</strong>.
+                </p>
+              </div>
 
-                {/* Presenter Profile Card */}
-                <div className="bg-gradient-to-br from-slate-50 to-blue-50/50 border border-blue-200 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-xl shadow-md shadow-blue-500/20">
-                      K
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-lg font-black text-slate-950">{PRESENTER_INFO.name}</h3>
-                        <span className="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 font-bold text-[11px] border border-blue-200">
-                          Course Instructor
-                        </span>
-                      </div>
-                      <p className="text-xs sm:text-sm font-bold text-blue-700">
-                        {PRESENTER_INFO.role} at {PRESENTER_INFO.company}
-                      </p>
-                    </div>
+              {/* Presenter Profile Card */}
+              <div className="bg-gradient-to-br from-slate-50 to-blue-50/50 border border-blue-200 rounded-2xl p-3.5 shadow-sm space-y-2.5">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-lg shadow-md shadow-blue-500/20">
+                    K
                   </div>
-
-                  <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-normal">
-                    {PRESENTER_INFO.bio}
-                  </p>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-slate-200/80 text-xs">
-                    <div className="flex items-center gap-2 text-slate-800 font-medium">
-                      <Briefcase className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                      <span>{PRESENTER_INFO.previousRole}</span>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-base font-black text-slate-950">{PRESENTER_INFO.name}</h3>
+                      <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 font-bold text-[10px] border border-blue-200">
+                        Instructor
+                      </span>
                     </div>
-                    <div className="flex items-center gap-2 text-slate-800 font-medium">
-                      <Rocket className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                      <span><strong>{PRESENTER_INFO.venture}</strong> — Cloud Systems</span>
-                    </div>
+                    <p className="text-xs font-bold text-blue-700">
+                      {PRESENTER_INFO.role} at {PRESENTER_INFO.company}
+                    </p>
                   </div>
                 </div>
 
-                {/* 4 Curriculum Parts (Interactive) */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
-                  <button
-                    onClick={() => setSlideNum(1)}
-                    className="p-2.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-center shadow-sm transition-all text-left group"
-                  >
-                    <span className="text-[11px] font-mono font-bold text-blue-700 block group-hover:underline">Part 1 (S1-5)</span>
-                    <span className="text-xs text-slate-800 font-semibold block leading-tight">Why CI/CD</span>
-                  </button>
-                  <button
-                    onClick={() => setSlideNum(6)}
-                    className="p-2.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-center shadow-sm transition-all text-left group"
-                  >
-                    <span className="text-[11px] font-mono font-bold text-blue-700 block group-hover:underline">Part 2 (S6-8)</span>
-                    <span className="text-xs text-slate-800 font-semibold block leading-tight">Git & GitHub</span>
-                  </button>
-                  <button
-                    onClick={() => setSlideNum(9)}
-                    className="p-2.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-center shadow-sm transition-all text-left group"
-                  >
-                    <span className="text-[11px] font-mono font-bold text-blue-700 block group-hover:underline">Part 3 (S9-13)</span>
-                    <span className="text-xs text-slate-800 font-semibold block leading-tight">Actions Mastery</span>
-                  </button>
-                  <button
-                    onClick={() => setSlideNum(14)}
-                    className="p-2.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-center shadow-sm transition-all text-left group"
-                  >
-                    <span className="text-[11px] font-mono font-bold text-blue-700 block group-hover:underline">Part 4 (S14-20)</span>
-                    <span className="text-xs text-slate-800 font-semibold block leading-tight">Docker & AWS</span>
-                  </button>
+                <p className="text-xs text-slate-700 leading-relaxed font-normal">
+                  {PRESENTER_INFO.bio}
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-slate-200/80 text-xs">
+                  <div className="flex items-center gap-2 text-slate-800 font-medium">
+                    <Briefcase className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                    <span>{PRESENTER_INFO.previousRole}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-slate-800 font-medium">
+                    <Rocket className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                    <span><strong>{PRESENTER_INFO.venture}</strong></span>
+                  </div>
                 </div>
               </div>
 
-              {/* Right Column (6 cols): Embedded DevOps Pipeline Illustration */}
-              <div className="lg:col-span-6 flex flex-col items-center">
-                <div
-                  className="w-full rounded-2xl overflow-hidden border-2 border-slate-200 shadow-md bg-white p-3 cursor-pointer group transition-all hover:border-blue-400"
-                  onClick={() => setEnlargedImage('/devops_cicd_intro.jpg')}
-                  title="Click to view full screen"
+              {/* 4 Curriculum Parts (Interactive) */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <button
+                  onClick={() => setSlideNum(1)}
+                  className="p-2 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-left transition-all"
                 >
-                  <div className="relative overflow-hidden rounded-xl bg-slate-50 flex items-center justify-center">
-                    <img
-                      src="/devops_cicd_intro.jpg"
-                      alt="DevOps CI/CD Pipeline Automation Illustration"
-                      className="w-full h-auto min-h-[280px] sm:min-h-[360px] max-h-[440px] rounded-xl object-cover group-hover:scale-101 transition-transform duration-300"
-                    />
-                    <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-sm text-white text-xs font-mono font-bold flex items-center gap-1.5 opacity-90 group-hover:opacity-100 transition-opacity">
-                      <Maximize2 className="w-3.5 h-3.5 text-white" />
-                      <span>Enlarge</span>
-                    </div>
+                  <span className="text-[10px] font-mono font-bold text-blue-700 block">Part 1 (S1-5)</span>
+                  <span className="text-xs text-slate-800 font-semibold block truncate">Why CI/CD</span>
+                </button>
+                <button
+                  onClick={() => setSlideNum(6)}
+                  className="p-2 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-left transition-all"
+                >
+                  <span className="text-[10px] font-mono font-bold text-blue-700 block">Part 2 (S6-8)</span>
+                  <span className="text-xs text-slate-800 font-semibold block truncate">Git & GitHub</span>
+                </button>
+                <button
+                  onClick={() => setSlideNum(9)}
+                  className="p-2 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-left transition-all"
+                >
+                  <span className="text-[10px] font-mono font-bold text-blue-700 block">Part 3 (S9-13)</span>
+                  <span className="text-xs text-slate-800 font-semibold block truncate">Actions</span>
+                </button>
+                <button
+                  onClick={() => setSlideNum(14)}
+                  className="p-2 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-left transition-all"
+                >
+                  <span className="text-[10px] font-mono font-bold text-blue-700 block">Part 4 (S14-20)</span>
+                  <span className="text-xs text-slate-800 font-semibold block truncate">Docker & AWS</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Right Column (6 cols): Embedded DevOps Pipeline Illustration */}
+            <div className="lg:col-span-6 flex flex-col items-center">
+              <div
+                className="w-full rounded-2xl overflow-hidden border-2 border-slate-200 shadow-md bg-white p-2.5 cursor-pointer group transition-all hover:border-blue-400"
+                onClick={() => setEnlargedImage('/devops_cicd_intro.jpg')}
+                title="Click to view full screen"
+              >
+                <div className="relative overflow-hidden rounded-xl bg-slate-50 flex items-center justify-center">
+                  <img
+                    src="/devops_cicd_intro.jpg"
+                    alt="DevOps CI/CD Pipeline Automation Illustration"
+                    className="w-full h-auto min-h-[220px] sm:min-h-[280px] max-h-[360px] rounded-xl object-cover group-hover:scale-101 transition-transform duration-300"
+                  />
+                  <div className="absolute top-2.5 right-2.5 px-2 py-1 rounded-lg bg-black/60 backdrop-blur-sm text-white text-xs font-mono font-bold flex items-center gap-1 opacity-90 group-hover:opacity-100 transition-opacity">
+                    <Maximize2 className="w-3 h-3 text-white" />
+                    <span>Enlarge</span>
                   </div>
-                  <div className="p-2 text-center bg-slate-50 rounded-lg mt-2 border border-slate-200">
-                    <span className="text-xs font-mono font-bold text-slate-900 block">
-                      ⚙️ DevOps Automated Assembly Line: Git Commit ➔ Tests ➔ Docker ➔ AWS
-                    </span>
-                  </div>
+                </div>
+                <div className="p-2 text-center bg-slate-50 rounded-lg mt-2 border border-slate-200">
+                  <span className="text-xs font-mono font-bold text-slate-900 block">
+                    ⚙️ DevOps Automated Assembly Line: Git Commit ➔ Tests ➔ Docker ➔ AWS
+                  </span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Bottom Action Bar for Slide 0 */}
-          <div className="pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <span className="text-xs sm:text-sm font-mono text-slate-500">
+          <div className="pt-3 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-2.5 mt-2">
+            <span className="text-xs font-mono text-slate-500">
               Press <kbd className="px-1.5 py-0.5 rounded border border-slate-300 bg-slate-100 font-sans font-bold text-slate-800">Space</kbd> or <kbd className="px-1.5 py-0.5 rounded border border-slate-300 bg-slate-100 font-sans font-bold text-slate-800">→</kbd> to begin
             </span>
             <button
               onClick={() => setSlideNum(1)}
-              className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-black text-sm sm:text-base rounded-xl shadow-md shadow-blue-500/25 transition-all hover:scale-102"
+              className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-black text-sm rounded-xl shadow-md shadow-blue-500/25 transition-all hover:scale-102"
             >
               <span>Begin Masterclass (Slide 1)</span>
               <ArrowRight className="w-4 h-4" />
@@ -799,108 +755,178 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
         </div>
       ) : (
         /* ==================== SLIDES 1 TO 20: MASTERCLASS LESSON SLIDES ==================== */
-        <div className="bg-white border-2 border-slate-200 rounded-3xl p-5 sm:p-7 lg:p-8 shadow-md relative flex flex-col justify-between min-h-[560px]">
-          <div>
-            {/* Slide Header: Phase & Slide Counter */}
-            <div className="flex flex-wrap items-center justify-between gap-2.5 border-b border-slate-100 pb-3 mb-4">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="px-3 py-1 rounded-full font-mono font-bold text-xs bg-blue-50 text-blue-700 border border-blue-200 shadow-sm">
-                  SLIDE {currentSlide!.num < 10 ? `0${currentSlide!.num}` : currentSlide!.num} OF 20
-                </span>
-                <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-600">
-                  {currentSlide!.category}
-                </span>
-                {currentSlide!.num === 16 && (
-                  <span className="px-2.5 py-0.5 rounded-full font-mono font-bold text-xs bg-amber-100 text-amber-900 border border-amber-300 flex items-center gap-1 shadow-sm">
-                    <Cloud className="w-3 h-3 text-amber-700" />
-                    <span>AWS Cloud Platform</span>
-                  </span>
-                )}
-                {currentSlide!.num === 19 && (
-                  <span className="px-2.5 py-0.5 rounded-full font-mono font-bold text-xs bg-emerald-100 text-emerald-900 border border-emerald-300 flex items-center gap-1 shadow-sm">
-                    <Rocket className="w-3 h-3 text-emerald-700" />
-                    <span>AWS Hands-On Lab</span>
-                  </span>
-                )}
-              </div>
-              <span className="text-xs font-mono font-semibold px-3 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
-                CI/CD Masterclass
+        <div className="bg-white border-2 border-slate-200 rounded-3xl p-5 sm:p-7 lg:p-8 shadow-md relative flex flex-col">
+          {/* Slide Header: Phase & Slide Counter */}
+          <div className="flex flex-wrap items-center justify-between gap-2.5 border-b border-slate-100 pb-2.5 mb-3.5">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="px-3 py-1 rounded-full font-mono font-bold text-xs bg-blue-50 text-blue-700 border border-blue-200 shadow-sm">
+                SLIDE {currentSlide!.num < 10 ? `0${currentSlide!.num}` : currentSlide!.num} OF 20
               </span>
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-600">
+                {currentSlide!.category}
+              </span>
+              {currentSlide!.num === 16 && (
+                <span className="px-2.5 py-0.5 rounded-full font-mono font-bold text-xs bg-amber-100 text-amber-900 border border-amber-300 flex items-center gap-1 shadow-sm">
+                  <Cloud className="w-3 h-3 text-amber-700" />
+                  <span>AWS Cloud Platform</span>
+                </span>
+              )}
+              {currentSlide!.num === 19 && (
+                <span className="px-2.5 py-0.5 rounded-full font-mono font-bold text-xs bg-emerald-100 text-emerald-900 border border-emerald-300 flex items-center gap-1 shadow-sm">
+                  <Rocket className="w-3 h-3 text-emerald-700" />
+                  <span>AWS Hands-On Lab</span>
+                </span>
+              )}
             </div>
+            <span className="text-xs font-mono font-semibold px-3 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+              CI/CD Masterclass
+            </span>
+          </div>
 
-            {/* Title & Subtitle */}
-            <div className="mb-4">
-              <h2 className={`${headingTextClass} text-slate-950 tracking-tight leading-tight`}>
-                {currentSlide!.title}
-              </h2>
-              <p className="text-sm sm:text-base text-slate-600 mt-1 font-medium leading-relaxed">
-                {currentSlide!.subtitle}
-              </p>
-            </div>
+          {/* Title & Subtitle */}
+          <div className="mb-3.5">
+            <h2 className={`${headingTextClass} text-slate-950 tracking-tight leading-tight`}>
+              {currentSlide!.title}
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-600 mt-1 font-medium leading-relaxed">
+              {currentSlide!.subtitle}
+            </p>
+          </div>
 
-            {/* =========================================================================
-                SLIDE BODY: 3 ADAPTIVE VIEW MODES
-                ========================================================================= */}
-            {viewMode === 'diagram' ? (
-              /* VIEW MODE 1: FULL DIAGRAM FOCUS */
-              <div className="space-y-4 mb-4">
-                <div className="w-full rounded-2xl overflow-hidden border-2 border-blue-300 shadow-xl bg-white p-3">
-                  <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100 flex-wrap gap-2">
-                    <div className="flex items-center gap-2 text-blue-700 font-bold text-xs sm:text-sm uppercase font-mono">
-                      <Layers className="w-4 h-4 text-blue-600" />
-                      <span>Architecture Diagram (Full View)</span>
-                      <span className="text-slate-400">•</span>
-                      <span className="text-slate-700 normal-case">{currentSlide!.imageCaption}</span>
-                    </div>
-                    <button
-                      onClick={() => {
-                        setEnlargedImage(currentSlide!.image!);
-                        setZoomLevel(1);
-                      }}
-                      className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-mono font-bold shadow-sm transition-all"
-                    >
-                      <ZoomIn className="w-3.5 h-3.5 text-white" />
-                      <span>Zoom Lightbox</span>
-                    </button>
+          {/* =========================================================================
+              SLIDE BODY: 3 ADAPTIVE VIEW MODES
+              ========================================================================= */}
+          {viewMode === 'diagram' ? (
+            /* VIEW MODE 1: FULL DIAGRAM FOCUS */
+            <div className="space-y-3 mb-3.5">
+              <div className="w-full rounded-2xl overflow-hidden border-2 border-blue-300 shadow-xl bg-white p-3">
+                <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100 flex-wrap gap-2">
+                  <div className="flex items-center gap-2 text-blue-700 font-bold text-xs sm:text-sm uppercase font-mono">
+                    <Layers className="w-4 h-4 text-blue-600" />
+                    <span>Architecture Diagram (Full View)</span>
+                    <span className="text-slate-400">•</span>
+                    <span className="text-slate-700 normal-case">{currentSlide!.imageCaption}</span>
                   </div>
-
-                  <div
-                    className="relative overflow-hidden rounded-xl bg-slate-50 flex items-center justify-center p-2 cursor-pointer group"
+                  <button
                     onClick={() => {
                       setEnlargedImage(currentSlide!.image!);
                       setZoomLevel(1);
                     }}
+                    className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-mono font-bold shadow-sm transition-all"
                   >
-                    <img
-                      src={currentSlide!.image}
-                      alt={currentSlide!.title}
-                      className="w-full h-auto min-h-[340px] sm:min-h-[460px] max-h-[640px] rounded-xl object-contain group-hover:scale-101 transition-transform duration-300"
-                    />
-                    <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-sm text-white text-xs font-mono font-bold flex items-center gap-1.5 opacity-90 group-hover:opacity-100 transition-opacity">
-                      <Maximize2 className="w-3.5 h-3.5 text-white" />
-                      <span>Click to Zoom</span>
-                    </div>
+                    <ZoomIn className="w-3.5 h-3.5 text-white" />
+                    <span>Zoom Lightbox</span>
+                  </button>
+                </div>
+
+                <div
+                  className="relative overflow-hidden rounded-xl bg-slate-50 flex items-center justify-center p-2 cursor-pointer group"
+                  onClick={() => {
+                    setEnlargedImage(currentSlide!.image!);
+                    setZoomLevel(1);
+                  }}
+                >
+                  <img
+                    src={currentSlide!.image}
+                    alt={currentSlide!.title}
+                    className="w-full h-auto min-h-[300px] sm:min-h-[420px] max-h-[580px] rounded-xl object-contain group-hover:scale-101 transition-transform duration-300"
+                  />
+                  <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-sm text-white text-xs font-mono font-bold flex items-center gap-1.5 opacity-90 group-hover:opacity-100 transition-opacity">
+                    <Maximize2 className="w-3.5 h-3.5 text-white" />
+                    <span>Click to Zoom</span>
                   </div>
                 </div>
               </div>
-            ) : viewMode === 'content' ? (
-              /* VIEW MODE 2: FULL CONTENT FOCUS (12-COL READING MODE) */
-              <div className="space-y-4 mb-4">
-                {renderSlidePrimaryContent(currentSlide!)}
+            </div>
+          ) : viewMode === 'content' ? (
+            /* VIEW MODE 2: FULL CONTENT FOCUS (12-COL READING MODE) */
+            <div className="space-y-3 mb-3.5">
+              {renderSlidePrimaryContent(currentSlide!)}
 
-                {/* Food Analogy Card */}
-                {currentSlide!.foodAnalogy && (
-                  <div className="p-4 rounded-2xl bg-amber-50/80 border-2 border-amber-200 shadow-sm">
-                    <div className="flex items-center gap-2 text-amber-950 font-black text-base mb-1.5">
+              {/* Food Analogy Card */}
+              {currentSlide!.foodAnalogy && (
+                <div className="p-3.5 rounded-2xl bg-amber-50/80 border-2 border-amber-200 shadow-sm">
+                  <div className="flex items-center gap-2 text-amber-950 font-black text-sm mb-1">
+                    <UtensilsCrossed className="w-4 h-4 text-amber-600" />
+                    <span>{currentSlide!.foodAnalogy.title}</span>
+                  </div>
+                  <p className={`${bodyTextClass} text-slate-800 leading-relaxed mb-2`}>
+                    {currentSlide!.foodAnalogy.story}
+                  </p>
+                  {currentSlide!.foodAnalogy.connection && (
+                    <div className="p-2.5 rounded-xl bg-white border border-amber-200 shadow-sm">
+                      <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                        <strong className="text-amber-950">Software Connection:</strong> {currentSlide!.foodAnalogy.connection}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          ) : (
+            /* VIEW MODE 3: SPLIT VIEW WITH CONVENIENT CONTENT TABS */
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start mb-3.5">
+              {/* Left Side (6 cols): Primary Content & Analogy Tabs */}
+              <div className="lg:col-span-6 space-y-2.5 flex flex-col justify-between">
+                {/* Content Section Tabs */}
+                {hasFoodAnalogy && (
+                  <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs font-bold">
+                    <button
+                      onClick={() => setActiveTab('primary')}
+                      className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all shrink-0 ${
+                        activeTab === 'primary'
+                          ? 'bg-white text-blue-700 shadow-sm'
+                          : 'text-slate-600 hover:text-slate-900'
+                      }`}
+                    >
+                      <ListChecks className="w-3.5 h-3.5" />
+                      <span>Core Blueprint</span>
+                    </button>
+
+                    <button
+                      onClick={() => setActiveTab('analogy')}
+                      className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all shrink-0 ${
+                        activeTab === 'analogy'
+                          ? 'bg-amber-400 text-slate-950 shadow-sm font-black'
+                          : 'text-amber-900 hover:bg-amber-100/60'
+                      }`}
+                    >
+                      <UtensilsCrossed className="w-3.5 h-3.5" />
+                      <span>Food Analogy</span>
+                    </button>
+
+                    <button
+                      onClick={() => setActiveTab('all')}
+                      className={`px-2.5 py-1.5 rounded-lg transition-all shrink-0 text-slate-500 hover:text-slate-900 ${
+                        activeTab === 'all' ? 'bg-white text-slate-900 shadow-sm font-bold' : ''
+                      }`}
+                      title="View all content sections combined"
+                    >
+                      All
+                    </button>
+                  </div>
+                )}
+
+                {/* Tab 1: Primary Rich Content */}
+                {(activeTab === 'primary' || activeTab === 'all') && (
+                  <div className="animate-fadeIn">
+                    {renderSlidePrimaryContent(currentSlide!)}
+                  </div>
+                )}
+
+                {/* Tab 2: Food Analogy */}
+                {(activeTab === 'analogy' || activeTab === 'all') && currentSlide!.foodAnalogy && (
+                  <div className="p-3.5 rounded-2xl bg-amber-50/80 border-2 border-amber-200 shadow-sm animate-fadeIn">
+                    <div className="flex items-center gap-2 text-amber-950 font-black text-sm mb-1.5">
                       <UtensilsCrossed className="w-4 h-4 text-amber-600" />
                       <span>{currentSlide!.foodAnalogy.title}</span>
                     </div>
-                    <p className={`${bodyTextClass} text-slate-800 leading-relaxed mb-2`}>
+                    <p className="text-xs sm:text-sm text-slate-800 leading-relaxed mb-2 font-normal">
                       {currentSlide!.foodAnalogy.story}
                     </p>
                     {currentSlide!.foodAnalogy.connection && (
-                      <div className="p-2.5 rounded-xl bg-white border border-amber-200 shadow-sm">
-                        <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                      <div className="p-2 rounded-xl bg-white border border-amber-200 shadow-sm">
+                        <p className="text-xs text-slate-700 leading-relaxed font-medium">
                           <strong className="text-amber-950">Software Connection:</strong> {currentSlide!.foodAnalogy.connection}
                         </p>
                       </div>
@@ -908,143 +934,71 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                   </div>
                 )}
               </div>
-            ) : (
-              /* VIEW MODE 3: SPLIT VIEW WITH CONVENIENT CONTENT TABS */
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start mb-4">
-                {/* Left Side (6 cols): Primary Content & Analogy Tabs */}
-                <div className="lg:col-span-6 space-y-2.5 flex flex-col justify-between">
-                  {/* Content Section Tabs */}
-                  {hasFoodAnalogy && (
-                    <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs font-bold">
-                      <button
-                        onClick={() => setActiveTab('primary')}
-                        className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all shrink-0 ${
-                          activeTab === 'primary'
-                            ? 'bg-white text-blue-700 shadow-sm'
-                            : 'text-slate-600 hover:text-slate-900'
-                        }`}
-                      >
-                        <ListChecks className="w-3.5 h-3.5" />
-                        <span>Core Blueprint</span>
-                      </button>
 
+              {/* Right Side (6 cols): Architecture Diagram Image */}
+              <div className="lg:col-span-6 flex flex-col items-center space-y-2">
+                <div
+                  className="w-full rounded-2xl overflow-hidden border-2 border-slate-200 shadow-md bg-white p-2.5 cursor-pointer group transition-all hover:border-blue-400"
+                  onClick={() => {
+                    setEnlargedImage(currentSlide!.image!);
+                    setZoomLevel(1);
+                  }}
+                  title="Click to view full screen"
+                >
+                  <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-100">
+                    <div className="flex items-center gap-1.5 text-blue-700 font-bold text-xs uppercase font-mono">
+                      <Layers className="w-3.5 h-3.5" />
+                      <span>Architecture Diagram</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
                       <button
-                        onClick={() => setActiveTab('analogy')}
-                        className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all shrink-0 ${
-                          activeTab === 'analogy'
-                            ? 'bg-amber-400 text-slate-950 shadow-sm font-black'
-                            : 'text-amber-900 hover:bg-amber-100/60'
-                        }`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setViewMode('diagram');
+                        }}
+                        className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-mono font-bold transition-all"
                       >
-                        <UtensilsCrossed className="w-3.5 h-3.5" />
-                        <span>Food Analogy</span>
-                      </button>
-
-                      <button
-                        onClick={() => setActiveTab('all')}
-                        className={`px-2.5 py-1.5 rounded-lg transition-all shrink-0 text-slate-500 hover:text-slate-900 ${
-                          activeTab === 'all' ? 'bg-white text-slate-900 shadow-sm font-bold' : ''
-                        }`}
-                        title="View all content sections combined"
-                      >
-                        All
+                        <Maximize2 className="w-3 h-3" />
+                        <span>Full Width</span>
                       </button>
                     </div>
-                  )}
+                  </div>
 
-                  {/* Tab 1: Primary Rich Content */}
-                  {(activeTab === 'primary' || activeTab === 'all') && (
-                    <div className="animate-fadeIn">
-                      {renderSlidePrimaryContent(currentSlide!)}
+                  <div className="relative overflow-hidden rounded-xl bg-slate-50 flex items-center justify-center p-2">
+                    <img
+                      src={currentSlide!.image}
+                      alt={currentSlide!.title}
+                      className="w-full h-auto min-h-[220px] sm:min-h-[280px] max-h-[380px] rounded-xl object-contain group-hover:scale-101 transition-transform duration-300"
+                    />
+                    <div className="absolute top-2.5 right-2.5 px-2 py-1 rounded-lg bg-black/60 backdrop-blur-sm text-white text-xs font-mono font-bold flex items-center gap-1 opacity-90 group-hover:opacity-100 transition-opacity">
+                      <Maximize2 className="w-3 h-3 text-white" />
+                      <span>Enlarge</span>
                     </div>
-                  )}
+                  </div>
 
-                  {/* Tab 2: Food Analogy */}
-                  {(activeTab === 'analogy' || activeTab === 'all') && currentSlide!.foodAnalogy && (
-                    <div className="p-3.5 rounded-2xl bg-amber-50/80 border-2 border-amber-200 shadow-sm animate-fadeIn">
-                      <div className="flex items-center gap-2 text-amber-950 font-black text-sm mb-1.5">
-                        <UtensilsCrossed className="w-4 h-4 text-amber-600" />
-                        <span>{currentSlide!.foodAnalogy.title}</span>
-                      </div>
-                      <p className="text-xs sm:text-sm text-slate-800 leading-relaxed mb-2 font-normal">
-                        {currentSlide!.foodAnalogy.story}
-                      </p>
-                      {currentSlide!.foodAnalogy.connection && (
-                        <div className="p-2 rounded-xl bg-white border border-amber-200 shadow-sm">
-                          <p className="text-xs text-slate-700 leading-relaxed font-medium">
-                            <strong className="text-amber-950">Software Connection:</strong> {currentSlide!.foodAnalogy.connection}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                {/* Right Side (6 cols): Architecture Diagram Image */}
-                <div className="lg:col-span-6 flex flex-col items-center space-y-2">
-                  <div
-                    className="w-full rounded-2xl overflow-hidden border-2 border-slate-200 shadow-md bg-white p-2.5 cursor-pointer group transition-all hover:border-blue-400"
-                    onClick={() => {
-                      setEnlargedImage(currentSlide!.image!);
-                      setZoomLevel(1);
-                    }}
-                    title="Click to view full screen"
-                  >
-                    <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-100">
-                      <div className="flex items-center gap-1.5 text-blue-700 font-bold text-xs uppercase font-mono">
-                        <Layers className="w-3.5 h-3.5" />
-                        <span>Architecture Diagram</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setViewMode('diagram');
-                          }}
-                          className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-mono font-bold transition-all"
-                        >
-                          <Maximize2 className="w-3 h-3" />
-                          <span>Full Width</span>
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="relative overflow-hidden rounded-xl bg-slate-50 flex items-center justify-center p-2">
-                      <img
-                        src={currentSlide!.image}
-                        alt={currentSlide!.title}
-                        className="w-full h-auto min-h-[260px] sm:min-h-[340px] max-h-[460px] rounded-xl object-contain group-hover:scale-101 transition-transform duration-300"
-                      />
-                      <div className="absolute top-2.5 right-2.5 px-2 py-1 rounded-lg bg-black/60 backdrop-blur-sm text-white text-xs font-mono font-bold flex items-center gap-1 opacity-90 group-hover:opacity-100 transition-opacity">
-                        <Maximize2 className="w-3 h-3 text-white" />
-                        <span>Enlarge</span>
-                      </div>
-                    </div>
-
-                    <div className="p-2 bg-slate-50 rounded-xl mt-2 border border-slate-200">
-                      <p className="text-xs font-mono text-slate-800 leading-relaxed font-semibold">
-                        {currentSlide!.imageCaption}
-                      </p>
-                    </div>
+                  <div className="p-2 bg-slate-50 rounded-xl mt-2 border border-slate-200">
+                    <p className="text-xs font-mono text-slate-800 leading-relaxed font-semibold">
+                      {currentSlide!.imageCaption}
+                    </p>
                   </div>
                 </div>
               </div>
-            )}
+            </div>
+          )}
 
-            {/* Bottom Key Takeaway Banner */}
-            <div className="p-3 sm:p-3.5 rounded-xl bg-emerald-50 border-2 border-emerald-300 flex items-center gap-2.5 shadow-sm">
-              <span className="text-lg sm:text-xl shrink-0">💡</span>
-              <div className="text-xs sm:text-sm text-emerald-950 font-bold leading-relaxed">
-                <strong className="text-emerald-900 font-black uppercase tracking-wider text-xs block sm:inline mr-2">Key Takeaway:</strong>
-                {currentSlide!.keyTakeaway}
-              </div>
+          {/* Bottom Key Takeaway Banner */}
+          <div className="p-3 rounded-xl bg-emerald-50 border-2 border-emerald-300 flex items-center gap-2.5 shadow-sm mt-1">
+            <span className="text-lg shrink-0">💡</span>
+            <div className="text-xs sm:text-sm text-emerald-950 font-bold leading-relaxed">
+              <strong className="text-emerald-900 font-black uppercase tracking-wider text-xs block sm:inline mr-2">Key Takeaway:</strong>
+              {currentSlide!.keyTakeaway}
             </div>
           </div>
 
           {/* =========================================================================
-              UNIFIED BOTTOM DECK NAVIGATION DOCK WITH AUTO-SCROLLING 00-20 SCRUBBER
+              UNIFIED BOTTOM DECK NAVIGATION DOCK (CONSISTENT POSITION & AUTO-SCROLL)
               ========================================================================= */}
-          <div className="pt-4 border-t border-slate-200 mt-5 flex flex-col md:flex-row items-center justify-between gap-3">
+          <div className="pt-3.5 border-t border-slate-200 mt-4 flex flex-col md:flex-row items-center justify-between gap-3">
             {/* Left: Previous Button & Progress Bar */}
             <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
               <button
