@@ -9,9 +9,7 @@ import {
   ArrowRight, 
   Clock, 
   Sparkles, 
-  Share2, 
   CheckCircle2,
-  Layers,
   ChevronRight
 } from 'lucide-react';
 
@@ -66,7 +64,7 @@ export const LessonPage: React.FC<LessonPageProps> = ({
   };
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-[calc(100vh-4rem)]" ref={contentTopRef}>
+    <div className="flex flex-col lg:flex-row min-h-[calc(100vh-4rem)] bg-[#f8fafc]" ref={contentTopRef}>
       {/* Course Sidebar */}
       <Sidebar
         currentLessonSlug={currentLessonSlug}
@@ -80,30 +78,30 @@ export const LessonPage: React.FC<LessonPageProps> = ({
       {/* Main Lesson Content Area */}
       <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-8 py-8 w-full overflow-hidden">
         {/* Breadcrumb Navigation */}
-        <div className="flex items-center gap-2 text-xs text-slate-400 mb-6 flex-wrap">
-          <button onClick={onBackToOverview} className="hover:text-cyan-400 transition-colors">
+        <div className="flex items-center gap-2 text-xs text-slate-500 mb-6 flex-wrap font-medium">
+          <button onClick={onBackToOverview} className="hover:text-blue-600 transition-colors">
             Course Home
           </button>
-          <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
-          <span className="text-cyan-400 font-mono font-medium">
+          <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+          <span className="text-blue-700 font-mono font-bold">
             Module {lesson.module}: {moduleInfo?.title}
           </span>
-          <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
-          <span className="text-slate-200 font-medium truncate">Lesson {lesson.id}</span>
+          <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+          <span className="text-slate-900 font-bold truncate">Lesson {lesson.id}</span>
         </div>
 
         {/* Lesson Header */}
-        <header className="pb-8 border-b border-cyan-500/15 mb-8">
+        <header className="pb-8 border-b border-slate-200 mb-8">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-cyan-950/80 text-cyan-300 border border-cyan-500/30">
+              <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-blue-50 text-blue-700 border border-blue-200 shadow-xs">
                 Lesson {lesson.id < 10 ? `0${lesson.id}` : lesson.id} of 20
               </span>
-              <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-900 text-slate-400 border border-slate-800 flex items-center gap-1">
-                <Clock className="w-3 h-3 text-cyan-400" />
+              <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white text-slate-700 border border-slate-200 flex items-center gap-1 shadow-xs">
+                <Clock className="w-3 h-3 text-blue-600" />
                 {lesson.duration}
               </span>
-              <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-blue-950/40 text-blue-300 border border-blue-500/30">
+              <span className="px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 shadow-xs">
                 {lesson.difficulty}
               </span>
             </div>
@@ -112,10 +110,10 @@ export const LessonPage: React.FC<LessonPageProps> = ({
             <div className="flex items-center gap-2">
               <button
                 onClick={() => onToggleBookmark(lesson.id)}
-                className={`p-2 rounded-xl border text-xs flex items-center gap-1.5 transition-colors ${
+                className={`p-2.5 rounded-xl border text-xs flex items-center gap-1.5 transition-colors shadow-xs ${
                   isBookmarked
-                    ? 'bg-amber-950/50 border-amber-500/40 text-amber-300'
-                    : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
+                    ? 'bg-amber-50 border-amber-300 text-amber-700'
+                    : 'bg-white border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                 }`}
                 title={isBookmarked ? 'Remove bookmark' : 'Bookmark lesson'}
               >
@@ -124,10 +122,10 @@ export const LessonPage: React.FC<LessonPageProps> = ({
 
               <button
                 onClick={() => onToggleComplete(lesson.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-md ${
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-xs ${
                   isCompleted
-                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30'
-                    : 'bg-gradient-to-r from-cyan-500 to-blue-500 text-slate-950 hover:from-cyan-400 hover:to-blue-400 shadow-cyan-500/20'
+                    ? 'bg-emerald-50 text-emerald-800 border border-emerald-300 hover:bg-emerald-100'
+                    : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-blue-500/20'
                 }`}
               >
                 <Check className="w-4 h-4 stroke-[3]" />
@@ -136,10 +134,10 @@ export const LessonPage: React.FC<LessonPageProps> = ({
             </div>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-black text-slate-100 tracking-tight leading-tight">
+          <h1 className="text-3xl sm:text-4xl font-black text-slate-950 tracking-tight leading-tight">
             {lesson.title}
           </h1>
-          <p className="mt-2 text-base sm:text-lg text-slate-400 leading-relaxed font-normal">
+          <p className="mt-2 text-base sm:text-lg text-slate-600 leading-relaxed font-normal">
             {lesson.subtitle}
           </p>
 
@@ -148,7 +146,7 @@ export const LessonPage: React.FC<LessonPageProps> = ({
             {lesson.tags.map((tag) => (
               <span
                 key={tag}
-                className="text-[11px] font-mono bg-slate-900/90 text-slate-400 border border-slate-800 px-2 py-0.5 rounded-md"
+                className="text-[11px] font-mono font-semibold bg-white text-slate-700 border border-slate-200 px-2.5 py-1 rounded-lg shadow-xs"
               >
                 #{tag}
               </span>
@@ -169,16 +167,16 @@ export const LessonPage: React.FC<LessonPageProps> = ({
         </div>
 
         {/* Bottom Navigation Controls */}
-        <div className="mt-14 pt-8 border-t border-cyan-500/15 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="mt-14 pt-8 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
           {prevLesson ? (
             <button
               onClick={() => onSelectLesson(prevLesson.slug)}
-              className="w-full sm:w-auto flex items-center gap-2 px-4 py-3 bg-slate-900/80 hover:bg-slate-800 text-slate-300 rounded-xl border border-slate-800 hover:border-slate-700 text-xs font-semibold transition-all"
+              className="w-full sm:w-auto flex items-center gap-3 px-5 py-3 bg-white hover:bg-slate-50 text-slate-800 rounded-xl border border-slate-200 hover:border-slate-300 text-xs font-bold transition-all shadow-xs"
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-4 h-4 text-blue-600" />
               <div className="text-left">
-                <span className="block text-[10px] text-slate-500 uppercase font-mono">Previous</span>
-                <span className="truncate max-w-[180px] block">{prevLesson.title}</span>
+                <span className="block text-[10px] text-slate-500 uppercase font-mono">Previous Lesson</span>
+                <span className="truncate max-w-[200px] block text-slate-900">{prevLesson.title}</span>
               </div>
             </button>
           ) : (
@@ -188,10 +186,10 @@ export const LessonPage: React.FC<LessonPageProps> = ({
           {nextLesson ? (
             <button
               onClick={handleNextWithComplete}
-              className="w-full sm:w-auto flex items-center gap-3 px-6 py-3.5 bg-gradient-to-r from-cyan-500 to-blue-500 text-slate-950 rounded-xl font-bold text-sm hover:from-cyan-400 hover:to-blue-400 shadow-lg shadow-cyan-500/25 transition-all"
+              className="w-full sm:w-auto flex items-center gap-3 px-6 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-bold text-sm hover:from-blue-700 hover:to-indigo-700 shadow-md shadow-blue-500/20 transition-all"
             >
               <div className="text-left">
-                <span className="block text-[10px] text-slate-900 uppercase font-mono font-semibold">
+                <span className="block text-[10px] text-blue-100 uppercase font-mono font-semibold">
                   Complete & Next
                 </span>
                 <span className="truncate max-w-[220px] block">{nextLesson.title}</span>
@@ -204,7 +202,7 @@ export const LessonPage: React.FC<LessonPageProps> = ({
                 if (!isCompleted) onToggleComplete(lesson.id);
                 onBackToOverview();
               }}
-              className="w-full sm:w-auto flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-bold text-sm rounded-xl hover:from-emerald-400 hover:to-teal-400 shadow-lg shadow-emerald-500/25 transition-all"
+              className="w-full sm:w-auto flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-sm rounded-xl hover:from-emerald-700 hover:to-teal-700 shadow-lg shadow-emerald-500/25 transition-all"
             >
               <Sparkles className="w-4 h-4" />
               <span>Finish Course & Claim Certificate!</span>

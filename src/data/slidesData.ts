@@ -161,7 +161,9 @@ export const MASTER_SLIDES_DATA: MasterSlide[] = [
       "story": "Initially, a diner used paper slips and shoutouts. Over time, restaurants introduced digital point-of-sale systems, kitchen display screens, automated order tracking, and drone delivery.",
       "connection": "CI/CD evolved the same way: not as a single overnight invention, but as continuous improvements in tools, testing, and automation."
     },
-    "keyTakeaway": "CI/CD is an evolution of collaborative engineering practices, not an invention attributable to one individual."
+    "keyTakeaway": "CI/CD is an evolution of collaborative engineering practices, not an invention attributable to one individual.",
+    "image": "/slides/slide_3.png",
+    "imageCaption": "Historical Evolution: Grady Booch (1991), Kent Beck XP (1999) to Modern CI/CD."
   },
   {
     "num": 4,
@@ -229,7 +231,9 @@ export const MASTER_SLIDES_DATA: MasterSlide[] = [
         "analogy": "An autonomous delivery drone dispatches the order the instant quality checks pass."
       }
     ],
-    "keyTakeaway": "CI validates changes; Continuous Delivery prepares software for release; Continuous Deployment puts it into production automatically."
+    "keyTakeaway": "CI validates changes; Continuous Delivery prepares software for release; Continuous Deployment puts it into production automatically.",
+    "image": "/slides/slide_5.png",
+    "imageCaption": "CI, Continuous Delivery, and Continuous Deployment: Validating, Packaging, and Autonomous Cloud Rollout."
   },
   {
     "num": 6,
@@ -311,7 +315,9 @@ export const MASTER_SLIDES_DATA: MasterSlide[] = [
       "story": "If Git is the chef's personal notebook recording recipe steps, GitHub is the shared digital kitchen portal where recipes are stored, team members propose changes, and managers approve menus.",
       "connection": "Git tracks the versions; GitHub coordinates the team and ignites automation."
     },
-    "keyTakeaway": "Git manages versions locally; GitHub hosts repositories centrally and connects code directly to automation engines."
+    "keyTakeaway": "Git manages versions locally; GitHub hosts repositories centrally and connects code directly to automation engines.",
+    "image": "/slides/slide_7.png",
+    "imageCaption": "Git vs. GitHub Comparison: Distributed Local Revision Control vs. Central Collaboration & CI/CD Hub."
   },
   {
     "num": 8,
@@ -401,7 +407,9 @@ export const MASTER_SLIDES_DATA: MasterSlide[] = [
       "story": "Instead of leasing extra real estate and hiring technicians to maintain custom kitchen machinery, you use a modern kitchen facility with built-in power, appliances, and automated stations ready on demand.",
       "connection": "GitHub Actions eliminates tool fragmentation by embedding enterprise CI/CD directly inside your code repository."
     },
-    "keyTakeaway": "GitHub Actions is the ideal platform because it eliminates infrastructure overhead by bringing code, review, and automation together."
+    "keyTakeaway": "GitHub Actions is the ideal platform because it eliminates infrastructure overhead by bringing code, review, and automation together.",
+    "image": "/slides/slide_9.png",
+    "imageCaption": "Why GitHub Actions: Native Repo Integration, Ephemeral Runners, Marketplace Actions & Zero Infra Maintenance."
   },
   {
     "num": 10,
@@ -498,7 +506,9 @@ export const MASTER_SLIDES_DATA: MasterSlide[] = [
       "story": "The moment an order arrives on the tablet, a kitchen ticket prints, station lights illuminate, cooks wash hands, ingredients are assembled, and food is prepared according to strict timers.",
       "connection": "The push trigger starts the pipeline; the runner executes the steps in strict, reliable sequence."
     },
-    "keyTakeaway": "A trigger starts the workflow; the runner executes its jobs and steps in an isolated, clean sandbox."
+    "keyTakeaway": "A trigger starts the workflow; the runner executes its jobs and steps in an isolated, clean sandbox.",
+    "image": "/slides/slide_11.png",
+    "imageCaption": "GitHub Actions Lifecycle: Event Trigger \u2794 Runner Spin-Up \u2794 Checkout \u2794 Test Execution \u2794 Status Report."
   },
   {
     "num": 12,
@@ -537,7 +547,9 @@ export const MASTER_SLIDES_DATA: MasterSlide[] = [
       "story": "The laminated kitchen SOP sheet lists instructions step by step: 1) Wash hands, 2) Set grill to 350\u00b0F, 3) Cook patty for 3 minutes, 4) Check internal temperature with thermometer.",
       "connection": "The YAML file tells GitHub Actions what to automate; the runner carries out those exact instructions every time."
     },
-    "keyTakeaway": "YAML configuration files are human-readable blueprints that tell cloud runners exactly how to build and verify your software."
+    "keyTakeaway": "YAML configuration files are human-readable blueprints that tell cloud runners exactly how to build and verify your software.",
+    "image": "/slides/slide_12.png",
+    "imageCaption": "GitHub Actions YAML Anatomy: Events, Permissions, Jobs, Ephemeral Runners & Sequential Steps."
   },
   {
     "num": 13,
@@ -568,7 +580,9 @@ export const MASTER_SLIDES_DATA: MasterSlide[] = [
       "story": "The sous-chef tastes the soup before it leaves the kitchen. If too salty, it is rejected right at the pot \u2014 preventing an unhappy customer and negative review.",
       "connection": "CI provides developers rapid feedback in minutes, catching bugs when they are easiest and cheapest to fix."
     },
-    "keyTakeaway": "CI gives developers rapid feedback within minutes, stopping broken code before it progresses toward production."
+    "keyTakeaway": "CI gives developers rapid feedback within minutes, stopping broken code before it progresses toward production.",
+    "image": "/slides/slide_13.png",
+    "imageCaption": "Real Code Push Tracing: Push Event \u2794 Fast Feedback Loop \u2794 Automated Guardrails Block Defective Code."
   },
   {
     "num": 14,
@@ -691,13 +705,13 @@ export const MASTER_SLIDES_DATA: MasterSlide[] = [
     ],
     "code": "# .github/workflows/deploy-aws.yml\nname: Deploy to Amazon ECS\non:\n  push:\n    branches: [ main ]\npermissions:\n  id-token: write\n  contents: read\njobs:\n  deploy:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - name: Authenticate with AWS via OIDC\n        uses: aws-actions/configure-aws-credentials@v4\n        with:\n          role-to-assume: arn:aws:iam::123456789012:role/GitHubActionsRole\n          aws-region: us-east-1\n      - name: Login to Amazon ECR\n        uses: aws-actions/amazon-ecr-login@v2\n      - name: Build & Push Docker Image\n        run: |\n          docker build -t $ECR_REGISTRY/food-order-api:${{ github.sha }} .\n          docker push $ECR_REGISTRY/food-order-api:${{ github.sha }}\n      - name: Deploy to Amazon ECS Fargate\n        run: |\n          aws ecs update-service --cluster prod --service food-api --force-new-deployment",
     "foodAnalogy": {
-      "title": "Franchise Logistics Network 🚚",
+      "title": "Franchise Logistics Network \ud83d\ude9a",
       "story": "GitHub Actions coordinates food prep, Amazon ECR is the central cold-storage distribution hub, Amazon ECS is the network of commercial franchise kitchens, and the Load Balancer routes hungry diners.",
       "connection": "GitHub Actions orchestrates the release; AWS provides the scalable cloud infrastructure."
     },
     "keyTakeaway": "GitHub Actions automates the deployment process; cloud providers supply the scalable hosting infrastructure.",
     "image": "/slides/slide_16.png",
-    "imageCaption": "AWS Cloud Architecture: GitHub Actions OIDC ➔ Amazon ECR Registry ➔ Amazon ECS Fargate ➔ ALB Load Balancer (200 OK)."
+    "imageCaption": "AWS Cloud Architecture: GitHub Actions OIDC \u2794 Amazon ECR Registry \u2794 Amazon ECS Fargate \u2794 ALB Load Balancer (200 OK)."
   },
   {
     "num": 17,
@@ -735,7 +749,9 @@ export const MASTER_SLIDES_DATA: MasterSlide[] = [
       "story": "A restaurant automates order cooking, but still locks cash registers, requires hairnets, tests food temperatures, and restricts kitchen entry to authorized personnel.",
       "connection": "Speed without security is reckless. Pipelines must halt immediately if security checks fail or unapproved code tries to ship."
     },
-    "keyTakeaway": "Automate safely, not just quickly. Security checks and approval gates protect production from catastrophic leaks."
+    "keyTakeaway": "Automate safely, not just quickly. Security checks and approval gates protect production from catastrophic leaks.",
+    "image": "/slides/slide_17.png",
+    "imageCaption": "DevSecOps & AWS OIDC Security: Least-Privilege, Ephemeral Tokens, and Automated Container Scans."
   },
   {
     "num": 18,
@@ -774,7 +790,9 @@ export const MASTER_SLIDES_DATA: MasterSlide[] = [
       "story": "If food burns on the grill, it stays in the kitchen. If a rider drops a package, the system alerts the team, logs the refund, and dispatches a fresh meal immediately.",
       "connection": "Automation doesn't mean errors disappear \u2014 it means errors are detected and contained before they affect customers."
     },
-    "keyTakeaway": "A reliable pipeline detects failures instantly, stops unsafe rollouts, and supports rapid recovery."
+    "keyTakeaway": "A reliable pipeline detects failures instantly, stops unsafe rollouts, and supports rapid recovery.",
+    "image": "/slides/slide_18.png",
+    "imageCaption": "Deployment Strategies: Blue-Green Instant Cutover vs. Canary Progressive Traffic Shifting."
   },
   {
     "num": 19,
@@ -823,8 +841,8 @@ export const MASTER_SLIDES_DATA: MasterSlide[] = [
       "SRE Telemetry & Observability: AWS CloudWatch tracks latency and 5xx error rates, triggering automated rollbacks if any defects emerge."
     ],
     "foodAnalogy": {
-      "title": "The Fully Automated Smart Restaurant 🍕",
-      "story": "Customer orders on phone ➔ Smart ticket alerts kitchen ➔ Robotic grill cooks burger ➔ Optical sensor inspects burger ➔ Packaged in bento box ➔ Drone delivers to customer.",
+      "title": "The Fully Automated Smart Restaurant \ud83c\udf55",
+      "story": "Customer orders on phone \u2794 Smart ticket alerts kitchen \u2794 Robotic grill cooks burger \u2794 Optical sensor inspects burger \u2794 Packaged in bento box \u2794 Drone delivers to customer.",
       "connection": "This real-world project unifies version control, automation, containerization, cloud hosting on AWS, and observability into one cohesive system."
     },
     "keyTakeaway": "This end-to-end project combines code, CI/CD, containers, AWS cloud infrastructure, and monitoring into a complete production system.",
@@ -872,6 +890,8 @@ export const MASTER_SLIDES_DATA: MasterSlide[] = [
     ],
     "finalAnalogy": "A customer places an order, and the restaurant coordinates prep, taste checks, packaging, and delivery. In software, a developer pushes code, and the pipeline coordinates building, testing, packaging, and cloud deployment.",
     "finalPhilosophy": "CI/CD is not about replacing developers. It is about eliminating repetitive manual delivery friction so engineers can focus on building innovative software.",
-    "keyTakeaway": "Mastering CI/CD transforms you into a high-impact engineer capable of delivering reliable software at scale."
+    "keyTakeaway": "Mastering CI/CD transforms you into a high-impact engineer capable of delivering reliable software at scale.",
+    "image": "/slides/slide_20.png",
+    "imageCaption": "Mastery Summary: The Complete DevOps & CI/CD Conveyor Belt from Git Commit to Production Monitoring."
   }
 ];

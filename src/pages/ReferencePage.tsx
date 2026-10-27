@@ -58,38 +58,39 @@ export const ReferencePage: React.FC = () => {
       category: 'Testing'
     },
     {
-      term: 'Rollback',
-      foodAnalogy: 'Recalling bad meal and quickly handing customer fresh replacement',
-      definition: 'Instantly reverting production to the previous known-good deployment if errors occur in a new release.',
-      category: 'Deployment'
-    },
-    {
-      term: 'Blue-Green Deployment',
-      foodAnalogy: 'Two identical kitchens; one serves while other cooks next batch',
-      definition: 'Running two identical environments (Blue=Live, Green=Idle). Deploy to Green, test, then switch router.',
-      category: 'Deployment'
-    },
-    {
-      term: 'Canary Release',
-      foodAnalogy: 'Serving 5% of diners new dessert recipe before putting on main menu',
-      definition: 'Deploying a new version to a tiny subset (e.g., 5%) of users first to test stability in real production.',
-      category: 'Deployment'
-    },
-    {
-      term: 'Rolling Update',
-      foodAnalogy: 'Replacing dining tables one-by-one so restaurant stays open',
-      definition: 'Incrementally replacing old server instances with new ones, ensuring zero downtime throughout.',
-      category: 'Deployment'
-    },
-    {
       term: 'Webhook',
-      foodAnalogy: 'The bell ringing inside the kitchen when online order arrives',
-      definition: 'An automated HTTP callback sent from one system (GitHub) to trigger another (CI server).',
+      foodAnalogy: 'Bell ringing at the kitchen counter when order arrives',
+      definition: 'An automated HTTP callback message sent from GitHub to the CI server to trigger a pipeline run.',
       category: 'Integration'
+    },
+    {
+      term: 'Docker Container',
+      foodAnalogy: 'Insulated foil takeout box maintaining food freshness',
+      definition: 'A standardized unit of software packaging code and all dependencies so it runs reliably everywhere.',
+      category: 'Packaging'
+    },
+    {
+      term: 'Container Registry (ECR / Docker Hub)',
+      foodAnalogy: 'The restaurant dry-storage pantry holding standardized meal boxes',
+      definition: 'A cloud storage repository for storing, versioning, and distributing Docker container images.',
+      category: 'Infrastructure'
+    },
+    {
+      term: 'Secret / Credential',
+      foodAnalogy: 'The restaurant cash safe combination code',
+      definition: 'Sensitive information (API keys, passwords, private certificates) encrypted and injected at runtime.',
+      category: 'Security'
+    },
+    {
+      term: 'Zero-Downtime Deployment',
+      foodAnalogy: 'Serving new menu dishes while kitchen is open without closing doors',
+      definition: 'Releasing new software versions without any service interruption or error spikes for active users.',
+      category: 'Deployment'
     }
   ];
 
-  const GITHUB_ACTIONS_CHEATSHEET = `name: Production CI/CD
+  const GITHUB_ACTIONS_CHEATSHEET = `name: Production CI/CD Pipeline
+
 on:
   push:
     branches: [ main ]
@@ -100,23 +101,22 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository code
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js runtime
+      - name: Setup Node.js 20
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: npm ci
 
-      - name: Run automated test suite
-        run: npm test
-
-      - name: Build production bundle
-        run: npm run build`;
+      - name: Run Linter & Tests
+        run: |
+          npm run lint
+          npm test -- --coverage`;
 
   const DOCKER_CHEATSHEET = `# Build a Docker image with tag 'my-app:1.0.0'
 docker build -t my-app:1.0.0 .
@@ -139,50 +139,50 @@ docker push 123456789.dkr.ecr.us-east-1.amazonaws.com/my-app:1.0.0`;
   );
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 pb-24">
+    <div className="max-w-7xl mx-auto px-4 py-8 pb-24 space-y-10">
       {/* Page Title */}
-      <div className="mb-8">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/80 border border-cyan-500/30 text-cyan-300 text-xs font-mono mb-2">
-          <Layers className="w-3.5 h-3.5 text-cyan-400" />
+      <div>
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-mono font-bold mb-3 shadow-xs">
+          <Layers className="w-3.5 h-3.5 text-blue-600" />
           <span>Quick Reference & Cheatsheets</span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-black text-slate-100 tracking-tight">
+        <h1 className="text-3xl sm:text-4xl font-black text-slate-950 tracking-tight">
           DevOps & CI/CD Knowledge Bank
         </h1>
-        <p className="text-slate-400 text-sm md:text-base mt-2">
-          Essential syntax, commands, and the complete Food Ordering → DevOps glossary.
+        <p className="text-slate-600 text-sm md:text-base mt-2 font-normal">
+          Essential syntax, commands, and the complete Food Ordering ➔ DevOps glossary.
         </p>
       </div>
 
       {/* Cheatsheets Side-by-Side */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
-        <div className="bg-[#0b101e] border border-cyan-500/20 rounded-2xl p-6 shadow-xl">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white border-2 border-slate-200 rounded-3xl p-6 sm:p-7 shadow-xs">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="font-bold text-slate-100 flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-cyan-400"></span>
-              GitHub Actions Workflow (.github/workflows/ci.yml)
+            <h3 className="font-extrabold text-slate-900 flex items-center gap-2 text-base">
+              <span className="w-3 h-3 rounded-full bg-blue-600"></span>
+              <span>GitHub Actions Workflow (.github/workflows/ci.yml)</span>
             </h3>
-            <span className="text-[10px] font-mono text-cyan-400 bg-cyan-950 px-2 py-0.5 rounded border border-cyan-500/30">
+            <span className="text-[10px] font-mono text-blue-700 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200 font-bold">
               YAML Syntax
             </span>
           </div>
-          <p className="text-xs text-slate-400 mb-3">
+          <p className="text-xs sm:text-sm text-slate-600 mb-4 font-normal">
             Minimal production-grade pipeline with checkout, Node setup, caching, testing, and building.
           </p>
           <CodeBlock code={GITHUB_ACTIONS_CHEATSHEET} language="yaml" />
         </div>
 
-        <div className="bg-[#0b101e] border border-cyan-500/20 rounded-2xl p-6 shadow-xl">
+        <div className="bg-white border-2 border-slate-200 rounded-3xl p-6 sm:p-7 shadow-xs">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="font-bold text-slate-100 flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-blue-400"></span>
-              Essential Docker & Registry Commands
+            <h3 className="font-extrabold text-slate-900 flex items-center gap-2 text-base">
+              <span className="w-3 h-3 rounded-full bg-amber-600"></span>
+              <span>Essential Docker & Registry Commands</span>
             </h3>
-            <span className="text-[10px] font-mono text-blue-400 bg-blue-950 px-2 py-0.5 rounded border border-blue-500/30">
+            <span className="text-[10px] font-mono text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200 font-bold">
               CLI Reference
             </span>
           </div>
-          <p className="text-xs text-slate-400 mb-3">
+          <p className="text-xs sm:text-sm text-slate-600 mb-4 font-normal">
             Standard container build, local execution, and Amazon ECR registry push commands.
           </p>
           <CodeBlock code={DOCKER_CHEATSHEET} language="bash" />
@@ -190,25 +190,25 @@ docker push 123456789.dkr.ecr.us-east-1.amazonaws.com/my-app:1.0.0`;
       </div>
 
       {/* Rosetta Stone Glossary */}
-      <div className="bg-[#0b101e] border border-cyan-500/20 rounded-2xl p-6 shadow-xl">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-cyan-500/15">
+      <div className="bg-white border-2 border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200">
           <div>
-            <div className="flex items-center gap-2 text-amber-400 text-xs font-mono font-semibold uppercase">
-              <UtensilsCrossed className="w-4 h-4" />
+            <div className="flex items-center gap-2 text-amber-800 text-xs font-mono font-bold uppercase">
+              <UtensilsCrossed className="w-4 h-4 text-amber-600" />
               <span>Analogy Rosetta Stone</span>
             </div>
-            <h3 className="text-xl font-bold text-slate-100 mt-1">DevOps Terminology & Food Equivalents</h3>
+            <h3 className="text-xl font-black text-slate-950 mt-1 tracking-tight">DevOps Terminology & Food Equivalents</h3>
           </div>
 
           {/* Search filter */}
-          <div className="relative min-w-[260px]">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <div className="relative min-w-[280px]">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Filter terms..."
+              placeholder="Search terms, analogies..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-slate-900 border border-cyan-500/20 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400"
+              className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-10 pr-4 py-2 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white shadow-xs"
             />
           </div>
         </div>
@@ -217,18 +217,18 @@ docker push 123456789.dkr.ecr.us-east-1.amazonaws.com/my-app:1.0.0`;
           {filteredTerms.map((item, idx) => (
             <div
               key={idx}
-              className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-cyan-500/30 transition-all flex flex-col justify-between"
+              className="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-blue-400 transition-all flex flex-col justify-between shadow-xs"
             >
               <div>
-                <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-400 bg-cyan-950/80 px-2 py-0.5 rounded border border-cyan-500/20">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
                   {item.category}
                 </span>
-                <h4 className="text-sm font-bold text-slate-100 mt-2">{item.term}</h4>
-                <div className="mt-2 text-xs text-amber-300/90 font-medium bg-amber-950/20 p-2 rounded-lg border border-amber-500/20 flex items-start gap-1.5">
-                  <span>🍔</span>
+                <h4 className="text-base font-extrabold text-slate-950 mt-2.5">{item.term}</h4>
+                <div className="mt-2.5 text-xs text-amber-950 font-bold bg-amber-50 p-2.5 rounded-xl border border-amber-200 flex items-start gap-2 shadow-xs">
+                  <span className="text-sm">🍔</span>
                   <span>{item.foodAnalogy}</span>
                 </div>
-                <p className="text-xs text-slate-300 mt-2 leading-relaxed">{item.definition}</p>
+                <p className="text-xs sm:text-sm text-slate-700 mt-3 leading-relaxed font-normal">{item.definition}</p>
               </div>
             </div>
           ))}
