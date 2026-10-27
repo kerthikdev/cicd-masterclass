@@ -1,3 +1,12 @@
+export interface PresenterExperienceItem {
+  role: string;
+  company: string;
+  type: string;
+  badge: string;
+  badgeClass: string;
+  description: string;
+}
+
 export interface PresenterBio {
   name: string;
   role: string;
@@ -6,16 +15,43 @@ export interface PresenterBio {
   venture: string;
   ventureDetail: string;
   bio: string;
+  experiences: PresenterExperienceItem[];
 }
 
 export const PRESENTER_INFO: PresenterBio = {
   name: "Kerthik",
   role: "Project Manager",
   company: "TNQ",
-  previousRole: "DevOps Engineer at SentinelFox",
+  previousRole: "Worked as DevOps Engineer at SentinelFox",
   venture: "Building OrivianLabs",
-  ventureDetail: "Production DevOps, Kubernetes, and Cloud Systems Fellowship",
-  bio: "Engineering leader and DevOps specialist focused on production cloud systems, zero-downtime automated deployment pipelines, and scalable developer velocity."
+  ventureDetail: "DevOps, Kubernetes & Cloud Systems Fellowship",
+  bio: "Engineering leader and DevOps specialist with deep hands-on expertise spanning agile project management, production cloud infrastructure, automated CI/CD pipelines, and high-velocity developer culture.",
+  experiences: [
+    {
+      role: "Project Manager",
+      company: "TNQ",
+      type: "Current Leadership Role",
+      badge: "Current PM @ TNQ",
+      badgeClass: "bg-blue-100 text-blue-900 border-blue-300 font-bold",
+      description: "Working as Project Manager in TNQ, orchestrating enterprise software delivery, engineering roadmaps, and agile release velocity."
+    },
+    {
+      role: "Building OrivianLabs",
+      company: "OrivianLabs",
+      type: "Founder & Architecture",
+      badge: "Founder @ OrivianLabs",
+      badgeClass: "bg-amber-100 text-amber-950 border-amber-300 font-bold",
+      description: "Building OrivianLabs — empowering engineers with hands-on masterclasses and fellowships in production DevOps, Kubernetes, and AWS cloud systems."
+    },
+    {
+      role: "DevOps Engineer",
+      company: "SentinelFox",
+      type: "DevOps Engineering Roots",
+      badge: "Ex-DevOps @ SentinelFox",
+      badgeClass: "bg-emerald-100 text-emerald-950 border-emerald-300 font-bold",
+      description: "Worked as DevOps Engineer in SentinelFox, designing automated CI/CD delivery pipelines, Docker containers, and high-availability production cloud infrastructure."
+    }
+  ]
 };
 
 export interface MasterSlide {
@@ -62,6 +98,9 @@ export interface MasterSlide {
   summaryMapping?: { tool: string; role: string }[];
   finalAnalogy?: string;
   finalPhilosophy?: string;
+  qaTopics?: { icon: string; title: string; desc: string; sampleQuestions: string[] }[];
+  thankYouHighlights?: { title: string; desc: string }[];
+  contactChannels?: { label: string; value: string; note: string }[];
 }
 
 export const MASTER_SLIDES_DATA: MasterSlide[] = [
@@ -893,5 +932,84 @@ export const MASTER_SLIDES_DATA: MasterSlide[] = [
     "keyTakeaway": "Mastering CI/CD transforms you into a high-impact engineer capable of delivering reliable software at scale.",
     "image": "/slides/slide_20.png",
     "imageCaption": "Mastery Summary: The Complete DevOps & CI/CD Conveyor Belt from Git Commit to Production Monitoring."
+  },
+  {
+    "num": 21,
+    "title": "Thank You & Q&A: Open Questions & Discussion",
+    "subtitle": "Congratulations on completing the CI/CD Masterclass! The floor is open for any questions, architecture guidance, and career discussions.",
+    "category": "Conclusion & Q&A",
+    "detailedPoints": [
+      "Congratulations! You have completed the comprehensive 21-slide CI/CD Masterclass from manual friction to automated AWS cloud delivery.",
+      "Open Floor for Any Questions: Ask about GitHub Actions, Docker containers, AWS ECS/ECR deployment architectures, or security best practices.",
+      "Connect with Instructor Kerthik: Project Manager at TNQ, Founder building OrivianLabs, and Former DevOps Engineer at SentinelFox."
+    ],
+    "keyTakeaway": "Continuous delivery is an engineering superpower. Automate relentlessly, test thoroughly, and ship to production with fearless confidence!",
+    "image": "/slides/slide_21.png",
+    "imageCaption": "Thank You & Q&A: Open discussion on CI/CD pipelines, AWS cloud delivery, and modern DevOps careers.",
+    "qaTopics": [
+      {
+        "icon": "GitBranch",
+        "title": "1. CI/CD & Pipeline Design",
+        "desc": "Questions about GitHub Actions workflows, trunk-based branching, matrix builds, artifact caching, and flaky test mitigation.",
+        "sampleQuestions": [
+          "How to structure multi-environment stages (Dev -> Staging -> Prod)?",
+          "What is the best way to manage reusable GitHub Actions composite steps?"
+        ]
+      },
+      {
+        "icon": "Cloud",
+        "title": "2. Cloud & Containers (AWS + Docker)",
+        "desc": "Questions on multi-stage Docker builds, Amazon ECR registries, ECS Fargate serverless containers, and ALB zero-downtime traffic routing.",
+        "sampleQuestions": [
+          "How does blue-green deployment compare to canary deployments?",
+          "How do we configure zero-downtime rolling updates with ALB health checks?"
+        ]
+      },
+      {
+        "icon": "ShieldCheck",
+        "title": "3. DevSecOps & Governance",
+        "desc": "Questions on eliminating long-lived AWS IAM secret keys via GitHub OIDC OpenID Connect, SAST vulnerability scanning, and audit trails.",
+        "sampleQuestions": [
+          "How does AWS OIDC temporary token exchange work under the hood?",
+          "How to prevent secret leaks and enforce signed commits in team PRs?"
+        ]
+      },
+      {
+        "icon": "Compass",
+        "title": "4. Career Path & Engineering Leadership",
+        "desc": "Discussion on navigating DevOps engineering, transitioning into Project Management, building developer culture, and OrivianLabs.",
+        "sampleQuestions": [
+          "How to transition from software engineering into DevOps / Cloud?",
+          "How does a Project Manager effectively bridge Dev and Ops teams?"
+        ]
+      }
+    ],
+    "thankYouHighlights": [
+      {
+        "title": "Masterclass Complete! 🎉",
+        "desc": "You have mastered the mental models, analogies, Git workflows, Docker packaging, and AWS cloud delivery automation."
+      },
+      {
+        "title": "Mentorship & Community 🚀",
+        "desc": "Connect with Kerthik and the OrivianLabs engineering fellowship to continue building hands-on cloud native systems."
+      }
+    ],
+    "contactChannels": [
+      {
+        "label": "Instructor",
+        "value": "Kerthik",
+        "note": "Working as Project Manager in TNQ"
+      },
+      {
+        "label": "Initiative",
+        "value": "Building OrivianLabs",
+        "note": "Modern DevOps, Cloud & Kubernetes fellowships"
+      },
+      {
+        "label": "Background",
+        "value": "DevOps Roots",
+        "note": "Worked as DevOps Engineer in SentinelFox"
+      }
+    ]
   }
 ];

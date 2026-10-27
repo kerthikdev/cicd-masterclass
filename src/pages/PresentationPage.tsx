@@ -45,7 +45,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
 
   const containerRef = useRef<HTMLDivElement>(null);
   const activeScrubberBtnRef = useRef<HTMLButtonElement | null>(null);
-  const totalSlides = 20;
+  const totalSlides = MASTER_SLIDES_DATA.length;
 
   // Reset tab to 'primary' and ALWAYS reset window scroll to top whenever slide changes
   useEffect(() => {
@@ -414,6 +414,69 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
       );
     }
 
+    // Slide 21: Thank You & Q&A Open Discussion
+    if (slide.qaTopics) {
+      return (
+        <div className="space-y-3">
+          {/* Thank You Highlights */}
+          {slide.thankYouHighlights && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              {slide.thankYouHighlights.map((th, idx) => (
+                <div key={idx} className="p-3 rounded-2xl bg-gradient-to-br from-emerald-50 via-teal-50/50 to-blue-50 border border-emerald-200 shadow-xs">
+                  <h4 className="text-xs sm:text-sm font-black text-emerald-950 flex items-center gap-1.5">{th.title}</h4>
+                  <p className="text-[11px] sm:text-xs text-slate-700 mt-1 leading-relaxed">{th.desc}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Interactive Q&A Topic Cards */}
+          <div className="space-y-1.5">
+            <span className="text-xs font-mono font-bold text-slate-700 uppercase tracking-wide block">
+              Suggested Discussion & Q&A Topics:
+            </span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              {slide.qaTopics.map((qa, idx) => (
+                <div key={idx} className="p-2.5 rounded-xl bg-white border border-slate-200 shadow-xs hover:border-blue-400 hover:shadow-md transition-all">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-mono font-bold text-xs text-blue-700 flex items-center gap-1.5">
+                      <span>{qa.icon}</span>
+                      <span>{qa.title}</span>
+                    </span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-800 font-bold border border-blue-100">Open Q&A</span>
+                  </div>
+                  <p className="text-[11px] text-slate-600 mb-1.5 leading-snug">{qa.desc}</p>
+                  <div className="space-y-1 pt-1.5 border-t border-slate-100">
+                    {qa.sampleQuestions.map((q, qIdx) => (
+                      <div key={qIdx} className="text-[10.5px] text-slate-700 font-medium flex items-start gap-1.5">
+                        <span className="text-blue-500 font-bold mt-0.5">?</span>
+                        <span className="italic">{q}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Instructor & Connect Channels */}
+          {slide.contactChannels && (
+            <div className="p-2.5 rounded-2xl bg-slate-100/80 border border-slate-200">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-center sm:text-left">
+                {slide.contactChannels.map((c, idx) => (
+                  <div key={idx} className="p-2 rounded-xl bg-white border border-slate-200 shadow-2xs">
+                    <span className="text-[10px] font-mono font-bold uppercase text-slate-500 block">{c.label}</span>
+                    <span className="text-xs font-bold text-slate-900 block truncate">{c.value}</span>
+                    <span className="text-[10px] text-blue-700 font-medium block truncate">{c.note}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
     // Standard Bullet Points (Slide 1, 2, 6, 7, 10, 15, 16, 19)
     const points = slide.detailedPoints || slide.contentPoints || [];
     return (
@@ -472,7 +535,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
               <span className="text-slate-600 font-semibold">{PRESENTER_INFO.name}</span>
             </div>
             <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-md bg-blue-100/80 text-blue-800 border border-blue-200">
-              {slideNum === 0 ? 'Slide 00 / 20' : `Slide ${slideNum < 10 ? `0${slideNum}` : slideNum} / 20`}
+              {slideNum === 0 ? `Slide 00 / ${totalSlides}` : `Slide ${slideNum < 10 ? `0${slideNum}` : slideNum} / ${totalSlides}`}
             </span>
             <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 hidden sm:inline-flex items-center gap-1">
               🍔 Food Delivery Analogy
@@ -623,7 +686,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2 mb-3">
               <div className="flex items-center gap-2">
                 <span className="px-3 py-1 rounded-full font-mono font-bold text-xs bg-blue-50 text-blue-700 border border-blue-200 shadow-sm">
-                  SLIDE 00 OF 20
+                  SLIDE 00 OF {totalSlides}
                 </span>
                 <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-600">
                   Course Roadmap & Instructor
@@ -646,12 +709,12 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
 
             {/* Hero Split: Left Info + Right Image */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start mb-3">
-              {/* Left Column (6 cols): Instructor Card & 4 Curriculum Parts */}
+              {/* Left Column (6 cols): Instructor Card & 5 Curriculum Parts */}
               <div className="lg:col-span-6 space-y-2.5">
                 {/* Instructor Profile Card */}
-                <div className="bg-gradient-to-br from-slate-50 to-blue-50/50 border border-blue-200 rounded-2xl p-3 shadow-sm space-y-2">
+                <div className="bg-gradient-to-br from-slate-50 to-blue-50/50 border border-blue-200 rounded-2xl p-3 sm:p-3.5 shadow-sm space-y-2.5">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-lg shadow-md shadow-blue-500/20">
+                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-lg sm:text-xl shadow-md shadow-blue-500/20 shrink-0">
                       K
                     </div>
                     <div>
@@ -667,51 +730,76 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                     </div>
                   </div>
 
-                  <p className="text-xs text-slate-700 leading-relaxed">
+                  <p className="text-xs text-slate-700 leading-relaxed font-medium">
                     {PRESENTER_INFO.bio}
                   </p>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1.5 border-t border-slate-200/80 text-[11px] text-slate-700 font-medium">
-                    <div className="flex items-center gap-1.5">
-                      <Briefcase className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                      <span>{PRESENTER_INFO.previousRole}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <Rocket className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                      <span><strong>{PRESENTER_INFO.venture}</strong></span>
+                  {/* 3 Career Experiences requested by user */}
+                  <div className="pt-2 border-t border-slate-200/80 space-y-1.5">
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500 block">
+                      Career Experience & Background:
+                    </span>
+                    <div className="space-y-1.5">
+                      {PRESENTER_INFO.experiences.map((exp, idx) => (
+                        <div key={idx} className="p-2 rounded-xl bg-white border border-slate-200 shadow-2xs hover:border-blue-300 transition-all">
+                          <div className="flex items-center justify-between gap-1.5 flex-wrap">
+                            <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                              {idx === 0 && <Briefcase className="w-3.5 h-3.5 text-blue-600 shrink-0" />}
+                              {idx === 1 && <Rocket className="w-3.5 h-3.5 text-amber-600 shrink-0" />}
+                              {idx === 2 && <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />}
+                              <span>{exp.role}</span>
+                              <span className="text-slate-400">@</span>
+                              <span className="text-blue-700">{exp.company}</span>
+                            </span>
+                            <span className={`text-[10px] px-2 py-0.5 rounded-full border ${exp.badgeClass}`}>
+                              {exp.type}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-slate-600 mt-0.5 leading-snug">
+                            {exp.description}
+                          </p>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
 
-                {/* 4 Curriculum Parts (Interactive) */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {/* 5 Curriculum Parts (Interactive) */}
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
                   <button
                     onClick={() => setSlideNum(1)}
-                    className="p-2 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-left transition-all"
+                    className="p-1.5 sm:p-2 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-left transition-all"
                   >
                     <span className="text-[10px] font-mono font-bold text-blue-700 block">Part 1 (S1-5)</span>
-                    <span className="text-xs text-slate-800 font-semibold block truncate">Why CI/CD</span>
+                    <span className="text-[11px] sm:text-xs text-slate-800 font-semibold block truncate">Why CI/CD</span>
                   </button>
                   <button
                     onClick={() => setSlideNum(6)}
-                    className="p-2 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-left transition-all"
+                    className="p-1.5 sm:p-2 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-left transition-all"
                   >
                     <span className="text-[10px] font-mono font-bold text-blue-700 block">Part 2 (S6-8)</span>
-                    <span className="text-xs text-slate-800 font-semibold block truncate">Git & Tools</span>
+                    <span className="text-[11px] sm:text-xs text-slate-800 font-semibold block truncate">Git & Tools</span>
                   </button>
                   <button
                     onClick={() => setSlideNum(9)}
-                    className="p-2 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-left transition-all"
+                    className="p-1.5 sm:p-2 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-left transition-all"
                   >
                     <span className="text-[10px] font-mono font-bold text-blue-700 block">Part 3 (S9-13)</span>
-                    <span className="text-xs text-slate-800 font-semibold block truncate">Actions</span>
+                    <span className="text-[11px] sm:text-xs text-slate-800 font-semibold block truncate">Actions</span>
                   </button>
                   <button
                     onClick={() => setSlideNum(14)}
-                    className="p-2 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-left transition-all"
+                    className="p-1.5 sm:p-2 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-left transition-all"
                   >
                     <span className="text-[10px] font-mono font-bold text-blue-700 block">Part 4 (S14-20)</span>
-                    <span className="text-xs text-slate-800 font-semibold block truncate">Docker & AWS</span>
+                    <span className="text-[11px] sm:text-xs text-slate-800 font-semibold block truncate">Docker & AWS</span>
+                  </button>
+                  <button
+                    onClick={() => setSlideNum(21)}
+                    className="p-1.5 sm:p-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 hover:border-emerald-300 text-left transition-all col-span-2 sm:col-span-1"
+                  >
+                    <span className="text-[10px] font-mono font-bold text-emerald-800 block">Part 5 (S21)</span>
+                    <span className="text-[11px] sm:text-xs text-emerald-950 font-semibold block truncate">Q&A / End</span>
                   </button>
                 </div>
               </div>
@@ -759,7 +847,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2 mb-3">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="px-3 py-1 rounded-full font-mono font-bold text-xs bg-blue-50 text-blue-700 border border-blue-200 shadow-sm">
-                  SLIDE {currentSlide!.num < 10 ? `0${currentSlide!.num}` : currentSlide!.num} OF 20
+                  SLIDE {currentSlide!.num < 10 ? `0${currentSlide!.num}` : currentSlide!.num} OF {totalSlides}
                 </span>
                 <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-600">
                   {currentSlide!.category}
@@ -1098,7 +1186,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
               <div>
                 <h3 className="text-xl font-black text-slate-950 flex items-center gap-2">
                   <LayoutGrid className="w-5 h-5 text-blue-600" />
-                  <span>All 20 Slides Overview</span>
+                  <span>All {totalSlides} Slides Overview</span>
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">Click any slide card to jump directly to it</p>
               </div>

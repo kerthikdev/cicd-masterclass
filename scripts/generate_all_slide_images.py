@@ -409,6 +409,20 @@ slides_configs = [
             ("AUTO-ROLLBACK", "If 5xx errors breach 1% threshold, CI/CD automatically redeploys previous SHA.", (16, 185, 129))
         ],
         "footer_badge": "The Pipeline Never Ends: Deployment is just the beginning of the continuous feedback loop (200 OK)"
+    },
+    {
+        "id": 21,
+        "title": "Thank You & Q&A: Open Questions & Discussion",
+        "category": "Conclusion & Mentorship",
+        "color": (16, 185, 129),
+        "draw": "cams_grid",
+        "pillars": [
+            ("1. CI/CD & AUTOMATION", "Ask anything on GitHub Actions, workflows, triggers, artifacts, and multi-stage pipelines.", (37, 99, 235)),
+            ("2. DOCKER & CONTAINERS", "Ask anything on containerization, Alpine vs full images, caching layers, and registries.", (14, 165, 233)),
+            ("3. AWS CLOUD & ECS", "Ask anything on ECS Fargate, ECR, task definitions, load balancers, and zero downtime.", (245, 158, 11)),
+            ("4. CAREER & ORIVIANLABS", "Transitioning into DevOps & PM, building cloud projects, and joining OrivianLabs fellowships.", (16, 185, 129))
+        ],
+        "footer_badge": "Thank You for Attending! The floor is open for any questions, architecture discussions, or hands-on reviews."
     }
 ]
 
