@@ -27,7 +27,6 @@ import {
   Image as ImageIcon,
   LayoutGrid,
   X,
-  Compass,
   FileCode2,
   ListChecks
 } from 'lucide-react';
@@ -375,58 +374,58 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
   return (
     <div
       ref={containerRef}
-      className={`bg-[#f8fafc] text-slate-900 transition-all relative ${
+      className={`bg-[#f8fafc] text-slate-900 transition-all ${
         isFullscreen
           ? 'fixed inset-0 z-50 overflow-y-auto p-3 sm:p-6 lg:p-8 flex flex-col justify-between bg-[#f8fafc]'
-          : 'w-full max-w-7xl mx-auto px-4 py-6 pb-24'
+          : 'w-full max-w-7xl mx-auto px-4 py-4 sm:py-6 pb-12'
       }`}
     >
       {/* =========================================================================
-          PERSISTENT DECK HEADER & CONTROLS TOOLBAR
+          TOP DECK HEADER & CONTROLS TOOLBAR (CLEAN, COMPACT, NO COLLISION)
           ========================================================================= */}
-      <div className="sticky top-0 z-30 bg-[#f8fafc]/95 backdrop-blur-md pb-4 pt-1 mb-4 border-b border-slate-200">
+      <div className="relative pb-3 mb-4 border-b border-slate-200">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
           {/* Deck Meta Title */}
           <div>
             <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-blue-600">
               <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-              <span>CI/CD Masterclass — 20-Slide Complete Presentation</span>
-              <span className="text-slate-400">•</span>
-              <span className="text-slate-600">{PRESENTER_INFO.name} ({PRESENTER_INFO.role} @ {PRESENTER_INFO.company})</span>
+              <span>CI/CD Masterclass</span>
+              <span className="text-slate-300">•</span>
+              <span className="text-slate-600">{PRESENTER_INFO.name} ({PRESENTER_INFO.company})</span>
             </div>
-            <h1 className="text-lg sm:text-2xl font-black text-slate-950 mt-0.5 tracking-tight flex items-center gap-2 flex-wrap">
-              <span>CI/CD: From Manual Software Delivery to Full Automation</span>
-              <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
+            <h1 className="text-base sm:text-xl font-black text-slate-950 mt-0.5 tracking-tight flex items-center gap-2 flex-wrap">
+              <span>{slideNum === 0 ? "Course Roadmap & Overview" : `Slide ${slideNum < 10 ? `0${slideNum}` : slideNum}: ${currentSlide?.title}`}</span>
+              <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
                 🍔 Food Analogy
               </span>
             </h1>
           </div>
 
           {/* Action Controls Toolbar */}
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-1.5 flex-wrap">
             {/* Grid Overview Modal Button */}
             <button
               onClick={() => setGridModalOpen(true)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs sm:text-sm font-bold text-slate-700 shadow-sm transition-all"
               title="View all slides in a grid overview (Press G)"
             >
-              <LayoutGrid className="w-4 h-4 text-blue-600" />
-              <span>Slide Grid</span>
+              <LayoutGrid className="w-3.5 h-3.5 text-blue-600" />
+              <span>Grid</span>
               <kbd className="hidden sm:inline text-[10px] bg-slate-100 text-slate-500 px-1 py-0.5 rounded border border-slate-200 font-mono">G</kbd>
             </button>
 
             {/* Quick Jump Dropdown */}
-            <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 shadow-sm">
+            <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-xl px-2 py-1 shadow-sm">
               <span className="text-xs font-mono font-bold text-slate-500">Jump:</span>
               <select
                 value={slideNum}
                 onChange={(e) => setSlideNum(Number(e.target.value))}
-                className="bg-transparent text-xs sm:text-sm font-bold text-slate-800 focus:outline-none cursor-pointer max-w-[130px] sm:max-w-[170px] truncate"
+                className="bg-transparent text-xs sm:text-sm font-bold text-slate-800 focus:outline-none cursor-pointer max-w-[120px] sm:max-w-[160px] truncate"
               >
                 <option value={0}>00. Intro (Kerthik)</option>
                 {MASTER_SLIDES_DATA.map((s) => (
                   <option key={s.num} value={s.num}>
-                    {s.num < 10 ? `0${s.num}` : s.num}. {s.title.slice(0, 26)}...
+                    {s.num < 10 ? `0${s.num}` : s.num}. {s.title.slice(0, 24)}...
                   </option>
                 ))}
               </select>
@@ -434,7 +433,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
 
             {/* View Mode Toggle */}
             {slideNum > 0 && (
-              <div className="hidden sm:flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs shadow-sm">
+              <div className="hidden sm:flex items-center gap-1 bg-slate-100 p-0.5 rounded-xl border border-slate-200 text-xs shadow-sm">
                 <button
                   onClick={() => setViewMode('split')}
                   className={`px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 transition-all ${
@@ -442,7 +441,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                   }`}
                   title="Side-by-Side: Content & Diagram"
                 >
-                  <Columns className="w-3.5 h-3.5" />
+                  <Columns className="w-3 h-3" />
                   <span>Split</span>
                 </button>
                 <button
@@ -452,7 +451,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                   }`}
                   title="Full Content Reading Mode"
                 >
-                  <BookOpen className="w-3.5 h-3.5" />
+                  <BookOpen className="w-3 h-3" />
                   <span>Content</span>
                 </button>
                 <button
@@ -462,14 +461,14 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                   }`}
                   title="Full Diagram Architecture Mode"
                 >
-                  <ImageIcon className="w-3.5 h-3.5" />
+                  <ImageIcon className="w-3 h-3" />
                   <span>Diagram</span>
                 </button>
               </div>
             )}
 
             {/* Font Scaling Control */}
-            <div className="flex items-center gap-1 bg-white border border-slate-200 p-1 rounded-xl shadow-sm">
+            <div className="flex items-center gap-0.5 bg-white border border-slate-200 p-0.5 rounded-xl shadow-sm">
               <button
                 onClick={() => setFontSize('normal')}
                 className={`px-2 py-0.5 rounded text-xs font-bold ${
@@ -503,7 +502,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
             <a
               href="/CICD_Masterclass_20_Slides.pptx"
               download="CI_CD_Masterclass_20_Slides.pptx"
-              className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs sm:text-sm font-bold text-slate-700 shadow-sm transition-all"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs sm:text-sm font-bold text-slate-700 shadow-sm transition-all"
               title="Download PowerPoint Presentation Deck"
             >
               <Download className="w-3.5 h-3.5 text-blue-600" />
@@ -513,7 +512,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
             {/* Fullscreen Button */}
             <button
               onClick={toggleFullscreen}
-              className={`flex items-center gap-1 px-3 py-1.5 rounded-xl border text-xs sm:text-sm font-bold transition-all shadow-sm ${
+              className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl border text-xs sm:text-sm font-bold transition-all shadow-sm ${
                 isFullscreen
                   ? 'bg-blue-600 text-white border-blue-600'
                   : 'bg-white text-slate-700 hover:text-blue-600 border-slate-200'
@@ -527,9 +526,9 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
             {!isFullscreen && (
               <button
                 onClick={onBackToCourse}
-                className="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold shadow-sm transition-all"
+                className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold shadow-sm transition-all"
               >
-                Course
+                Exit
               </button>
             )}
           </div>
@@ -537,36 +536,11 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
       </div>
 
       {/* =========================================================================
-          FLOATING QUICK SIDE CHEVRONS (CONVENIENCE NAVIGATION)
-          ========================================================================= */}
-      <button
-        onClick={prevSlide}
-        disabled={slideNum === 0}
-        className={`fixed left-2 sm:left-4 top-1/2 -translate-y-1/2 z-40 p-2.5 sm:p-3 rounded-2xl bg-white/95 border border-slate-200 text-slate-800 shadow-xl hover:bg-blue-600 hover:text-white transition-all duration-200 group ${
-          slideNum === 0 ? 'opacity-20 cursor-not-allowed pointer-events-none' : 'hover:scale-110 active:scale-95'
-        }`}
-        title="Previous Slide (← / Left Arrow)"
-      >
-        <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
-      </button>
-
-      <button
-        onClick={nextSlide}
-        disabled={slideNum === totalSlides}
-        className={`fixed right-2 sm:right-4 top-1/2 -translate-y-1/2 z-40 p-2.5 sm:p-3 rounded-2xl bg-white/95 border border-slate-200 text-slate-800 shadow-xl hover:bg-blue-600 hover:text-white transition-all duration-200 group ${
-          slideNum === totalSlides ? 'opacity-20 cursor-not-allowed pointer-events-none' : 'hover:scale-110 active:scale-95'
-        }`}
-        title="Next Slide (→ / Right Arrow / Space)"
-      >
-        <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
-      </button>
-
-      {/* =========================================================================
           SLIDE CANVAS
           ========================================================================= */}
       {slideNum === 0 ? (
         /* ==================== SLIDE 0: TITLE & ROADMAP ==================== */
-        <div className="bg-white border-2 border-slate-200 rounded-3xl p-6 sm:p-8 lg:p-10 shadow-md relative flex flex-col justify-between min-h-[580px]">
+        <div className="bg-white border-2 border-slate-200 rounded-3xl p-5 sm:p-8 lg:p-10 shadow-md relative flex flex-col justify-between min-h-[560px]">
           <div>
             {/* Header Meta */}
             <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-5">
@@ -584,7 +558,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
             </div>
 
             {/* Hero Split */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-6">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center mb-6">
               {/* Left Column (6 cols): Title & Bio */}
               <div className="lg:col-span-6 space-y-4">
                 <div>
@@ -678,14 +652,14 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                     <img
                       src="/devops_cicd_intro.jpg"
                       alt="DevOps CI/CD Pipeline Automation Illustration"
-                      className="w-full h-auto min-h-[300px] sm:min-h-[380px] max-h-[460px] rounded-xl object-cover group-hover:scale-101 transition-transform duration-300"
+                      className="w-full h-auto min-h-[280px] sm:min-h-[360px] max-h-[440px] rounded-xl object-cover group-hover:scale-101 transition-transform duration-300"
                     />
                     <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-sm text-white text-xs font-mono font-bold flex items-center gap-1.5 opacity-90 group-hover:opacity-100 transition-opacity">
                       <Maximize2 className="w-3.5 h-3.5 text-white" />
                       <span>Enlarge</span>
                     </div>
                   </div>
-                  <div className="p-2.5 text-center bg-slate-50 rounded-lg mt-2.5 border border-slate-200">
+                  <div className="p-2 text-center bg-slate-50 rounded-lg mt-2 border border-slate-200">
                     <span className="text-xs font-mono font-bold text-slate-900 block">
                       ⚙️ DevOps Automated Assembly Line: Git Commit ➔ Tests ➔ Docker ➔ AWS
                     </span>
@@ -695,7 +669,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
             </div>
           </div>
 
-          {/* Bottom Action Bar */}
+          {/* Bottom Action Bar for Slide 0 */}
           <div className="pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
             <span className="text-xs sm:text-sm font-mono text-slate-500">
               Press <kbd className="px-1.5 py-0.5 rounded border border-slate-300 bg-slate-100 font-sans font-bold text-slate-800">Space</kbd> or <kbd className="px-1.5 py-0.5 rounded border border-slate-300 bg-slate-100 font-sans font-bold text-slate-800">→</kbd> to begin
@@ -711,12 +685,12 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
         </div>
       ) : (
         /* ==================== SLIDES 1 TO 20: MASTERCLASS LESSON SLIDES ==================== */
-        <div className="bg-white border-2 border-slate-200 rounded-3xl p-5 sm:p-8 lg:p-10 shadow-md relative flex flex-col justify-between min-h-[580px]">
+        <div className="bg-white border-2 border-slate-200 rounded-3xl p-5 sm:p-7 lg:p-8 shadow-md relative flex flex-col justify-between min-h-[560px]">
           <div>
             {/* Slide Header: Phase & Slide Counter */}
             <div className="flex flex-wrap items-center justify-between gap-2.5 border-b border-slate-100 pb-3 mb-4">
-              <div className="flex items-center gap-2.5 flex-wrap">
-                <span className="px-3.5 py-1 rounded-full font-mono font-bold text-xs bg-blue-50 text-blue-700 border border-blue-200 shadow-sm">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="px-3 py-1 rounded-full font-mono font-bold text-xs bg-blue-50 text-blue-700 border border-blue-200 shadow-sm">
                   SLIDE {currentSlide!.num < 10 ? `0${currentSlide!.num}` : currentSlide!.num} OF 20
                 </span>
                 <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-600">
@@ -741,7 +715,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
             </div>
 
             {/* Title & Subtitle */}
-            <div className="mb-5">
+            <div className="mb-4">
               <h2 className={`${headingTextClass} text-slate-950 tracking-tight leading-tight`}>
                 {currentSlide!.title}
               </h2>
@@ -755,9 +729,9 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                 ========================================================================= */}
             {viewMode === 'diagram' ? (
               /* VIEW MODE 1: FULL DIAGRAM FOCUS */
-              <div className="space-y-4 mb-5">
-                <div className="w-full rounded-2xl overflow-hidden border-2 border-blue-300 shadow-xl bg-white p-3.5">
-                  <div className="flex items-center justify-between pb-2.5 mb-2 border-b border-slate-100 flex-wrap gap-2">
+              <div className="space-y-4 mb-4">
+                <div className="w-full rounded-2xl overflow-hidden border-2 border-blue-300 shadow-xl bg-white p-3">
+                  <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100 flex-wrap gap-2">
                     <div className="flex items-center gap-2 text-blue-700 font-bold text-xs sm:text-sm uppercase font-mono">
                       <Layers className="w-4 h-4 text-blue-600" />
                       <span>Architecture Diagram (Full View)</span>
@@ -769,7 +743,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                         setEnlargedImage(currentSlide!.image!);
                         setZoomLevel(1);
                       }}
-                      className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-mono font-bold shadow-sm transition-all"
+                      className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-mono font-bold shadow-sm transition-all"
                     >
                       <ZoomIn className="w-3.5 h-3.5 text-white" />
                       <span>Zoom Lightbox</span>
@@ -777,7 +751,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                   </div>
 
                   <div
-                    className="relative overflow-hidden rounded-xl bg-slate-50 flex items-center justify-center p-3 cursor-pointer group"
+                    className="relative overflow-hidden rounded-xl bg-slate-50 flex items-center justify-center p-2 cursor-pointer group"
                     onClick={() => {
                       setEnlargedImage(currentSlide!.image!);
                       setZoomLevel(1);
@@ -786,9 +760,9 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                     <img
                       src={currentSlide!.image}
                       alt={currentSlide!.title}
-                      className="w-full h-auto min-h-[380px] sm:min-h-[500px] max-h-[680px] rounded-xl object-contain group-hover:scale-101 transition-transform duration-300"
+                      className="w-full h-auto min-h-[340px] sm:min-h-[460px] max-h-[640px] rounded-xl object-contain group-hover:scale-101 transition-transform duration-300"
                     />
-                    <div className="absolute top-3 right-3 px-3 py-1.5 rounded-xl bg-black/70 backdrop-blur-sm text-white text-xs font-mono font-bold flex items-center gap-1.5 opacity-90 group-hover:opacity-100 transition-opacity">
+                    <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-sm text-white text-xs font-mono font-bold flex items-center gap-1.5 opacity-90 group-hover:opacity-100 transition-opacity">
                       <Maximize2 className="w-3.5 h-3.5 text-white" />
                       <span>Click to Zoom</span>
                     </div>
@@ -797,11 +771,11 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
               </div>
             ) : viewMode === 'content' ? (
               /* VIEW MODE 2: FULL CONTENT FOCUS (12-COL READING MODE) */
-              <div className="space-y-5 mb-5">
+              <div className="space-y-4 mb-4">
                 {/* Detailed Points */}
-                <div className="space-y-2.5">
+                <div className="space-y-2">
                   {(currentSlide!.detailedPoints || currentSlide!.contentPoints)?.map((pt, idx) => (
-                    <div key={idx} className="flex items-start gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 shadow-sm">
+                    <div key={idx} className="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200 shadow-sm">
                       <CheckCircle2 className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
                       <p className={`${bodyTextClass} text-slate-800 font-medium`}>{pt}</p>
                     </div>
@@ -810,16 +784,16 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
 
                 {/* Food Analogy Card */}
                 {currentSlide!.foodAnalogy && (
-                  <div className="p-5 rounded-2xl bg-amber-50/80 border-2 border-amber-200 shadow-sm">
+                  <div className="p-4 rounded-2xl bg-amber-50/80 border-2 border-amber-200 shadow-sm">
                     <div className="flex items-center gap-2 text-amber-950 font-black text-base mb-1.5">
                       <UtensilsCrossed className="w-4 h-4 text-amber-600" />
                       <span>{currentSlide!.foodAnalogy.title}</span>
                     </div>
-                    <p className={`${bodyTextClass} text-slate-800 leading-relaxed mb-2.5`}>
+                    <p className={`${bodyTextClass} text-slate-800 leading-relaxed mb-2`}>
                       {currentSlide!.foodAnalogy.story}
                     </p>
                     {currentSlide!.foodAnalogy.connection && (
-                      <div className="p-3 rounded-xl bg-white border border-amber-200 shadow-sm">
+                      <div className="p-2.5 rounded-xl bg-white border border-amber-200 shadow-sm">
                         <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
                           <strong className="text-amber-950">Software Connection:</strong> {currentSlide!.foodAnalogy.connection}
                         </p>
@@ -833,9 +807,9 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
               </div>
             ) : (
               /* VIEW MODE 3: SPLIT VIEW WITH CONVENIENT CONTENT TABS */
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start mb-5">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start mb-4">
                 {/* Left Side (6 cols): Tabbed Content & Concepts */}
-                <div className="lg:col-span-6 space-y-3 flex flex-col justify-between">
+                <div className="lg:col-span-6 space-y-2.5 flex flex-col justify-between">
                   {/* Content Section Tabs */}
                   {(hasFoodAnalogy || hasTechExtras) && (
                     <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs font-bold overflow-x-auto">
@@ -875,7 +849,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                           }`}
                         >
                           <FileCode2 className="w-3.5 h-3.5" />
-                          <span>Technical Deep-Dive</span>
+                          <span>Technical Details</span>
                         </button>
                       )}
 
@@ -893,7 +867,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
 
                   {/* Tab 1: Core Points */}
                   {(activeTab === 'points' || activeTab === 'all') && (
-                    <div className="space-y-2.5 animate-fadeIn">
+                    <div className="space-y-2 animate-fadeIn">
                       {(currentSlide!.detailedPoints || currentSlide!.contentPoints)?.map((pt, idx) => (
                         <div key={idx} className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200 shadow-sm">
                           <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
@@ -905,8 +879,8 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
 
                   {/* Tab 2: Food Analogy */}
                   {(activeTab === 'analogy' || activeTab === 'all') && currentSlide!.foodAnalogy && (
-                    <div className="p-4 rounded-2xl bg-amber-50/80 border-2 border-amber-200 shadow-sm animate-fadeIn">
-                      <div className="flex items-center gap-2 text-amber-950 font-black text-sm sm:text-base mb-1.5">
+                    <div className="p-3.5 rounded-2xl bg-amber-50/80 border-2 border-amber-200 shadow-sm animate-fadeIn">
+                      <div className="flex items-center gap-2 text-amber-950 font-black text-sm mb-1.5">
                         <UtensilsCrossed className="w-4 h-4 text-amber-600" />
                         <span>{currentSlide!.foodAnalogy.title}</span>
                       </div>
@@ -914,8 +888,8 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                         {currentSlide!.foodAnalogy.story}
                       </p>
                       {currentSlide!.foodAnalogy.connection && (
-                        <div className="p-2.5 rounded-xl bg-white border border-amber-200 shadow-sm">
-                          <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                        <div className="p-2 rounded-xl bg-white border border-amber-200 shadow-sm">
+                          <p className="text-xs text-slate-700 leading-relaxed font-medium">
                             <strong className="text-amber-950">Software Connection:</strong> {currentSlide!.foodAnalogy.connection}
                           </p>
                         </div>
@@ -932,16 +906,16 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                 </div>
 
                 {/* Right Side (6 cols): Architecture Diagram Image */}
-                <div className="lg:col-span-6 flex flex-col items-center space-y-2.5">
+                <div className="lg:col-span-6 flex flex-col items-center space-y-2">
                   <div
-                    className="w-full rounded-2xl overflow-hidden border-2 border-slate-200 shadow-md bg-white p-3 cursor-pointer group transition-all hover:border-blue-400"
+                    className="w-full rounded-2xl overflow-hidden border-2 border-slate-200 shadow-md bg-white p-2.5 cursor-pointer group transition-all hover:border-blue-400"
                     onClick={() => {
                       setEnlargedImage(currentSlide!.image!);
                       setZoomLevel(1);
                     }}
                     title="Click to view full screen"
                   >
-                    <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
+                    <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-100">
                       <div className="flex items-center gap-1.5 text-blue-700 font-bold text-xs uppercase font-mono">
                         <Layers className="w-3.5 h-3.5" />
                         <span>Architecture Diagram</span>
@@ -952,7 +926,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                             e.stopPropagation();
                             setViewMode('diagram');
                           }}
-                          className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-mono font-bold transition-all"
+                          className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-mono font-bold transition-all"
                         >
                           <Maximize2 className="w-3 h-3" />
                           <span>Full Width</span>
@@ -964,15 +938,15 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                       <img
                         src={currentSlide!.image}
                         alt={currentSlide!.title}
-                        className="w-full h-auto min-h-[300px] sm:min-h-[380px] max-h-[500px] rounded-xl object-contain group-hover:scale-101 transition-transform duration-300"
+                        className="w-full h-auto min-h-[260px] sm:min-h-[340px] max-h-[460px] rounded-xl object-contain group-hover:scale-101 transition-transform duration-300"
                       />
-                      <div className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-sm text-white text-xs font-mono font-bold flex items-center gap-1 opacity-90 group-hover:opacity-100 transition-opacity">
+                      <div className="absolute top-2.5 right-2.5 px-2 py-1 rounded-lg bg-black/60 backdrop-blur-sm text-white text-xs font-mono font-bold flex items-center gap-1 opacity-90 group-hover:opacity-100 transition-opacity">
                         <Maximize2 className="w-3 h-3 text-white" />
                         <span>Enlarge</span>
                       </div>
                     </div>
 
-                    <div className="p-2.5 bg-slate-50 rounded-xl mt-2.5 border border-slate-200">
+                    <div className="p-2 bg-slate-50 rounded-xl mt-2 border border-slate-200">
                       <p className="text-xs font-mono text-slate-800 leading-relaxed font-semibold">
                         {currentSlide!.imageCaption}
                       </p>
@@ -983,8 +957,8 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
             )}
 
             {/* Bottom Key Takeaway Banner */}
-            <div className="mt-4 p-3.5 sm:p-4 rounded-xl bg-emerald-50 border-2 border-emerald-300 flex items-center gap-3 shadow-sm">
-              <span className="text-xl sm:text-2xl shrink-0">💡</span>
+            <div className="p-3 sm:p-3.5 rounded-xl bg-emerald-50 border-2 border-emerald-300 flex items-center gap-2.5 shadow-sm">
+              <span className="text-lg sm:text-xl shrink-0">💡</span>
               <div className="text-xs sm:text-sm text-emerald-950 font-bold leading-relaxed">
                 <strong className="text-emerald-900 font-black uppercase tracking-wider text-xs block sm:inline mr-2">Key Takeaway:</strong>
                 {currentSlide!.keyTakeaway}
@@ -992,19 +966,12 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
             </div>
           </div>
 
-          {/* Slide Footer with Controls */}
-          <div className="pt-4 border-t border-slate-200 mt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5">
-              <span className="text-xs sm:text-sm font-mono font-bold text-slate-700">
-                Slide {currentSlide!.num} of {totalSlides}
-              </span>
-              <span className="text-slate-300">•</span>
-              <span className="text-xs font-mono text-slate-500 font-medium">
-                Use <kbd className="px-1 py-0.5 rounded border border-slate-300 bg-slate-100 font-sans font-bold">←</kbd> <kbd className="px-1 py-0.5 rounded border border-slate-300 bg-slate-100 font-sans font-bold">→</kbd> or <kbd className="px-1 py-0.5 rounded border border-slate-300 bg-slate-100 font-sans font-bold">Space</kbd>
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2.5">
+          {/* =========================================================================
+              UNIFIED BOTTOM DECK NAVIGATION DOCK (ZERO CLUTTER, ALL-IN-ONE)
+              ========================================================================= */}
+          <div className="pt-4 border-t border-slate-200 mt-5 flex flex-col md:flex-row items-center justify-between gap-3">
+            {/* Left: Previous Button & Progress Bar */}
+            <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
               <button
                 onClick={prevSlide}
                 className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-slate-200 hover:bg-slate-100 text-xs sm:text-sm font-bold text-slate-700 transition-all shadow-sm"
@@ -1012,60 +979,67 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                 <ChevronLeft className="w-4 h-4" />
                 <span>{slideNum === 1 ? 'Intro' : 'Previous'}</span>
               </button>
+
+              <div className="flex items-center gap-2">
+                <span className="text-xs sm:text-sm font-mono font-bold text-slate-800">
+                  Slide {currentSlide!.num < 10 ? `0${currentSlide!.num}` : currentSlide!.num} <span className="text-slate-400">/</span> {totalSlides}
+                </span>
+                <div className="w-16 sm:w-24 h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                  <div
+                    className="h-full bg-blue-600 transition-all duration-300"
+                    style={{ width: `${(slideNum / totalSlides) * 100}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Center: Slide Numbers Quick Scrubber */}
+            <div className="hidden lg:flex items-center gap-1 overflow-x-auto max-w-[440px] px-2 py-1 bg-slate-100/80 rounded-xl border border-slate-200">
+              <button
+                onClick={() => setSlideNum(0)}
+                className={`px-2 py-1 rounded-lg text-xs font-mono font-bold transition-all ${
+                  slideNum === 0
+                    ? 'bg-blue-600 text-white shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                }`}
+                title="Slide 0: Overview & Bio"
+              >
+                00
+              </button>
+              {MASTER_SLIDES_DATA.map((s) => (
+                <button
+                  key={s.num}
+                  onClick={() => setSlideNum(s.num)}
+                  className={`px-1.5 py-1 rounded-lg text-[11px] font-mono font-bold transition-all ${
+                    s.num === slideNum
+                      ? 'bg-blue-600 text-white shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                  }`}
+                  title={`Slide ${s.num}: ${s.title}`}
+                >
+                  {s.num < 10 ? `0${s.num}` : s.num}
+                </button>
+              ))}
+            </div>
+
+            {/* Right: Next Slide Button */}
+            <div className="w-full md:w-auto flex items-center justify-end">
               <button
                 onClick={nextSlide}
                 disabled={slideNum === totalSlides}
-                className={`flex items-center gap-1.5 px-5 py-2 rounded-xl text-xs sm:text-sm font-bold text-white transition-all shadow-sm ${
+                className={`w-full md:w-auto flex items-center justify-center gap-1.5 px-6 py-2 rounded-xl text-xs sm:text-sm font-bold text-white transition-all shadow-md ${
                   slideNum === totalSlides
-                    ? 'bg-slate-300 cursor-not-allowed text-slate-500'
-                    : 'bg-blue-600 hover:bg-blue-700 shadow-blue-500/25'
+                    ? 'bg-slate-300 cursor-not-allowed text-slate-500 shadow-none'
+                    : 'bg-blue-600 hover:bg-blue-700 shadow-blue-500/20 active:scale-95'
                 }`}
               >
-                <span>{slideNum === totalSlides ? 'Completed' : 'Next Slide'}</span>
+                <span>{slideNum === totalSlides ? 'Completed 🎉' : 'Next Slide'}</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
           </div>
         </div>
       )}
-
-      {/* =========================================================================
-          21-SLIDE THUMBNAIL QUICK-SCRUBBER STRIP AT BOTTOM
-          ========================================================================= */}
-      <div className="mt-6 pt-3 border-t border-slate-200 overflow-x-auto">
-        <div className="flex items-center gap-1.5 pb-2 min-w-[700px]">
-          {/* Slide 0: Intro */}
-          <button
-            onClick={() => setSlideNum(0)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold font-mono transition-all shrink-0 shadow-sm ${
-              slideNum === 0
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'bg-white text-slate-700 border border-slate-200 hover:border-blue-400 hover:text-blue-600'
-            }`}
-          >
-            00. Intro
-          </button>
-
-          {/* Slides 1-20 */}
-          {MASTER_SLIDES_DATA.map((slide) => {
-            const isActive = slide.num === slideNum;
-            return (
-              <button
-                key={slide.num}
-                onClick={() => setSlideNum(slide.num)}
-                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold font-mono transition-all shrink-0 shadow-sm ${
-                  isActive
-                    ? 'bg-blue-600 text-white shadow-sm scale-105'
-                    : 'bg-white text-slate-700 border border-slate-200 hover:border-blue-400 hover:text-blue-600'
-                }`}
-                title={`Slide ${slide.num}: ${slide.title}`}
-              >
-                {slide.num < 10 ? `0${slide.num}` : slide.num}
-              </button>
-            );
-          })}
-        </div>
-      </div>
 
       {/* =========================================================================
           SLIDE GRID OVERVIEW MODAL (LIGHT TABLE / ALL SLIDES AT ONCE)

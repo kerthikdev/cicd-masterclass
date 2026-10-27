@@ -194,9 +194,10 @@ export function App() {
         percentComplete={percentComplete}
       />
 
-      {/* Modern Global Footer */}
-      <footer className="bg-slate-100 border-t border-slate-200 py-10 px-4 mt-auto">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-xs text-slate-600">
+      {/* Modern Global Footer (Hidden in Presentation Deck View for Clean UX) */}
+      {currentView !== 'presentation' && (
+        <footer className="bg-slate-100 border-t border-slate-200 py-10 px-4 mt-auto">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-xs text-slate-600">
           <div className="flex items-center gap-3">
             <span className="text-xl">🍔</span>
             <div>
@@ -234,6 +235,7 @@ export function App() {
           </div>
         </div>
       </footer>
+      )}
     </div>
   );
 }
