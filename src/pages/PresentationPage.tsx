@@ -446,17 +446,17 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
   return (
     <div
       ref={containerRef}
-      className={`bg-[#f8fafc] text-slate-900 transition-all flex flex-col items-center justify-center ${
+      className={`bg-[#f8fafc] text-slate-900 transition-all flex flex-col items-center ${
         isFullscreen
-          ? 'fixed inset-0 z-50 overflow-y-auto p-2 sm:p-4 bg-[#f8fafc]'
-          : 'w-full min-h-[calc(100vh-4.25rem)] px-3 sm:px-6 py-2 sm:py-3'
+          ? 'fixed inset-0 z-50 overflow-y-auto p-2 sm:p-4 lg:p-6 bg-[#f8fafc]'
+          : 'w-full min-h-[calc(100vh-4.25rem)] px-3 sm:px-6 py-3 sm:py-5'
       }`}
     >
-      <div className="w-full max-w-6xl my-auto flex flex-col">
+      <div className="w-full max-w-6xl my-auto bg-white border-2 border-slate-200 rounded-3xl shadow-xl flex flex-col overflow-hidden">
         {/* =========================================================================
-            TOP DECK HEADER & CONTROLS TOOLBAR (COMPACT SINGLE BAR)
+            TOP DECK HEADER & CONTROLS TOOLBAR (INTEGRATED DIRECTLY INTO CARD HEADER)
             ========================================================================= */}
-        <div className="flex flex-wrap items-center justify-between gap-2 pb-2 mb-2.5 border-b border-slate-200">
+        <div className="bg-slate-50/90 border-b border-slate-200 px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-2">
           {/* Deck Meta Title */}
           <div className="flex items-center gap-2 flex-wrap">
             <div className="flex items-center gap-1.5 text-xs font-mono font-bold uppercase tracking-wider text-blue-600">
@@ -465,7 +465,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
               <span className="text-slate-300">•</span>
               <span className="text-slate-600 font-semibold">{PRESENTER_INFO.name}</span>
             </div>
-            <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200">
+            <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-md bg-blue-100/80 text-blue-800 border border-blue-200">
               {slideNum === 0 ? 'Slide 00 / 20' : `Slide ${slideNum < 10 ? `0${slideNum}` : slideNum} / 20`}
             </span>
             <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 hidden sm:inline-flex items-center gap-1">
@@ -478,7 +478,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
             {/* Grid Overview Modal Button */}
             <button
               onClick={() => setGridModalOpen(true)}
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs font-bold text-slate-700 shadow-sm transition-all"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700 shadow-sm transition-all"
               title="View all slides in a grid overview (Press G)"
             >
               <LayoutGrid className="w-3.5 h-3.5 text-blue-600" />
@@ -609,7 +609,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
         {/* =========================================================================
             SLIDE CANVAS (UNIFIED TEMPLATE FOR SLIDE 00 AND SLIDES 01-20)
             ========================================================================= */}
-        <div className="bg-white border-2 border-slate-200 rounded-3xl p-4 sm:p-5 lg:p-6 shadow-md relative flex flex-col">
+        <div className="p-4 sm:p-5 lg:p-6 flex flex-col flex-1">
         {slideNum === 0 ? (
           /* ==================== SLIDE 00: COURSE INTRODUCTION & ROADMAP ==================== */
           <div>
