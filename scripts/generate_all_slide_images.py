@@ -214,7 +214,7 @@ slides_configs = [
         "category": "Culture & Tooling",
         "color": (5, 150, 105),
         "draw": "comparison_split",
-        "left_title": "The Old 'Wall of Confusion'",
+        "left_title": "[OLD] The 'Wall of Confusion'",
         "left_items": [
             "• Developers rewarded for speed & frequent changes",
             "• Operations rewarded for system stability & uptime",
@@ -222,7 +222,7 @@ slides_configs = [
             "• Ops blamed when unvetted code crashes server",
             "• Finger-pointing, siloed friction, and blame games"
         ],
-        "right_title": "The DevOps Unified Culture",
+        "right_title": "[DEVOPS] The Unified Culture",
         "right_items": [
             "• Shared responsibility for code AND production uptime",
             "• 'You build it, you run it' (Werner Vogels, Amazon)",
@@ -375,7 +375,7 @@ slides_configs = [
         "right_items": [
             "• Route 5% traffic to new release v2 (canary)",
             "• Monitor HTTP 500 error rates & latency metrics",
-            "• If healthy, auto-ramp to 25% ➔ 50% ➔ 100%",
+            "• If healthy, auto-ramp to 25% -> 50% -> 100%",
             "• If errors spike > 1%, instantly route 100% back",
             "• Limits blast radius so only a tiny fraction of users see bugs"
         ],
@@ -458,7 +458,7 @@ for cfg in slides_configs:
             
             # Green Verified Badge
             d.rounded_rectangle([(bx + 16, y + 360), (bx + box_w - 16, y + 440)], radius=16, fill=(236, 253, 245), outline=(16, 185, 129), width=2)
-            d.text((bx + 36, y + 385), "PASSED ✓", fill=(5, 150, 105), font=font_head)
+            d.text((bx + 36, y + 385), "PASSED [OK]", fill=(5, 150, 105), font=font_head)
             
             # Flow arrow
             if idx < num - 1:
@@ -556,7 +556,7 @@ for cfg in slides_configs:
             
             # Card Body
             d.rounded_rectangle([(gx + 20, gy + 105), (gx + gw - 20, gy + gh - 20)], radius=14, fill=(248, 250, 252), outline=(226, 232, 240), width=2)
-            draw_wrapped_text(d, desc, gx + 35, gy + 125, gw - 70, font_body_bold, (30, 41, 59), line_spacing=10)
+            draw_wrapped_text(d, desc, gx + 35, gy + 130, gw - 70, font_body_bold, (30, 41, 59), line_spacing=10)
 
     # 5. ACTIONS ARCH (Slides 13, 14)
     elif cfg["draw"] == "actions_arch":
