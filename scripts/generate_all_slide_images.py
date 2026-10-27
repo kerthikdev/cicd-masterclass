@@ -35,6 +35,32 @@ font_body_bold = get_font(FONT_BOLD_PATH, 22)
 font_badge = get_font(FONT_BOLD_PATH, 20)
 font_footer = get_font(FONT_BOLD_PATH, 22)
 
+def draw_wrapped_text(d, text, x, y, max_width, font, fill, line_spacing=8):
+    words = text.split()
+    lines = []
+    current_line = []
+    for word in words:
+        test_line = ' '.join(current_line + [word])
+        bbox = d.textbbox((0, 0), test_line, font=font)
+        if bbox[2] - bbox[0] <= max_width:
+            current_line.append(word)
+        else:
+            if current_line:
+                lines.append(' '.join(current_line))
+                current_line = [word]
+            else:
+                lines.append(word)
+                current_line = []
+    if current_line:
+        lines.append(' '.join(current_line))
+    
+    curr_y = y
+    for line in lines:
+        d.text((x, curr_y), line, font=font, fill=fill)
+        bbox = d.textbbox((0, 0), line, font=font)
+        curr_y += (bbox[3] - bbox[1]) + line_spacing
+    return curr_y
+
 def draw_base_card(title, category, badge_color=(37, 99, 235)):
     img = Image.new('RGB', (W, H), color=(255, 255, 255))
     d = ImageDraw.Draw(img)
@@ -86,7 +112,7 @@ slides_configs = [
         "category": "History & Problem",
         "color": (225, 29, 72),
         "draw": "comparison_split",
-        "left_title": "❌ The Old Way: Manual 'Integration Hell'",
+        "left_title": "[OLD WAY] Manual 'Integration Hell'",
         "left_items": [
             "• 6-Month Big Bang Releases (High Risk)",
             "• 10,000-Line Terrifying Merge Conflicts",
@@ -94,7 +120,7 @@ slides_configs = [
             "• 2:00 AM SSH & FTP Manual Deployments",
             "• Catastrophic Outages on Launch Day"
         ],
-        "right_title": "✅ The CI/CD Way: Automated Continuous Flow",
+        "right_title": "[CI/CD] Automated Continuous Flow",
         "right_items": [
             "• Small Atomic Commits Multiple Times Daily",
             "• Automated Test Suites Catch Bugs in < 5 Mins",
@@ -188,7 +214,7 @@ slides_configs = [
         "category": "Culture & Tooling",
         "color": (5, 150, 105),
         "draw": "comparison_split",
-        "left_title": "🧱 The Old 'Wall of Confusion'",
+        "left_title": "The Old 'Wall of Confusion'",
         "left_items": [
             "• Developers rewarded for speed & frequent changes",
             "• Operations rewarded for system stability & uptime",
@@ -196,7 +222,7 @@ slides_configs = [
             "• Ops blamed when unvetted code crashes server",
             "• Finger-pointing, siloed friction, and blame games"
         ],
-        "right_title": "🤝 The DevOps Unified Culture",
+        "right_title": "The DevOps Unified Culture",
         "right_items": [
             "• Shared responsibility for code AND production uptime",
             "• 'You build it, you run it' (Werner Vogels, Amazon)",
@@ -218,7 +244,7 @@ slides_configs = [
             ("M - MEASUREMENT", "DORA Metrics: Lead Time, Deploy Frequency, MTTR, Change Failure Rate", (245, 158, 11)),
             ("S - SHARING", "Cross-pollination of knowledge and transparent documentation", (139, 92, 246))
         ],
-        "footer_badge": "Continuous Feedback Loop: Plan ➔ Code ➔ Build ➔ Test ➔ Release ➔ Deploy ➔ Operate ➔ Monitor"
+        "footer_badge": "Continuous Feedback Loop: Plan -> Code -> Build -> Test -> Release -> Deploy -> Operate -> Monitor"
     },
     {
         "id": 10,
@@ -269,7 +295,7 @@ slides_configs = [
             ("1. Event Trigger", "git push, pull_request, schedule, workflow_dispatch waking up pipeline", (37, 99, 235)),
             ("2. GitHub Runner", "Ephemeral fresh VM (Ubuntu, macOS, Windows) spun up in seconds", (14, 165, 233)),
             ("3. Jobs (Parallel)", "Independent job containers running concurrently across runner pool", (139, 92, 246)),
-            ("4. Steps (Sequential)", "Check out repo ➔ Set up Node/Python ➔ Run tests ➔ Build artifact", (16, 185, 129))
+            ("4. Steps (Sequential)", "Check out repo -> Set up Node/Python -> Run tests -> Build artifact", (16, 185, 129))
         ],
         "footer_badge": "Ephemeral Security: Every job runs inside an isolated clean virtual machine that is destroyed after use"
     },
@@ -315,7 +341,7 @@ slides_configs = [
             ("4. AWS ALB", "Load Balancer", "Zero-Downtime Live", (16, 185, 129)),
             ("5. CloudWatch", "Telemetry & Alarms", "Auto-Rollback OK", (225, 29, 72))
         ],
-        "footer_badge": "AWS Production Architecture: GitHub Actions OIDC ➔ Amazon ECR ➔ Amazon ECS Fargate ➔ ALB Live (200 OK)"
+        "footer_badge": "AWS Production Architecture: GitHub Actions OIDC -> Amazon ECR -> Amazon ECS Fargate -> ALB Live (200 OK)"
     },
     {
         "id": 17,
@@ -366,7 +392,7 @@ slides_configs = [
             ("2. GitHub CI", "PyTest & Security", "100% Quality Pass", (14, 165, 233)),
             ("3. Docker Build", "Multi-stage Image", "Minimal 45MB Image", (139, 92, 246)),
             ("4. Push to ECR", "Amazon ECR Registry", "Secure AWS Storage", (245, 158, 11)),
-            ("5. Live on ECS", "Amazon ECS Fargate", "Zero-Downtime Live ✓", (16, 185, 129))
+            ("5. Live on ECS", "Amazon ECS Fargate", "Zero-Downtime Live [OK]", (16, 185, 129))
         ],
         "footer_badge": "Full Project Delivery: Code push to live high-availability AWS Cloud in under 4 minutes"
     },
@@ -530,7 +556,7 @@ for cfg in slides_configs:
             
             # Card Body
             d.rounded_rectangle([(gx + 20, gy + 105), (gx + gw - 20, gy + gh - 20)], radius=14, fill=(248, 250, 252), outline=(226, 232, 240), width=2)
-            d.text((gx + 35, gy + 140), desc, fill=(30, 41, 59), font=font_body_bold)
+            draw_wrapped_text(d, desc, gx + 35, gy + 125, gw - 70, font_body_bold, (30, 41, 59), line_spacing=10)
 
     # 5. ACTIONS ARCH (Slides 13, 14)
     elif cfg["draw"] == "actions_arch":
@@ -554,7 +580,7 @@ for cfg in slides_configs:
 
     # Bottom summary footer badge
     d.rounded_rectangle([(50, H - 120), (W - 50, H - 40)], radius=18, fill=(241, 245, 249), outline=(203, 213, 225), width=2)
-    d.text((75, H - 90), f"⚡ {cfg['footer_badge']}", fill=(15, 23, 42), font=font_footer)
+    d.text((75, H - 90), f">> {cfg['footer_badge']}", fill=(15, 23, 42), font=font_footer)
 
     out_path = f"public/slides/slide_{cfg['id']}.png"
     img.save(out_path, quality=95)
