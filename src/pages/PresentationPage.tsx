@@ -446,17 +446,23 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
   return (
     <div
       ref={containerRef}
-      className={`bg-[#f8fafc] text-slate-900 transition-all flex flex-col items-center ${
+      className={`bg-[#f8fafc] text-slate-900 transition-all flex flex-col items-center justify-center ${
         isFullscreen
-          ? 'fixed inset-0 z-50 overflow-y-auto p-2 sm:p-4 lg:p-6 bg-[#f8fafc]'
-          : 'w-full min-h-[calc(100vh-4.25rem)] px-3 sm:px-6 py-3 sm:py-5'
+          ? 'fixed inset-0 z-50 w-screen h-screen overflow-hidden p-0 bg-white'
+          : 'w-full min-h-[calc(100vh-4.25rem)] px-2 sm:px-4 lg:px-6 py-2 sm:py-3 flex flex-col justify-center items-center'
       }`}
     >
-      <div className="w-full max-w-6xl my-auto bg-white border-2 border-slate-200 rounded-3xl shadow-xl flex flex-col overflow-hidden">
+      <div
+        className={`w-full flex flex-col bg-white transition-all ${
+          isFullscreen
+            ? 'w-screen h-screen flex-1 flex flex-col justify-between rounded-none shadow-none border-0'
+            : 'max-w-7xl 2xl:max-w-[1600px] flex-1 my-auto rounded-2xl sm:rounded-3xl border-2 border-slate-200 shadow-xl overflow-hidden flex flex-col justify-between'
+        }`}
+      >
         {/* =========================================================================
             TOP DECK HEADER & CONTROLS TOOLBAR (INTEGRATED DIRECTLY INTO CARD HEADER)
             ========================================================================= */}
-        <div className="bg-slate-50/90 border-b border-slate-200 px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-2">
+        <div className="bg-slate-50/95 border-b border-slate-200 px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex flex-wrap items-center justify-between gap-2 shrink-0">
           {/* Deck Meta Title */}
           <div className="flex items-center gap-2 flex-wrap">
             <div className="flex items-center gap-1.5 text-xs font-mono font-bold uppercase tracking-wider text-blue-600">
@@ -609,10 +615,10 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
         {/* =========================================================================
             SLIDE CANVAS (UNIFIED TEMPLATE FOR SLIDE 00 AND SLIDES 01-20)
             ========================================================================= */}
-        <div className="p-4 sm:p-5 lg:p-6 flex flex-col flex-1">
+        <div className="p-4 sm:p-6 lg:p-8 flex flex-col flex-1 justify-between overflow-y-auto">
         {slideNum === 0 ? (
           /* ==================== SLIDE 00: COURSE INTRODUCTION & ROADMAP ==================== */
-          <div>
+          <div className="flex-1 flex flex-col justify-between">
             {/* Slide Header */}
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2 mb-3">
               <div className="flex items-center gap-2">
@@ -721,7 +727,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                     <img
                       src="/devops_cicd_intro.jpg"
                       alt="DevOps CI/CD Pipeline Automation Illustration"
-                      className="w-full h-auto min-h-[190px] sm:min-h-[220px] max-h-[290px] rounded-xl object-contain group-hover:scale-101 transition-transform duration-300"
+                      className="w-full h-auto min-h-[220px] sm:min-h-[260px] max-h-[380px] rounded-xl object-contain group-hover:scale-101 transition-transform duration-300"
                     />
                     <div className="absolute top-2.5 right-2.5 px-2 py-1 rounded-lg bg-black/60 backdrop-blur-sm text-white text-xs font-mono font-bold flex items-center gap-1 opacity-90 group-hover:opacity-100 transition-opacity">
                       <Maximize2 className="w-3 h-3 text-white" />
@@ -748,7 +754,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
           </div>
         ) : (
           /* ==================== SLIDES 01 TO 20: MASTERCLASS LESSON SLIDES ==================== */
-          <div>
+          <div className="flex-1 flex flex-col justify-between">
             {/* Slide Header: Phase & Slide Counter */}
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2 mb-3">
               <div className="flex items-center gap-2 flex-wrap">
@@ -961,7 +967,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                       <img
                         src={currentSlide!.image}
                         alt={currentSlide!.title}
-                        className="w-full h-auto min-h-[190px] sm:min-h-[240px] max-h-[320px] rounded-xl object-contain group-hover:scale-101 transition-transform duration-300"
+                        className="w-full h-auto min-h-[220px] sm:min-h-[260px] max-h-[380px] rounded-xl object-contain group-hover:scale-101 transition-transform duration-300"
                       />
                       <div className="absolute top-2.5 right-2.5 px-2 py-1 rounded-lg bg-black/60 backdrop-blur-sm text-white text-xs font-mono font-bold flex items-center gap-1 opacity-90 group-hover:opacity-100 transition-opacity">
                         <Maximize2 className="w-3 h-3 text-white" />
@@ -989,11 +995,12 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
             </div>
           </div>
         )}
+        </div>
 
         {/* =========================================================================
-            UNIVERSAL BOTTOM DECK NAVIGATION DOCK (FOR SLIDE 00 AND ALL SLIDES)
+            UNIVERSAL BOTTOM DECK NAVIGATION DOCK (PINNED AT BOTTOM OF FULL SCREEN CARD)
             ========================================================================= */}
-        <div className="pt-3 border-t border-slate-200 mt-3.5 flex flex-col md:flex-row items-center justify-between gap-3">
+        <div className="bg-slate-50/95 border-t border-slate-200 px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex flex-col md:flex-row items-center justify-between gap-3 shrink-0">
           {/* Left: Previous Button & Progress Bar */}
           <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
             <button
@@ -1013,7 +1020,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
               <span className="text-xs sm:text-sm font-mono font-bold text-slate-800">
                 Slide {slideNum < 10 ? `0${slideNum}` : slideNum} <span className="text-slate-400">/</span> {totalSlides}
               </span>
-              <div className="w-16 sm:w-20 h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+              <div className="w-16 sm:w-24 h-2 bg-slate-200 rounded-full overflow-hidden border border-slate-200">
                 <div
                   className="h-full bg-blue-600 transition-all duration-300"
                   style={{ width: `${(slideNum / totalSlides) * 100}%` }}
@@ -1023,14 +1030,14 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
           </div>
 
           {/* Center: Slide Numbers Quick Scrubber (With Auto-Scroll into View) */}
-          <div className="flex items-center gap-1 overflow-x-auto max-w-[340px] sm:max-w-[480px] lg:max-w-[580px] px-2 py-1 bg-slate-100/90 rounded-xl border border-slate-200 scroll-smooth">
+          <div className="flex items-center gap-1 overflow-x-auto max-w-[340px] sm:max-w-[480px] lg:max-w-[650px] xl:max-w-[760px] px-2 py-1 bg-white rounded-xl border border-slate-200 shadow-inner scroll-smooth">
             <button
               ref={slideNum === 0 ? activeScrubberBtnRef : null}
               onClick={() => setSlideNum(0)}
               className={`px-2 py-1 rounded-lg text-xs font-mono font-bold transition-all shrink-0 ${
                 slideNum === 0
                   ? 'bg-blue-600 text-white shadow-sm ring-2 ring-blue-400/50'
-                  : 'text-slate-700 hover:text-slate-950 hover:bg-white bg-slate-50 border border-slate-200'
+                  : 'text-slate-700 hover:text-slate-950 hover:bg-slate-100 bg-slate-50 border border-slate-200'
               }`}
               title="Slide 0: Overview & Bio"
             >
@@ -1046,7 +1053,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                   className={`px-2 py-1 rounded-lg text-[11px] font-mono font-bold transition-all shrink-0 ${
                     isActive
                       ? 'bg-blue-600 text-white shadow-sm ring-2 ring-blue-400/50 scale-105'
-                      : 'text-slate-700 hover:text-slate-950 hover:bg-white bg-slate-50 border border-slate-200'
+                      : 'text-slate-700 hover:text-slate-950 hover:bg-slate-100 bg-slate-50 border border-slate-200'
                   }`}
                   title={`Slide ${s.num}: ${s.title}`}
                 >
@@ -1072,7 +1079,6 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
             </button>
           </div>
         </div>
-      </div>
       </div>
 
       {/* =========================================================================
