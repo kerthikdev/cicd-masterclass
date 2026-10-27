@@ -28,7 +28,11 @@ import {
   LayoutGrid,
   X,
   FileCode2,
-  ListChecks
+  ListChecks,
+  Boxes,
+  HelpCircle,
+  GitBranch,
+  Quote
 } from 'lucide-react';
 
 export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onBackToCourse }) => {
@@ -40,14 +44,26 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
   const [fontSize, setFontSize] = useState<'normal' | 'large' | 'xl'>('large');
   const [zoomLevel, setZoomLevel] = useState<number>(1);
   const [gridModalOpen, setGridModalOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'points' | 'analogy' | 'tech' | 'all'>('points');
+  const [activeTab, setActiveTab] = useState<'primary' | 'analogy' | 'all'>('primary');
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const activeScrubberBtnRef = useRef<HTMLButtonElement | null>(null);
   const totalSlides = 20;
 
-  // Reset tab to 'points' whenever slide changes
+  // Reset tab to 'primary' whenever slide changes
   useEffect(() => {
-    setActiveTab('points');
+    setActiveTab('primary');
+  }, [slideNum]);
+
+  // Auto-scroll the scrubber bar to keep the active slide button centered & visible
+  useEffect(() => {
+    if (activeScrubberBtnRef.current) {
+      activeScrubberBtnRef.current.scrollIntoView({
+        behavior: 'smooth',
+        inline: 'center',
+        block: 'nearest'
+      });
+    }
   }, [slideNum]);
 
   const prevSlide = () => {
@@ -114,24 +130,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
   }, [slideNum, enlargedImage, gridModalOpen]);
 
   const currentSlide = slideNum > 0 ? MASTER_SLIDES_DATA[slideNum - 1] : null;
-
-  // Determine available tabs for current slide
   const hasFoodAnalogy = Boolean(currentSlide?.foodAnalogy);
-  const hasTechExtras = Boolean(
-    currentSlide &&
-    (currentSlide.services ||
-      currentSlide.flowSteps ||
-      currentSlide.code ||
-      currentSlide.architectureSteps ||
-      currentSlide.projectTasks ||
-      currentSlide.securityRules ||
-      currentSlide.failureMatrix ||
-      currentSlide.timeline ||
-      currentSlide.concepts ||
-      currentSlide.comparison ||
-      currentSlide.stages ||
-      currentSlide.summaryMapping)
-  );
 
   // Font size classes
   const bodyTextClass = 
@@ -144,232 +143,347 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
     fontSize === 'large' ? 'text-xl sm:text-2xl lg:text-3xl font-black' :
     'text-lg sm:text-xl lg:text-2xl font-black';
 
-  // Render Slide-specific rich data
-  const renderSlideExtras = (slide: MasterSlide) => (
-    <div className="space-y-4 pt-1">
-      {/* AWS Core Services Grid */}
-      {slide.services && (
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-amber-900 font-bold text-sm">
-            <Cloud className="w-4 h-4 text-amber-600" />
-            <span>Core AWS Cloud Services:</span>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            {slide.services.map((svc, idx) => (
-              <div key={idx} className="p-3 rounded-xl bg-amber-50/80 border border-amber-200 shadow-sm">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-                  <span className="text-xs sm:text-sm font-mono font-bold text-amber-950">{svc.service}</span>
-                </div>
-                <p className="text-xs text-slate-700 mt-1 leading-snug font-medium">{svc.role}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* AWS 7-Step Deployment Flow */}
-      {slide.flowSteps && (
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-blue-900 font-bold text-sm">
-            <Terminal className="w-4 h-4 text-blue-600" />
-            <span>7-Step AWS Production Deployment Flow:</span>
-          </div>
-          <div className="space-y-1.5">
-            {slide.flowSteps.map((step, idx) => (
-              <div key={idx} className="flex items-start gap-2.5 p-2.5 rounded-xl bg-blue-50/70 border border-blue-200 text-xs sm:text-sm font-medium text-slate-900 shadow-sm">
-                <span className="w-5 h-5 rounded-md bg-blue-600 text-white font-mono font-bold flex items-center justify-center text-xs shrink-0 mt-0.5">
-                  {idx + 1}
-                </span>
-                <span className="leading-snug">{step}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Slide Code Block */}
-      {slide.code && (
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-xs font-mono font-bold text-slate-800">
-            <span className="flex items-center gap-1.5">
-              <Terminal className="w-4 h-4 text-blue-600" />
-              <span>Workflow YAML Configuration</span>
-            </span>
-            <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[11px] font-bold border border-amber-300">
-              CI/CD Pipeline
-            </span>
-          </div>
-          <div className="rounded-xl border border-slate-300 shadow-sm overflow-hidden max-h-[360px] overflow-y-auto">
-            <CodeBlock code={slide.code} language="yaml" />
-          </div>
-        </div>
-      )}
-
-      {/* Slide 19 Architecture Steps */}
-      {slide.architectureSteps && (
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-emerald-900 font-bold text-sm">
-            <Rocket className="w-4 h-4 text-emerald-600" />
-            <span>End-to-End AWS Pipeline Architecture:</span>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {slide.architectureSteps.map((st, idx) => (
-              <div key={idx} className="p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200 shadow-sm">
-                <span className="text-xs font-mono font-bold text-emerald-900 block">{st.step}</span>
-                <p className="text-xs text-slate-700 mt-0.5 leading-snug">{st.detail}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Slide 19 Project Tasks */}
-      {slide.projectTasks && (
-        <div className="space-y-2">
-          <span className="text-xs font-mono font-bold text-slate-800 uppercase block">Hands-On Checklist:</span>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {slide.projectTasks.map((tsk, idx) => (
-              <div key={idx} className="p-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-800 flex items-start gap-2 shadow-sm font-medium">
-                <CheckSquare className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                <span className="leading-snug">{tsk}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Slide 17 Security Rules */}
-      {slide.securityRules && (
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-rose-900 font-bold text-sm">
-            <ShieldCheck className="w-4 h-4 text-rose-600" />
-            <span>DevSecOps Security & AWS OIDC Rules:</span>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {slide.securityRules.map((sec, idx) => (
-              <div key={idx} className="p-2.5 rounded-xl bg-rose-50/70 border border-rose-200 shadow-sm">
-                <span className="text-xs font-mono font-bold text-rose-900 block">{sec.rule}</span>
-                <p className="text-xs text-slate-700 mt-0.5 leading-snug">{sec.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Slide 18 Failure Matrix */}
-      {slide.failureMatrix && (
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-rose-900 font-bold text-sm">
-            <AlertTriangle className="w-4 h-4 text-rose-600" />
-            <span>Pipeline Failure Modes & Automated Recovery:</span>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {slide.failureMatrix.map((f, idx) => (
-              <div key={idx} className="p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-rose-700 text-xs font-mono">{f.failure}</span>
-                  <span className="text-[10px] text-slate-500 font-medium">Cause: {f.cause}</span>
-                </div>
-                <p className="text-xs text-slate-800 mt-1 font-medium">{f.action}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Slide 3 Timeline */}
-      {slide.timeline && (
-        <div className="space-y-2">
-          <span className="text-xs font-mono font-bold text-blue-700 uppercase block">Historical Evolution Milestones:</span>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-            {slide.timeline.map((item, idx) => (
-              <div key={idx} className="p-3 rounded-xl bg-white border border-slate-200 shadow-sm">
-                <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 font-mono font-bold text-[11px] inline-block mb-1">
-                  {item.era}
-                </span>
-                <h4 className="text-xs sm:text-sm font-bold text-slate-900 leading-snug">{item.title}</h4>
-                <p className="text-[11px] text-slate-600 mt-1 leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Slide 5 Concepts */}
-      {slide.concepts && (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-          {slide.concepts.map((c, idx) => (
-            <div key={idx} className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between">
-              <div>
-                <span className="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-mono font-bold text-[11px] inline-block mb-1">
-                  Concept 0{idx + 1}
-                </span>
-                <h4 className="text-sm font-black text-slate-950">{c.term}</h4>
-                <p className="text-xs text-blue-700 font-mono font-semibold mb-1.5">{c.purpose}</p>
-                <p className="text-xs text-slate-700 leading-relaxed">{c.desc}</p>
-              </div>
-              <div className="mt-2.5 pt-2 border-t border-slate-100 text-[11px] text-amber-900 font-medium">
-                🍔 {c.analogy}
-              </div>
+  // =========================================================================
+  // PRIMARY RICH CONTENT RENDERER (GUARANTEES 100% RICH CONTENT FOR ALL 20 SLIDES)
+  // =========================================================================
+  const renderSlidePrimaryContent = (slide: MasterSlide) => {
+    // 1. If slide has explicit detailed points or content points (e.g. Slide 1, 2, 6, 7, 10, 16, 19)
+    if (slide.detailedPoints || slide.contentPoints) {
+      const points = slide.detailedPoints || slide.contentPoints || [];
+      return (
+        <div className="space-y-2.5">
+          {points.map((pt, idx) => (
+            <div key={idx} className="flex items-start gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 shadow-sm hover:border-blue-300 transition-colors">
+              <CheckCircle2 className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
+              <p className={`${bodyTextClass} text-slate-800 font-medium`}>{pt}</p>
             </div>
           ))}
-        </div>
-      )}
 
-      {/* Slide 7 Comparison */}
-      {slide.comparison && (
-        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-          <table className="w-full text-left text-xs">
+          {/* Slide 15 Docker terms extra */}
+          {slide.terms && (
+            <div className="mt-3 space-y-2">
+              <span className="text-xs font-mono font-bold text-slate-700 uppercase block">Key Docker Concepts:</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {slide.terms.map((t, idx) => (
+                  <div key={idx} className="p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm">
+                    <span className="text-xs font-mono font-bold text-blue-700 block">{t.term}</span>
+                    <p className="text-xs text-slate-700 mt-0.5">{t.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Slide 16 AWS Services extra */}
+          {slide.services && (
+            <div className="mt-3 space-y-2">
+              <span className="text-xs font-mono font-bold text-amber-800 uppercase block">Integrated AWS Services:</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {slide.services.map((svc, idx) => (
+                  <div key={idx} className="p-2.5 rounded-xl bg-amber-50/80 border border-amber-200 shadow-sm">
+                    <span className="text-xs font-mono font-bold text-amber-950 block">{svc.service}</span>
+                    <p className="text-xs text-slate-700 mt-0.5">{svc.role}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Slide 19 Architecture Steps extra */}
+          {slide.architectureSteps && (
+            <div className="mt-3 space-y-2">
+              <span className="text-xs font-mono font-bold text-emerald-800 uppercase block">End-to-End Pipeline Steps:</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {slide.architectureSteps.map((st, idx) => (
+                  <div key={idx} className="p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200 shadow-sm">
+                    <span className="text-xs font-mono font-bold text-emerald-950 block">{st.step}</span>
+                    <p className="text-xs text-slate-700 mt-0.5">{st.detail}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // 2. Slide 14: Four Major Stages of Delivery (Build, Test, Package, Deploy)
+    if (slide.stages) {
+      return (
+        <div className="space-y-2.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            {slide.stages.map((stg, idx) => (
+              <div key={idx} className="p-4 rounded-2xl bg-white border-2 border-slate-200 hover:border-blue-400 shadow-sm transition-all flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800">
+                      Stage {stg.num}
+                    </span>
+                    <span className="text-xs text-slate-400 font-mono font-semibold">Delivery Gate</span>
+                  </div>
+                  <h4 className="text-base font-black text-slate-950 mt-1">{stg.name}</h4>
+                  <p className="text-xs sm:text-sm text-slate-700 mt-1 leading-snug">{stg.purpose}</p>
+                </div>
+                <div className="mt-3 pt-2 border-t border-slate-100 text-xs text-amber-900 font-medium">
+                  🍔 <strong>Kitchen Equivalent:</strong> {stg.foodEquivalent}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    // 3. Slide 17: Security Rules & DevSecOps
+    if (slide.securityRules) {
+      return (
+        <div className="space-y-2.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            {slide.securityRules.map((sec, idx) => (
+              <div key={idx} className="p-3.5 rounded-xl bg-white border border-rose-200 shadow-sm hover:border-rose-400 transition-colors">
+                <div className="flex items-center gap-2 mb-1">
+                  <ShieldCheck className="w-4 h-4 text-rose-600 shrink-0" />
+                  <span className="text-xs sm:text-sm font-bold text-slate-950 font-mono">{sec.rule}</span>
+                </div>
+                <p className="text-xs text-slate-700 leading-relaxed font-medium pl-6">{sec.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    // 4. Slide 18: Failure Matrix & Automated Recovery
+    if (slide.failureMatrix) {
+      return (
+        <div className="space-y-2.5">
+          <div className="grid grid-cols-1 gap-2">
+            {slide.failureMatrix.map((f, idx) => (
+              <div key={idx} className="p-3 rounded-xl bg-white border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div className="flex items-center gap-2.5">
+                  <span className="p-1 rounded-lg bg-rose-50 text-rose-600 border border-rose-200">
+                    <AlertTriangle className="w-4 h-4" />
+                  </span>
+                  <div>
+                    <span className="text-xs sm:text-sm font-bold text-rose-900 font-mono block">{f.failure}</span>
+                    <span className="text-[11px] text-slate-500">Root Cause: {f.cause}</span>
+                  </div>
+                </div>
+                <div className="sm:text-right">
+                  <span className="inline-block px-3 py-1 rounded-lg bg-emerald-50 text-emerald-900 border border-emerald-200 text-xs font-semibold">
+                    🛡️ {f.action}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    // 5. Slide 3: Historical Timeline
+    if (slide.timeline) {
+      return (
+        <div className="space-y-2.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            {slide.timeline.map((item, idx) => (
+              <div key={idx} className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-sm">
+                <span className="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 font-mono font-bold text-xs inline-block mb-1">
+                  {item.era}
+                </span>
+                <h4 className="text-sm font-bold text-slate-950 leading-snug">{item.title}</h4>
+                <p className="text-xs text-slate-600 mt-1 leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    // 6. Slide 4: Comparison Table
+    if (slide.comparisonTable) {
+      return (
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <table className="w-full text-left text-xs sm:text-sm">
             <thead className="bg-slate-100 border-b border-slate-200 font-mono font-bold text-slate-800">
               <tr>
-                <th className="p-2.5">Aspect</th>
-                <th className="p-2.5 text-blue-700">Git</th>
-                <th className="p-2.5 text-purple-700">GitHub</th>
+                <th className="p-3">Process Dimension</th>
+                <th className="p-3 text-rose-700">Before CI/CD (Manual)</th>
+                <th className="p-3 text-emerald-700">After CI/CD (Automated)</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {slide.comparison.map((row, idx) => (
+              {slide.comparisonTable.map((row, idx) => (
                 <tr key={idx} className="hover:bg-slate-50">
-                  <td className="p-2.5 font-bold text-slate-900">{row.aspect}</td>
-                  <td className="p-2.5 text-slate-700">{row.git}</td>
-                  <td className="p-2.5 text-slate-700 font-medium">{row.github}</td>
+                  <td className="p-3 font-bold text-slate-900">{row.aspect}</td>
+                  <td className="p-3 text-slate-600">{row.before}</td>
+                  <td className="p-3 text-emerald-950 font-semibold">{row.after}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-      )}
+      );
+    }
 
-      {/* Slide 14 Stages */}
-      {slide.stages && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
-          {slide.stages.map((stg, idx) => (
-            <div key={idx} className="p-3 rounded-xl bg-white border border-slate-200 shadow-sm">
-              <span className="text-[11px] font-mono font-bold text-blue-700 block">Stage {stg.num}</span>
-              <h4 className="text-sm font-black text-slate-900 mb-0.5">{stg.name}</h4>
-              <p className="text-xs text-slate-600 mb-1.5 leading-snug">{stg.purpose}</p>
-              <div className="pt-1.5 border-t border-slate-100 text-[11px] text-amber-900 font-medium">
-                🍔 {stg.foodEquivalent}
+    // 7. Slide 5: Three Core Concepts
+    if (slide.concepts) {
+      return (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          {slide.concepts.map((c, idx) => (
+            <div key={idx} className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between">
+              <div>
+                <span className="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-mono font-bold text-xs inline-block mb-1">
+                  Concept 0{idx + 1}
+                </span>
+                <h4 className="text-base font-black text-slate-950">{c.term}</h4>
+                <p className="text-xs text-blue-700 font-mono font-semibold mb-1.5">{c.purpose}</p>
+                <p className="text-xs text-slate-700 leading-relaxed">{c.desc}</p>
+              </div>
+              <div className="mt-3 pt-2 border-t border-slate-100 text-xs text-amber-900 font-medium">
+                🍔 {c.analogy}
               </div>
             </div>
           ))}
         </div>
-      )}
+      );
+    }
 
-      {/* Slide 20 Summary Mapping */}
-      {slide.summaryMapping && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
-          {slide.summaryMapping.map((item, idx) => (
-            <div key={idx} className="p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm">
-              <span className="font-mono font-bold text-xs text-blue-700 block">{item.tool}</span>
-              <span className="text-xs text-slate-700 mt-0.5 block leading-snug">{item.role}</span>
+    // 8. Slide 8: Tools Table
+    if (slide.toolsTable) {
+      return (
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <table className="w-full text-left text-xs sm:text-sm">
+            <thead className="bg-slate-100 border-b border-slate-200 font-mono font-bold text-slate-800">
+              <tr>
+                <th className="p-3">Pipeline Stage</th>
+                <th className="p-3 text-blue-700">Industry Standard Tools</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {slide.toolsTable.map((t, idx) => (
+                <tr key={idx} className="hover:bg-slate-50">
+                  <td className="p-3 font-bold text-slate-900">{t.stage}</td>
+                  <td className="p-3 text-slate-800 font-medium">{t.tools}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    }
+
+    // 9. Slide 9: Advantages
+    if (slide.advantages) {
+      return (
+        <div className="space-y-2">
+          {slide.advantages.map((adv, idx) => (
+            <div key={idx} className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-sm flex items-start gap-3">
+              <Rocket className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+              <div>
+                <h4 className="text-sm font-bold text-slate-950">{adv.title}</h4>
+                <p className="text-xs text-slate-700 mt-0.5">{adv.desc}</p>
+              </div>
             </div>
           ))}
         </div>
-      )}
-    </div>
-  );
+      );
+    }
+
+    // 10. Slide 11: Workflow Lifecycle Steps
+    if (slide.lifecycleSteps) {
+      return (
+        <div className="space-y-2">
+          {slide.lifecycleSteps.map((st, idx) => (
+            <div key={idx} className="flex items-start gap-3 p-3 rounded-xl bg-white border border-slate-200 shadow-sm">
+              <span className="w-6 h-6 rounded-lg bg-blue-600 text-white font-mono font-bold flex items-center justify-center text-xs shrink-0 mt-0.5">
+                {idx + 1}
+              </span>
+              <div>
+                <span className="text-xs font-mono font-bold text-blue-700 uppercase block">{st.step}</span>
+                <p className="text-xs sm:text-sm text-slate-800">{st.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    // 11. Slide 12: Code & YAML Explanations
+    if (slide.code) {
+      return (
+        <div className="space-y-3">
+          <div className="rounded-xl border border-slate-300 shadow-sm overflow-hidden max-h-[300px] overflow-y-auto">
+            <CodeBlock code={slide.code} language="yaml" />
+          </div>
+          {slide.explanations && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {slide.explanations.map((exp, idx) => (
+                <div key={idx} className="p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm">
+                  <span className="text-xs font-mono font-bold text-blue-700 block">{exp.key}</span>
+                  <p className="text-xs text-slate-700 mt-0.5">{exp.desc}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // 12. Slide 13: Real Execution Flow
+    if (slide.steps) {
+      return (
+        <div className="space-y-2">
+          {slide.narrative && (
+            <div className="p-3 rounded-xl bg-blue-50 border border-blue-200 text-xs sm:text-sm font-medium text-slate-800">
+              {slide.narrative}
+            </div>
+          )}
+          <div className="space-y-1.5">
+            {slide.steps.map((st, idx) => (
+              <div key={idx} className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm text-xs sm:text-sm text-slate-800 font-medium">
+                <span className="w-5 h-5 rounded-md bg-blue-600 text-white font-mono font-bold flex items-center justify-center text-xs shrink-0">
+                  {idx + 1}
+                </span>
+                <span>{st}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    // 13. Slide 20: Summary Mapping & Mastery Philosophy
+    if (slide.summaryMapping) {
+      return (
+        <div className="space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {slide.summaryMapping.map((item, idx) => (
+              <div key={idx} className="p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm">
+                <span className="font-mono font-bold text-xs text-blue-700 block">{item.tool}</span>
+                <span className="text-xs text-slate-700 mt-0.5 block leading-snug">{item.role}</span>
+              </div>
+            ))}
+          </div>
+          {slide.finalPhilosophy && (
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 shadow-sm flex items-start gap-3">
+              <Quote className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
+              <p className="text-xs sm:text-sm text-slate-800 font-medium italic leading-relaxed">
+                "{slide.finalPhilosophy}"
+              </p>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // Fallback: Key Takeaway
+    return (
+      <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 shadow-sm">
+        <p className={`${bodyTextClass} text-slate-800 font-medium`}>{slide.keyTakeaway}</p>
+      </div>
+    );
+  };
 
   return (
     <div
@@ -772,15 +886,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
             ) : viewMode === 'content' ? (
               /* VIEW MODE 2: FULL CONTENT FOCUS (12-COL READING MODE) */
               <div className="space-y-4 mb-4">
-                {/* Detailed Points */}
-                <div className="space-y-2">
-                  {(currentSlide!.detailedPoints || currentSlide!.contentPoints)?.map((pt, idx) => (
-                    <div key={idx} className="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200 shadow-sm">
-                      <CheckCircle2 className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
-                      <p className={`${bodyTextClass} text-slate-800 font-medium`}>{pt}</p>
-                    </div>
-                  ))}
-                </div>
+                {renderSlidePrimaryContent(currentSlide!)}
 
                 {/* Food Analogy Card */}
                 {currentSlide!.foodAnalogy && (
@@ -801,57 +907,38 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                     )}
                   </div>
                 )}
-
-                {/* Extras */}
-                {renderSlideExtras(currentSlide!)}
               </div>
             ) : (
               /* VIEW MODE 3: SPLIT VIEW WITH CONVENIENT CONTENT TABS */
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start mb-4">
-                {/* Left Side (6 cols): Tabbed Content & Concepts */}
+                {/* Left Side (6 cols): Primary Content & Analogy Tabs */}
                 <div className="lg:col-span-6 space-y-2.5 flex flex-col justify-between">
                   {/* Content Section Tabs */}
-                  {(hasFoodAnalogy || hasTechExtras) && (
-                    <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs font-bold overflow-x-auto">
+                  {hasFoodAnalogy && (
+                    <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs font-bold">
                       <button
-                        onClick={() => setActiveTab('points')}
+                        onClick={() => setActiveTab('primary')}
                         className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all shrink-0 ${
-                          activeTab === 'points'
+                          activeTab === 'primary'
                             ? 'bg-white text-blue-700 shadow-sm'
                             : 'text-slate-600 hover:text-slate-900'
                         }`}
                       >
                         <ListChecks className="w-3.5 h-3.5" />
-                        <span>Core Concepts</span>
+                        <span>Core Blueprint</span>
                       </button>
 
-                      {hasFoodAnalogy && (
-                        <button
-                          onClick={() => setActiveTab('analogy')}
-                          className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all shrink-0 ${
-                            activeTab === 'analogy'
-                              ? 'bg-amber-400 text-slate-950 shadow-sm font-black'
-                              : 'text-amber-900 hover:bg-amber-100/60'
-                          }`}
-                        >
-                          <UtensilsCrossed className="w-3.5 h-3.5" />
-                          <span>Food Analogy</span>
-                        </button>
-                      )}
-
-                      {hasTechExtras && (
-                        <button
-                          onClick={() => setActiveTab('tech')}
-                          className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all shrink-0 ${
-                            activeTab === 'tech'
-                              ? 'bg-blue-600 text-white shadow-sm'
-                              : 'text-slate-600 hover:text-slate-900'
-                          }`}
-                        >
-                          <FileCode2 className="w-3.5 h-3.5" />
-                          <span>Technical Details</span>
-                        </button>
-                      )}
+                      <button
+                        onClick={() => setActiveTab('analogy')}
+                        className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all shrink-0 ${
+                          activeTab === 'analogy'
+                            ? 'bg-amber-400 text-slate-950 shadow-sm font-black'
+                            : 'text-amber-900 hover:bg-amber-100/60'
+                        }`}
+                      >
+                        <UtensilsCrossed className="w-3.5 h-3.5" />
+                        <span>Food Analogy</span>
+                      </button>
 
                       <button
                         onClick={() => setActiveTab('all')}
@@ -865,15 +952,10 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                     </div>
                   )}
 
-                  {/* Tab 1: Core Points */}
-                  {(activeTab === 'points' || activeTab === 'all') && (
-                    <div className="space-y-2 animate-fadeIn">
-                      {(currentSlide!.detailedPoints || currentSlide!.contentPoints)?.map((pt, idx) => (
-                        <div key={idx} className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200 shadow-sm">
-                          <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-                          <p className={`${bodyTextClass} text-slate-800 font-medium`}>{pt}</p>
-                        </div>
-                      ))}
+                  {/* Tab 1: Primary Rich Content */}
+                  {(activeTab === 'primary' || activeTab === 'all') && (
+                    <div className="animate-fadeIn">
+                      {renderSlidePrimaryContent(currentSlide!)}
                     </div>
                   )}
 
@@ -894,13 +976,6 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                           </p>
                         </div>
                       )}
-                    </div>
-                  )}
-
-                  {/* Tab 3: Technical Extras */}
-                  {(activeTab === 'tech' || activeTab === 'all') && hasTechExtras && (
-                    <div className="animate-fadeIn">
-                      {renderSlideExtras(currentSlide!)}
                     </div>
                   )}
                 </div>
@@ -967,7 +1042,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
           </div>
 
           {/* =========================================================================
-              UNIFIED BOTTOM DECK NAVIGATION DOCK (ZERO CLUTTER, ALL-IN-ONE)
+              UNIFIED BOTTOM DECK NAVIGATION DOCK WITH AUTO-SCROLLING 00-20 SCRUBBER
               ========================================================================= */}
           <div className="pt-4 border-t border-slate-200 mt-5 flex flex-col md:flex-row items-center justify-between gap-3">
             {/* Left: Previous Button & Progress Bar */}
@@ -984,7 +1059,7 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
                 <span className="text-xs sm:text-sm font-mono font-bold text-slate-800">
                   Slide {currentSlide!.num < 10 ? `0${currentSlide!.num}` : currentSlide!.num} <span className="text-slate-400">/</span> {totalSlides}
                 </span>
-                <div className="w-16 sm:w-24 h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                <div className="w-16 sm:w-20 h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
                   <div
                     className="h-full bg-blue-600 transition-all duration-300"
                     style={{ width: `${(slideNum / totalSlides) * 100}%` }}
@@ -993,33 +1068,38 @@ export const PresentationPage: React.FC<{ onBackToCourse: () => void }> = ({ onB
               </div>
             </div>
 
-            {/* Center: Slide Numbers Quick Scrubber */}
-            <div className="hidden lg:flex items-center gap-1 overflow-x-auto max-w-[440px] px-2 py-1 bg-slate-100/80 rounded-xl border border-slate-200">
+            {/* Center: Slide Numbers Quick Scrubber (With Auto-Scroll into View) */}
+            <div className="flex items-center gap-1 overflow-x-auto max-w-[340px] sm:max-w-[480px] lg:max-w-[580px] px-2 py-1 bg-slate-100/90 rounded-xl border border-slate-200 scroll-smooth">
               <button
+                ref={slideNum === 0 ? activeScrubberBtnRef : null}
                 onClick={() => setSlideNum(0)}
-                className={`px-2 py-1 rounded-lg text-xs font-mono font-bold transition-all ${
+                className={`px-2 py-1 rounded-lg text-xs font-mono font-bold transition-all shrink-0 ${
                   slideNum === 0
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                    ? 'bg-blue-600 text-white shadow-sm ring-2 ring-blue-400/50'
+                    : 'text-slate-700 hover:text-slate-950 hover:bg-white bg-slate-50 border border-slate-200'
                 }`}
                 title="Slide 0: Overview & Bio"
               >
                 00
               </button>
-              {MASTER_SLIDES_DATA.map((s) => (
-                <button
-                  key={s.num}
-                  onClick={() => setSlideNum(s.num)}
-                  className={`px-1.5 py-1 rounded-lg text-[11px] font-mono font-bold transition-all ${
-                    s.num === slideNum
-                      ? 'bg-blue-600 text-white shadow-sm'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-                  }`}
-                  title={`Slide ${s.num}: ${s.title}`}
-                >
-                  {s.num < 10 ? `0${s.num}` : s.num}
-                </button>
-              ))}
+              {MASTER_SLIDES_DATA.map((s) => {
+                const isActive = s.num === slideNum;
+                return (
+                  <button
+                    key={s.num}
+                    ref={isActive ? activeScrubberBtnRef : null}
+                    onClick={() => setSlideNum(s.num)}
+                    className={`px-2 py-1 rounded-lg text-[11px] font-mono font-bold transition-all shrink-0 ${
+                      isActive
+                        ? 'bg-blue-600 text-white shadow-sm ring-2 ring-blue-400/50 scale-105'
+                        : 'text-slate-700 hover:text-slate-950 hover:bg-white bg-slate-50 border border-slate-200'
+                    }`}
+                    title={`Slide ${s.num}: ${s.title}`}
+                  >
+                    {s.num < 10 ? `0${s.num}` : s.num}
+                  </button>
+                );
+              })}
             </div>
 
             {/* Right: Next Slide Button */}
