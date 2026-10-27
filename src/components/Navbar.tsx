@@ -138,7 +138,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             }`}
           >
             <span>📽️</span>
-            <span>PPT Slides (20)</span>
+            <span>PPT Slides (21)</span>
           </button>
         </nav>
 

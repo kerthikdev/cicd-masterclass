@@ -132,7 +132,7 @@ export function App() {
             onClick={() => navigateTo('presentation')}
             className="w-full text-left px-3 py-2 text-sm rounded-lg text-amber-800 font-bold hover:bg-amber-50"
           >
-            📽️ PPT Slides (20)
+            📽️ PPT Slides (21)
           </button>
         </div>
       )}
@@ -223,7 +223,7 @@ export function App() {
               Glossary
             </button>
             <button onClick={() => navigateTo('presentation')} className="hover:text-amber-700 font-bold transition-colors">
-              PPT Slides (20)
+              PPT Slides (21)
             </button>
             <button onClick={() => setCertModalOpen(true)} className="hover:text-amber-700 font-medium transition-colors">
               Certificate
