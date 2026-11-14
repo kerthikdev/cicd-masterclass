@@ -6,6 +6,8 @@ import {
   RoadmapItem,
   McpInteractiveDemo 
 } from '../data/packetTracerRoadmapData';
+import { roadmapLessonsContent, RoadmapLessonDetail } from '../data/packetTracerLessonContent';
+import { RoadmapLessonModal } from '../components/RoadmapLessonModal';
 import { 
   Compass, 
   CheckCircle2, 
@@ -55,6 +57,66 @@ export const LearningRoadmapPage: React.FC<LearningRoadmapPageProps> = ({
   const [isDemoRunning, setIsDemoRunning] = useState<boolean>(false);
   const [demoOutput, setDemoOutput] = useState<any>(mcpInteractiveDemos[0].sampleResponse);
   const [copiedSnippet, setCopiedSnippet] = useState<string | null>(null);
+  const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null);
+
+  // All sequential milestone item IDs and tasks for Next/Prev modal navigation
+  const allTasks = packetTracerRoadmapPhases.flatMap(p => p.items);
+  const totalTasksCount = allTasks.length;
+  const completedCount = allTasks.filter(t => completedItems.includes(t.id)).length;
+  const progressPercent = Math.round((completedCount / (totalTasksCount || 1)) * 100);
+
+  const allMilestoneIds = allTasks.map(i => i.id);
+  const currentLessonIndex = selectedLessonId ? allMilestoneIds.indexOf(selectedLessonId) : -1;
+  const hasPrevLesson = currentLessonIndex > 0;
+  const hasNextLesson = currentLessonIndex >= 0 && currentLessonIndex < allMilestoneIds.length - 1;
+
+  const handlePrevLesson = () => {
+    if (hasPrevLesson) {
+      setSelectedLessonId(allMilestoneIds[currentLessonIndex - 1]);
+    }
+  };
+
+  const handleNextLesson = () => {
+    if (hasNextLesson) {
+      setSelectedLessonId(allMilestoneIds[currentLessonIndex + 1]);
+    }
+  };
+
+  // Selected lesson detail
+  const selectedLesson: RoadmapLessonDetail | null = selectedLessonId ? (
+    roadmapLessonsContent[selectedLessonId] || {
+      id: selectedLessonId,
+      title: allTasks.find(t => t.id === selectedLessonId)?.title || 'Milestone Tutorial',
+      phaseTitle: 'Cisco Packet Tracer AI & MCP Roadmap',
+      estimatedReadTime: '8 mins',
+      difficulty: 'Intermediate',
+      overview: allTasks.find(t => t.id === selectedLessonId)?.description || '',
+      mentalModelAnalogy: {
+        title: 'Core System Concept',
+        description: 'Understand how automated MCP tool calls orchestrate Packet Tracer simulation engines.'
+      },
+      deepDiveSections: [
+        {
+          heading: 'Technical Architecture & Deep Dive',
+          content: 'Detailed step-by-step breakdown of how packet-tracer-mcp handles this operation.'
+        }
+      ],
+      handsOnLab: {
+        labTitle: 'Hands-On Milestone Lab',
+        prerequisites: ['Packet Tracer v8.2+', 'Bridge Connected'],
+        steps: ['Run the command in Packet Tracer', 'Verify connectivity'],
+        aiPrompt: 'Execute this task in Packet Tracer using MCP tools.',
+        expectedOutcome: 'Task verified successfully.'
+      },
+      troubleshootingTips: ['Ensure Cisco Packet Tracer bridge is active and authorized.'],
+      knowledgeQuiz: {
+        question: 'What is the primary tool call used for this operation?',
+        options: ['pt_bridge_status', 'add_device', 'test_reachability', 'configure_interface'],
+        correctIndex: 0,
+        explanation: 'The MCP server coordinates these commands through local IPC.'
+      }
+    }
+  ) : null;
 
   useEffect(() => {
     try {
@@ -81,12 +143,6 @@ export const LearningRoadmapPage: React.FC<LearningRoadmapPageProps> = ({
     setCopiedSnippet(label);
     setTimeout(() => setCopiedSnippet(null), 2000);
   };
-
-  // Compute total tasks and progress
-  const allTasks = packetTracerRoadmapPhases.flatMap(p => p.items);
-  const totalTasksCount = allTasks.length;
-  const completedCount = allTasks.filter(t => completedItems.includes(t.id)).length;
-  const progressPercent = Math.round((completedCount / (totalTasksCount || 1)) * 100);
 
   // Filter phases & items based on selected filter and search query
   const filteredPhases = packetTracerRoadmapPhases.map(phase => {
@@ -531,6 +587,38 @@ export const LearningRoadmapPage: React.FC<LearningRoadmapPageProps> = ({
                                       <span>{item.verificationCheck}</span>
                                     </div>
                                   </div>
+
+                                  {/* Deep Lesson Reader CTA */}
+                                  <div className="mt-4 pt-3 border-t border-slate-200/60 flex flex-wrap items-center gap-2.5">
+                                    <button
+                                      onClick={() => setSelectedLessonId(item.id)}
+                                      className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-xs flex items-center gap-2 shadow-xs hover:shadow-blue-500/25 transition-all hover:scale-102 active:scale-98"
+                                    >
+                                      <BookOpen className="w-4 h-4 text-blue-200" />
+                                      <span>Read In-Depth Lesson & Lab Guide</span>
+                                    </button>
+
+                                    <button
+                                      onClick={() => toggleItemCompleted(item.id)}
+                                      className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 border transition-all ${
+                                        isDone
+                                          ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
+                                          : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100 shadow-2xs'
+                                      }`}
+                                    >
+                                      {isDone ? (
+                                        <>
+                                          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                                          <span>Completed</span>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Circle className="w-4 h-4 text-slate-400" />
+                                          <span>Mark as Complete</span>
+                                        </>
+                                      )}
+                                    </button>
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -773,6 +861,23 @@ export const LearningRoadmapPage: React.FC<LearningRoadmapPageProps> = ({
             </div>
           </div>
         </main>
+      )}
+
+      {/* =========================================================================
+          DETAILED ROADMAP LESSON MODAL (FULL TUTORIAL & LAB CONTENT)
+          ========================================================================= */}
+      {selectedLesson && (
+        <RoadmapLessonModal
+          lesson={selectedLesson}
+          isOpen={!!selectedLessonId}
+          onClose={() => setSelectedLessonId(null)}
+          isCompleted={completedItems.includes(selectedLesson.id)}
+          onToggleComplete={() => toggleItemCompleted(selectedLesson.id)}
+          onPrevLesson={handlePrevLesson}
+          onNextLesson={handleNextLesson}
+          hasPrev={hasPrevLesson}
+          hasNext={hasNextLesson}
+        />
       )}
     </div>
   );
