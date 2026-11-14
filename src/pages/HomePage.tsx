@@ -16,7 +16,9 @@ import {
   ChevronRight,
   Flame,
   Clock,
-  Cloud
+  Cloud,
+  Compass,
+  Network
 } from 'lucide-react';
 
 interface HomePageProps {
@@ -24,6 +26,7 @@ interface HomePageProps {
   onOpenSimulator: () => void;
   onOpenAws?: () => void;
   onOpenReference: () => void;
+  onOpenLearning?: () => void;
   completedLessons: number[];
   percentComplete: number;
 }
@@ -33,6 +36,7 @@ export const HomePage: React.FC<HomePageProps> = ({
   onOpenSimulator,
   onOpenAws,
   onOpenReference,
+  onOpenLearning,
   completedLessons,
   percentComplete,
 }) => {
@@ -91,6 +95,16 @@ export const HomePage: React.FC<HomePageProps> = ({
                 <span>AWS Cloud Lab</span>
               </button>
             )}
+
+            {onOpenLearning && (
+              <button
+                onClick={onOpenLearning}
+                className="flex items-center gap-2 px-6 py-4 bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:from-indigo-500 hover:to-violet-500 font-black text-base rounded-2xl hover:shadow-xl hover:shadow-indigo-500/20 transition-all hover:scale-105 active:scale-95 shadow-xs"
+              >
+                <Network className="w-5 h-5 text-white" />
+                <span>Packet Tracer MCP Roadmap</span>
+              </button>
+            )}
           </div>
 
           {/* Key Stats Bar */}
@@ -112,6 +126,39 @@ export const HomePage: React.FC<HomePageProps> = ({
               <div className="text-xs text-slate-500 mt-1 uppercase font-bold tracking-wider">Hands-On & Free</div>
             </div>
           </div>
+
+          {/* Featured Learning Module Banner */}
+          {onOpenLearning && (
+            <div className="mt-8 max-w-4xl mx-auto p-6 rounded-3xl bg-gradient-to-r from-indigo-900 via-slate-900 to-indigo-950 text-white border border-indigo-700/40 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 text-left">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center shrink-0">
+                  <Network className="w-6 h-6 text-indigo-300" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/30 text-indigo-200 border border-indigo-400/30 font-bold">
+                      New Hands-On Learning Module
+                    </span>
+                    <span className="text-xs text-indigo-300 font-medium hidden sm:inline">8 Milestone Phases</span>
+                  </div>
+                  <h3 className="text-lg font-bold text-white">
+                    Cisco Packet Tracer AI & MCP Learning Roadmap
+                  </h3>
+                  <p className="text-xs text-indigo-200/80 mt-1 max-w-xl leading-relaxed">
+                    Automate network creation, OSPF routing, VLAN trunking, and CI/CD validation tests via Model Context Protocol. Based on <code>Mats2208/MCP-Packet-Tracer</code> (llms-install.md).
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={onOpenLearning}
+                className="shrink-0 px-5 py-3 rounded-xl bg-white text-indigo-950 hover:bg-indigo-50 font-black text-xs flex items-center gap-2 transition-all shadow-md hover:scale-105 active:scale-95"
+              >
+                <span>Explore Roadmap</span>
+                <ChevronRight className="w-4 h-4 text-indigo-700" />
+              </button>
+            </div>
+          )}
         </div>
       </section>
 

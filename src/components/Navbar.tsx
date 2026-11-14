@@ -12,12 +12,14 @@ import {
   Cloud,
   ChevronRight,
   Tv,
-  Rocket
+  Rocket,
+  Compass,
+  Network
 } from 'lucide-react';
 
 interface NavbarProps {
-  currentView: 'home' | 'lesson' | 'simulator' | 'aws' | 'reference' | 'presentation';
-  onNavigate: (view: 'home' | 'lesson' | 'simulator' | 'aws' | 'reference' | 'presentation', lessonSlug?: string) => void;
+  currentView: 'home' | 'lesson' | 'simulator' | 'aws' | 'reference' | 'presentation' | 'learning';
+  onNavigate: (view: 'home' | 'lesson' | 'simulator' | 'aws' | 'reference' | 'presentation' | 'learning', lessonSlug?: string) => void;
   percentComplete: number;
   onOpenSearch: () => void;
   onOpenCertificate: () => void;
@@ -156,6 +158,23 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             <Tv className="w-3.5 h-3.5 shrink-0" />
             <span>Slides Deck</span>
+          </button>
+
+          {/* 7. Learning Roadmap (MCP Packet Tracer) */}
+          <button
+            onClick={() => onNavigate('learning')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap ${
+              currentView === 'learning'
+                ? 'bg-indigo-600 text-white shadow-xs'
+                : 'text-indigo-700 hover:text-indigo-950 hover:bg-indigo-50'
+            }`}
+            title="Cisco Packet Tracer AI & MCP Learning Roadmap"
+          >
+            <Compass className="w-3.5 h-3.5 shrink-0 text-indigo-500" />
+            <span>Learning</span>
+            <span className="text-[9px] bg-indigo-100 text-indigo-900 px-1 py-0.2 rounded font-mono font-bold">
+              PT MCP
+            </span>
           </button>
         </nav>
 
@@ -320,6 +339,23 @@ export const Navbar: React.FC<NavbarProps> = ({
               </span>
               <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-blue-100 text-blue-800 font-bold">
                 21+10
+              </span>
+            </button>
+
+            <button
+              onClick={() => onNavigate('learning')}
+              className={`p-2.5 rounded-xl text-xs font-bold flex items-center justify-between border transition-all ${
+                currentView === 'learning'
+                  ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                  : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+              }`}
+            >
+              <span className="flex items-center gap-2">
+                <Compass className="w-4 h-4 text-indigo-500" />
+                <span>Learning Roadmap</span>
+              </span>
+              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-indigo-100 text-indigo-900 font-bold">
+                PT MCP
               </span>
             </button>
           </div>

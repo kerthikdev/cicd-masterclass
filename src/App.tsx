@@ -7,6 +7,7 @@ import { SimulatorPage } from './pages/SimulatorPage';
 import { ReferencePage } from './pages/ReferencePage';
 import { PresentationPage } from './pages/PresentationPage';
 import { AwsSimulatorPage } from './pages/AwsSimulatorPage';
+import { LearningRoadmapPage } from './pages/LearningRoadmapPage';
 import { SearchModal } from './components/SearchModal';
 import { CertificateModal } from './components/CertificateModal';
 import { lessons } from './content/lessons';
@@ -23,7 +24,7 @@ export function App() {
     percentComplete,
   } = useProgress();
 
-  const [currentView, setCurrentView] = useState<'home' | 'lesson' | 'simulator' | 'aws' | 'reference' | 'presentation'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'lesson' | 'simulator' | 'aws' | 'reference' | 'presentation' | 'learning'>('home');
   const [currentLessonSlug, setCurrentLessonSlug] = useState<string>(lessons[0].slug);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [certModalOpen, setCertModalOpen] = useState(false);
@@ -43,6 +44,8 @@ export function App() {
         setCurrentView('reference');
       } else if (hash === 'presentation') {
         setCurrentView('presentation');
+      } else if (hash === 'learning' || hash === 'roadmap' || hash === 'packet-tracer') {
+        setCurrentView('learning');
       } else if (hash.startsWith('lesson/')) {
         const slug = hash.replace('lesson/', '');
         const exists = lessons.some((l) => l.slug === slug);
@@ -58,7 +61,7 @@ export function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  const navigateTo = (view: 'home' | 'lesson' | 'simulator' | 'aws' | 'reference' | 'presentation', lessonSlug?: string) => {
+  const navigateTo = (view: 'home' | 'lesson' | 'simulator' | 'aws' | 'reference' | 'presentation' | 'learning', lessonSlug?: string) => {
     setCurrentView(view);
     setMobileMenuOpen(false);
 
@@ -72,6 +75,8 @@ export function App() {
       window.location.hash = 'reference';
     } else if (view === 'presentation') {
       window.location.hash = 'presentation';
+    } else if (view === 'learning') {
+      window.location.hash = 'learning';
     } else if (view === 'lesson') {
       const targetSlug = lessonSlug || currentLessonSlug;
       setCurrentLessonSlug(targetSlug);
@@ -146,6 +151,7 @@ export function App() {
             onOpenSimulator={() => navigateTo('simulator')}
             onOpenAws={() => navigateTo('aws')}
             onOpenReference={() => navigateTo('reference')}
+            onOpenLearning={() => navigateTo('learning')}
             completedLessons={progress.completedLessons}
             percentComplete={percentComplete}
           />
@@ -178,6 +184,12 @@ export function App() {
 
         {currentView === 'reference' && <ReferencePage />}
         {currentView === 'presentation' && <PresentationPage onBackToCourse={() => navigateTo('home')} />}
+        {currentView === 'learning' && (
+          <LearningRoadmapPage 
+            onBackToHome={() => navigateTo('home')}
+            onOpenSimulator={() => navigateTo('simulator')}
+          />
+        )}
       </div>
 
       {/* Global Modals */}
@@ -227,6 +239,9 @@ export function App() {
             </button>
             <button onClick={() => navigateTo('presentation')} className="hover:text-amber-700 font-bold transition-colors">
               PPT Slides (21)
+            </button>
+            <button onClick={() => navigateTo('learning')} className="hover:text-indigo-600 font-bold transition-colors">
+              PT MCP Learning
             </button>
             <button onClick={() => setCertModalOpen(true)} className="hover:text-amber-700 font-medium transition-colors">
               Certificate
